@@ -1,8 +1,12 @@
 # ADR-0004 — Tokens de design: cores, tipografia, espaço
 
 - **Status:** ACCEPTED
-- **Data:** 2026-05-09
+- **Data:** 2026-05-09 (refinamento 2026-05-09: raios zerados, alinhamento GOV.UK total)
 - **Decisor(es):** Dono do produto (aprovado em 2026-05-09)
+
+## Refinamentos
+
+- **2026-05-09:** Zerar todos os raios (`--radius-sm/md/lg = 0`). Mantém `--radius-pill: 999px` apenas para casos circulares específicos (avatares). Decisão alinha o DS ainda mais com GOV.UK, que é estritamente "sharp corners".
 - **RFs/RNFs relacionados:** RF-0001, RF-0003, RNF-0001 (a11y), RNF-0003 (mobile-first)
 
 ## Contexto
