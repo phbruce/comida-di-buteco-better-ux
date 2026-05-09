@@ -21,9 +21,31 @@ interface Props {
 const { pageId, pageTitle, pageUrl } = Astro.props;
 
 const endpoint = import.meta.env.PUBLIC_FEEDBACK_ENDPOINT as string | undefined;
-const fallbackMail = "feedback@example.invalid"; // troque para um e-mail real ou deixe sem fallback
+const ghOwner = "phbruce";
+const ghRepo = "comida-di-buteco-better-ux";
+const ghIssueNew = `https://github.com/${ghOwner}/${ghRepo}/issues/new`;
 
 const id = `fb-${pageId}-${Math.random().toString(36).slice(2, 7)}`;
+
+/** Constrói URL do GitHub Issue pré-preenchido (modo no-deploy). */
+function ghIssueUrl(rating: "ok" | "bad", message?: string) {
+  const params = new URLSearchParams({
+    title: `[feedback] ${pageTitle}`,
+    labels: `feedback,${rating === "ok" ? "feedback-ok" : "feedback-corrigir"}`,
+    body: [
+      `**Página:** [${pageTitle}](${pageUrl})`,
+      `**ID:** \`${pageId}\``,
+      `**Rating:** ${rating === "ok" ? "✅ ok" : "⚠️ tem algo errado"}`,
+      "",
+      "**Mensagem:**",
+      message ? message : "_(sem mensagem)_",
+    ].join("\n"),
+  });
+  return `${ghIssueNew}?${params.toString()}`;
+}
+
+const okHref = ghIssueUrl("ok");
+const badHref = ghIssueUrl("bad");
 ---
 
 <section class="feedback" data-feedback aria-labelledby={`${id}-title`}>
@@ -34,69 +56,81 @@ const id = `fb-${pageId}-${Math.random().toString(36).slice(2, 7)}`;
       Se algo está errado, conta pra gente.
     </p>
 
-    {endpoint ? (
-      <form
-        class="feedback__form"
-        method="POST"
-        action={endpoint}
-        data-feedback-form
-        novalidate
-      >
-        <input type="hidden" name="pageId" value={pageId} />
-        <input type="hidden" name="pageTitle" value={pageTitle} />
-        <input type="hidden" name="pageUrl" value={pageUrl} />
-        {/* honeypot — bots costumam preencher; humanos não veem */}
-        <input
-          type="text"
-          name="website"
-          tabindex="-1"
-          autocomplete="off"
-          aria-hidden="true"
-          class="feedback__honeypot"
-        />
+    <form
+      class="feedback__form"
+      method="POST"
+      action={endpoint ?? ghIssueNew}
+      data-feedback-form
+      data-mode={endpoint ? "worker" : "github"}
+      data-gh-ok-url={okHref}
+      data-gh-bad-base={ghIssueNew}
+      data-page-id={pageId}
+      data-page-title={pageTitle}
+      data-page-url={pageUrl}
+      novalidate
+    >
+      <input type="hidden" name="pageId" value={pageId} />
+      <input type="hidden" name="pageTitle" value={pageTitle} />
+      <input type="hidden" name="pageUrl" value={pageUrl} />
+      <input
+        type="text"
+        name="website"
+        tabindex="-1"
+        autocomplete="off"
+        aria-hidden="true"
+        class="feedback__honeypot"
+      />
 
-        <div class="feedback__quick" data-feedback-quick>
+      <div class="feedback__quick" data-feedback-quick>
+        {endpoint ? (
           <button type="submit" name="rating" value="ok" class="feedback__btn feedback__btn--ok">
             Sim, está correto
           </button>
-          <button type="button" class="feedback__btn feedback__btn--bad" data-feedback-toggle aria-expanded="false" aria-controls={`${id}-detail`}>
-            Tem algo errado
+        ) : (
+          <a class="feedback__btn feedback__btn--ok" href={okHref} rel="noopener" data-feedback-ok>
+            Sim, está correto
+          </a>
+        )}
+        <button type="button" class="feedback__btn feedback__btn--bad" data-feedback-toggle aria-expanded="false" aria-controls={`${id}-detail`}>
+          Tem algo errado
+        </button>
+      </div>
+
+      <div class="feedback__detail" id={`${id}-detail`} hidden>
+        <label class="feedback__label" for={`${id}-text`}>O que está errado?</label>
+        <textarea
+          id={`${id}-text`}
+          name="message"
+          rows="3"
+          class="feedback__textarea"
+          placeholder="Endereço mudou, prato diferente, buteco fechou…"
+          maxlength="800"
+        ></textarea>
+        <p class="feedback__hint">
+          {endpoint
+            ? "Seu feedback será enviado e publicado como issue pública no repositório do redesign."
+            : "Você será levado ao GitHub para confirmar o envio. O issue fica público no repositório do redesign."}
+          {" "}Não inclua dados pessoais.
+        </p>
+        <div class="feedback__actions">
+          <button type="submit" name="rating" value="bad" class="feedback__btn feedback__btn--ok">
+            {endpoint ? "Enviar" : "Abrir issue no GitHub"}
+          </button>
+          <button type="button" class="feedback__btn feedback__btn--ghost" data-feedback-cancel>
+            Cancelar
           </button>
         </div>
+      </div>
 
-        <div class="feedback__detail" id={`${id}-detail`} hidden>
-          <label class="feedback__label" for={`${id}-text`}>O que está errado?</label>
-          <textarea
-            id={`${id}-text`}
-            name="message"
-            rows="3"
-            class="feedback__textarea"
-            placeholder="Endereço mudou, prato diferente, buteco fechou…"
-            maxlength="800"
-          ></textarea>
-          <p class="feedback__hint">
-            Seu feedback será publicado como issue pública no repositório do redesign.
-            Não inclua dados pessoais.
-          </p>
-          <div class="feedback__actions">
-            <button type="submit" name="rating" value="bad" class="feedback__btn feedback__btn--ok">
-              Enviar
-            </button>
-            <button type="button" class="feedback__btn feedback__btn--ghost" data-feedback-cancel>
-              Cancelar
-            </button>
-          </div>
-        </div>
+      <div class="feedback__thanks" data-feedback-thanks hidden role="status">
+        <p><strong>Obrigado!</strong> Anotamos seu retorno.</p>
+      </div>
+    </form>
 
-        <div class="feedback__thanks" data-feedback-thanks hidden role="status">
-          <p><strong>Obrigado!</strong> Anotamos seu retorno.</p>
-        </div>
-      </form>
-    ) : (
-      <p class="feedback__fallback">
-        <a href={`mailto:${fallbackMail}?subject=${encodeURIComponent(`[CdB Redesign] ${pageTitle}`)}&body=${encodeURIComponent(`URL: ${pageUrl}\n\nO que está errado?\n`)}`}>
-          Reportar via e-mail
-        </a>
+    {!endpoint && (
+      <p class="feedback__hint feedback__hint--mode">
+        Modo no-deploy: feedback abre o formulário de issue do GitHub em uma nova aba.
+        Para envio sem fricção, deploye o Worker em <code>worker/</code>.
       </p>
     )}
   </div>
@@ -257,6 +291,8 @@ const id = `fb-${pageId}-${Math.random().toString(36).slice(2, 7)}`;
     toggle?.addEventListener("click", () => setMode("detail"));
     cancel?.addEventListener("click", () => setMode("idle"));
 
+    const mode = (form.dataset.mode ?? "github") as "github" | "worker";
+
     form.addEventListener("submit", async (e) => {
       // honeypot — bot preencheu? aborta silenciosamente
       if ((form.elements.namedItem("website") as HTMLInputElement | null)?.value) {
@@ -265,11 +301,35 @@ const id = `fb-${pageId}-${Math.random().toString(36).slice(2, 7)}`;
         return;
       }
 
-      // se browser não suporta fetch, deixa POST normal acontecer (form action)
-      if (!window.fetch) return;
-
       e.preventDefault();
       const data = new FormData(form);
+      const rating = (data.get("rating") as string | null) ?? "bad";
+      const message = (data.get("message") as string | null) ?? "";
+
+      if (mode === "github") {
+        // monta URL do GitHub Issue pré-preenchido e abre em nova aba
+        const ghBase = form.dataset.ghBadBase ?? "https://github.com/issues/new";
+        const pageId = form.dataset.pageId ?? "";
+        const pageTitle = form.dataset.pageTitle ?? "";
+        const pageUrl = form.dataset.pageUrl ?? "";
+        const params = new URLSearchParams({
+          title: `[feedback] ${pageTitle}`,
+          labels: `feedback,${rating === "ok" ? "feedback-ok" : "feedback-corrigir"}`,
+          body: [
+            `**Página:** [${pageTitle}](${pageUrl})`,
+            `**ID:** \`${pageId}\``,
+            `**Rating:** ${rating === "ok" ? "✅ ok" : "⚠️ tem algo errado"}`,
+            "",
+            "**Mensagem:**",
+            message || "_(sem mensagem)_",
+          ].join("\n"),
+        });
+        window.open(`${ghBase}?${params.toString()}`, "_blank", "noopener");
+        setMode("thanks");
+        return;
+      }
+
+      // modo worker: POST com fetch
       try {
         const res = await fetch(form.action, {
           method: "POST",
@@ -277,12 +337,10 @@ const id = `fb-${pageId}-${Math.random().toString(36).slice(2, 7)}`;
           headers: { Accept: "application/json" },
         });
         if (!res.ok && res.status !== 0) {
-          // 0 = opaque (CORS) — algumas configs do worker. Tratamos como sucesso silencioso.
           throw new Error(`HTTP ${res.status}`);
         }
       } catch (err) {
         console.warn("[feedback] fallback envio:", err);
-        // último recurso: deixa o navegador submeter (vai abrir nova aba do action)
         form.submit();
         return;
       }

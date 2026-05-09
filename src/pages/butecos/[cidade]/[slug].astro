@@ -5,6 +5,7 @@ import Button from "~/components/ui/Button.astro";
 import Tag from "~/components/ui/Tag.astro";
 import Map from "~/components/site/Map.astro";
 import Feedback from "~/components/site/Feedback.astro";
+import Comments from "~/components/site/Comments.astro";
 import { butecos, formatTelefone, fotoAltSintetico, creditoFoto } from "~/data/butecos";
 
 export async function getStaticPaths() {
@@ -167,6 +168,8 @@ const credito = creditoFoto(buteco);
     pageTitle={`${buteco.nome} — ${buteco.cidade}`}
     pageUrl={Astro.url.toString()}
   />
+
+  <Comments />
 </BaseLayout>
 
 <style>

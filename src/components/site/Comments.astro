@@ -1,0 +1,154 @@
+---
+/**
+ * Comments — comentários via giscus (ADR-0007).
+ *
+ * Pré-requisitos no GitHub:
+ * - Discussions habilitadas no repo (Settings → Features).
+ * - App giscus instalado (https://github.com/apps/giscus).
+ * - Categoria de Discussion existente (ex.: "General" ou "Comentários").
+ *
+ * Embed lazy: o script do giscus é injetado apenas quando o usuário rola
+ * até a seção (IntersectionObserver). Sem JS, mostra instrução de fallback.
+ */
+
+interface Props {
+  /** Mapeia o thread; ex.: pathname (cada URL = thread única). */
+  mapping?: "pathname" | "url" | "title";
+  /** Categoria das Discussions onde os comentários ficam. */
+  category?: string;
+  /** ID numérico da categoria (giscus.app/configure devolve). */
+  categoryId?: string;
+  /** ID numérico do repo (giscus.app/configure devolve). */
+  repoId?: string;
+}
+
+const {
+  mapping = "pathname",
+  category = "General",
+  // Fallback IDs — para quem instalou o app com config padrão. Quando você
+  // rodar https://giscus.app/configure no seu repo, substitua aqui pelos
+  // IDs reais (ou via env). Vazio = giscus tenta resolver pelo nome.
+  categoryId = "",
+  repoId = "",
+} = Astro.props;
+
+const repo = "phbruce/comida-di-buteco-better-ux";
+---
+
+<section class="comments" data-comments aria-labelledby="comments-title">
+  <div class="container">
+    <h2 id="comments-title" class="comments__title">Comentários</h2>
+    <p class="comments__lede">
+      Já visitou? Conta sua experiência. Comentários usam o sistema de
+      <a href="https://github.com/features/discussions" rel="noopener">GitHub Discussions</a> —
+      é necessário ter conta no GitHub para comentar.
+    </p>
+
+    <div
+      class="comments__mount"
+      data-comments-mount
+      data-repo={repo}
+      data-mapping={mapping}
+      data-category={category}
+      data-category-id={categoryId}
+      data-repo-id={repoId}
+      aria-live="polite"
+    >
+      <div class="comments__placeholder" data-comments-placeholder>
+        <p>Carregando comentários…</p>
+        <noscript>
+          Comentários precisam de JavaScript habilitado.
+          Você ainda pode <a href={`https://github.com/${repo}/discussions`} rel="noopener">abrir uma discussão diretamente no GitHub</a>.
+        </noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .comments {
+    padding-block: var(--space-7);
+    border-block-start: var(--border-thin);
+  }
+  .comments__title {
+    font-size: var(--font-size-h2);
+    margin-block-end: var(--space-3);
+  }
+  .comments__lede {
+    color: var(--color-text-muted);
+    max-width: 60ch;
+    margin-block-end: var(--space-5);
+  }
+  .comments__mount {
+    min-height: 200px;
+  }
+  .comments__placeholder {
+    padding: var(--space-5);
+    background: var(--color-bg-soft);
+    border: var(--border-thin);
+    color: var(--color-text-muted);
+    text-align: center;
+  }
+  .comments__placeholder p {
+    margin: 0;
+  }
+</style>
+
+<script>
+  // Carregamento lazy do giscus via IntersectionObserver
+  const GISCUS_SRC = "https://giscus.app/client.js";
+  const THEME_URL = `${import.meta.env.BASE_URL}giscus-theme.css`;
+
+  function load(mount: HTMLElement) {
+    if (mount.dataset.loaded === "true") return;
+    mount.dataset.loaded = "true";
+
+    const repo = mount.dataset.repo!;
+    const mapping = mount.dataset.mapping ?? "pathname";
+    const category = mount.dataset.category ?? "General";
+    const categoryId = mount.dataset.categoryId ?? "";
+    const repoId = mount.dataset.repoId ?? "";
+
+    // tema absoluto (URLs relativas não funcionam dentro do iframe do giscus)
+    const absTheme = new URL(THEME_URL, window.location.href).toString();
+
+    const s = document.createElement("script");
+    s.src = GISCUS_SRC;
+    s.async = true;
+    s.crossOrigin = "anonymous";
+    s.setAttribute("data-repo", repo);
+    s.setAttribute("data-repo-id", repoId);
+    s.setAttribute("data-category", category);
+    s.setAttribute("data-category-id", categoryId);
+    s.setAttribute("data-mapping", mapping);
+    s.setAttribute("data-strict", "0");
+    s.setAttribute("data-reactions-enabled", "1");
+    s.setAttribute("data-emit-metadata", "0");
+    s.setAttribute("data-input-position", "top");
+    s.setAttribute("data-theme", absTheme);
+    s.setAttribute("data-lang", "pt");
+    s.setAttribute("data-loading", "lazy");
+
+    // remove placeholder; giscus injeta seu próprio iframe no lugar
+    const ph = mount.querySelector("[data-comments-placeholder]");
+    ph?.remove();
+    mount.appendChild(s);
+  }
+
+  const mounts = document.querySelectorAll<HTMLElement>("[data-comments-mount]");
+  if (mounts.length) {
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            load(e.target as HTMLElement);
+            io.unobserve(e.target);
+          }
+        }
+      }, { rootMargin: "200px 0px" });
+      mounts.forEach((m) => io.observe(m));
+    } else {
+      mounts.forEach(load);
+    }
+  }
+</script>
