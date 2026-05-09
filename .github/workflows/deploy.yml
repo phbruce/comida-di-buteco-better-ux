@@ -50,6 +50,10 @@ jobs:
           # com nome GOOGLE_MAPS_KEY). Se não estiver definida, o build segue
           # com fallback ?output=embed (não interativo no mobile).
           PUBLIC_GOOGLE_MAPS_KEY: ${{ secrets.GOOGLE_MAPS_KEY }}
+          # Web3Forms access key (ADR-0012). Secret name: FEEDBACK_W3F_KEY.
+          # Sem essa env, Feedback.astro cai no fallback de abrir issue do
+          # GitHub (que exige conta — pior UX para audiência geral).
+          PUBLIC_FEEDBACK_W3F_KEY: ${{ secrets.FEEDBACK_W3F_KEY }}
         run: npm run build
 
       - name: Add .nojekyll

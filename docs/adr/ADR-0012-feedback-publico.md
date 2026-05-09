@@ -1,8 +1,8 @@
-# ADR-0012 — Feedback acessível a qualquer visitante (sem GitHub) (proposta)
+# ADR-0012 — Feedback acessível a qualquer visitante (sem GitHub)
 
-- **Status:** PROPOSED — aguarda aprovação do dono do produto
+- **Status:** ACCEPTED
 - **Data:** 2026-05-09
-- **Decisor(es):** —
+- **Decisor(es):** Dono do produto (aprovado em 2026-05-09 — opção A: Web3Forms)
 - **Relacionado:** ADR-0006 (mantido — define o conceito do botão de feedback). Esta proposta SÓ refina o canal de envio.
 - **RFs/RNFs relacionados:** RNF-0001 (a11y), RNF-0005 (privacidade)
 

@@ -37,7 +37,7 @@ Cada ADR responde:
 | [ADR-0009](./ADR-0009-mapa-google.md) | Trocar mapa para Google Maps (Embed) | ACCEPTED | Dono do produto | 2026-05-09 |
 | [ADR-0010](./ADR-0010-mapa-interativo-pan-zoom.md) | Destravar pan/zoom do mapa (Google API key) | ACCEPTED | Dono do produto | 2026-05-09 |
 | [ADR-0011](./ADR-0011-tags-alimentares.md) | Tags vegetariano/vegano e filtros alimentares | ~~REJECTED~~ (adiado) | Dono do produto | 2026-05-09 |
-| [ADR-0012](./ADR-0012-feedback-publico.md) | Feedback acessível a qualquer visitante (sem GitHub) | **PROPOSED** | — | 2026-05-09 |
+| [ADR-0012](./ADR-0012-feedback-publico.md) | Feedback acessível a qualquer visitante (Web3Forms) | ACCEPTED | Dono do produto | 2026-05-09 |
 
 ## Como propor um ADR
 
