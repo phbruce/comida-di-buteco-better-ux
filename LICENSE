@@ -1,0 +1,44 @@
+MIT License
+
+Copyright (c) 2026 phbruce
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+---
+
+ESCOPO DA LICENÇA / SCOPE OF THIS LICENSE
+
+A licença MIT acima cobre **apenas** o código deste repositório (Astro
+templates, CSS, scripts, documentação) escrito por phbruce e contribuidores.
+
+Ela **NÃO** cobre:
+
+- A marca "Comida di Buteco", seu logotipo, ou qualquer identidade visual da
+  organização que promove o concurso. Esses elementos pertencem aos seus
+  titulares e este projeto **não reivindica** qualquer direito sobre eles.
+- Nomes de butecos, pratos, fotos e demais conteúdos coletados do site
+  oficial (https://comidadibuteco.com.br/). Esses pertencem aos respectivos
+  estabelecimentos / fotógrafos / autores. Aparecem aqui exclusivamente a
+  título informativo e exploratório, sem redistribuição (fotos são
+  hotlinkadas para o servidor original, com atribuição visível).
+
+Este é um **redesign não oficial**, sem vínculo com a organização do concurso.
+Para contato com a organização oficial, visite https://comidadibuteco.com.br/.
+
+---
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

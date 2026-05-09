@@ -8,9 +8,16 @@ Este é um **redesign exploratório, NÃO oficial**, sem vínculo com a organiza
 
 - Não falamos em nome da marca.
 - Não coletamos votos reais — qualquer ação de votação **deve** redirecionar ao site oficial (`https://comidadibuteco.com.br/`).
-- Conteúdo (butecos, pratos, fotos) usado em protótipos é **mock** ou citação — substituir por dados reais só com autorização da organização ou via fontes públicas claramente atribuídas.
+- Conteúdo (butecos, pratos, fotos) usado é **citação** — fotos são **hotlinkadas** ao servidor original, nunca redistribuídas; nomes/descrições atribuídos ao site oficial via link no rodapé de cada página.
 - O domínio do redesign é `phbruce.github.io/comida-di-buteco-better-ux/` — diferente do oficial.
-- Banner de fase, footer e meta-tags devem deixar a natureza não oficial visível para qualquer visitante.
+- Banner de fase, footer e meta-tags deixam a natureza não oficial visível em toda página.
+
+### Direitos e licença
+
+- **Código** deste repositório: licença MIT (ver `LICENSE` na raiz). © phbruce.
+- **Marca "Comida di Buteco"**, logo e identidade da organização: pertencem à organização. **Não reivindicamos**.
+- **Conteúdo dos butecos** (nomes, fotos, pratos): pertence aos respectivos estabelecimentos / fotógrafos. Citamos com link de volta. Se um titular pedir remoção, fazemos imediatamente.
+- **NUNCA escrever "© Comida di Buteco" no rodapé** — implica que somos os titulares.
 
 Esse é o **tom de toda a comunicação do site**: explorar UX/UI sem se passar pelo produto oficial.
 

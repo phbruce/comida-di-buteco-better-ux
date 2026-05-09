@@ -41,11 +41,21 @@ const year = new Date().getFullYear();
 
   <div class="site-footer__bottom">
     <div class="container site-footer__bottom-inner">
-      <p>&copy; {year} Comida di Buteco — todos os direitos reservados.</p>
+      <p class="site-footer__legal">
+        Este é um <strong>redesign não oficial</strong> mantido por
+        <a href="https://github.com/phbruce" rel="noopener">@phbruce</a> ({year}).
+        <br />
+        <span class="site-footer__legal-muted">
+          "Comida di Buteco" é marca registrada da organização que promove o concurso.
+          Conteúdo (nomes de butecos, pratos, fotos) pertence aos respectivos titulares —
+          aqui é apresentado a título <em>informativo e exploratório</em>, com link de volta
+          ao site oficial.
+        </span>
+      </p>
       <p class="site-footer__credit">
-        Redesign aberto:
+        Código aberto sob licença MIT:
         <a href="https://github.com/phbruce/comida-di-buteco-better-ux" rel="noopener">
-          repositório no GitHub
+          repositório
         </a>
       </p>
     </div>
@@ -99,9 +109,16 @@ const year = new Date().getFullYear();
   .site-footer__bottom-inner {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
+    gap: var(--space-3);
     color: var(--color-text-on-dark);
-    opacity: 0.8;
+  }
+  .site-footer__legal {
+    margin: 0;
+    line-height: var(--line-height-normal);
+  }
+  .site-footer__legal-muted {
+    color: rgba(251, 247, 240, 0.7);
+    font-size: var(--font-size-caption);
   }
 
   @media (min-width: 640px) {
