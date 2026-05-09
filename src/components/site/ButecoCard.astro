@@ -10,6 +10,7 @@
  */
 
 import Tag from "~/components/ui/Tag.astro";
+import Illustration from "~/components/ui/Illustration.astro";
 import { fotoAltSintetico, type Buteco } from "~/data/butecos";
 
 interface Props {
@@ -21,6 +22,11 @@ const { buteco, destacarCidade = false } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const detalheUrl = `${base}butecos/${buteco.cidade_slug}/${buteco.slug}/`;
 const alt = fotoAltSintetico(buteco);
+
+// Motivo determinístico para placeholder de foto (mesmo buteco → mesma figura).
+const placeholderKinds = ["pimenta", "folha", "milho", "cebola", "tomate", "garrafa"] as const;
+const placeholderIdx = Array.from(buteco.slug).reduce((a, c) => a + c.charCodeAt(0), 0) % placeholderKinds.length;
+const placeholderKind = placeholderKinds[placeholderIdx];
 ---
 
 <article class="card">
@@ -39,7 +45,7 @@ const alt = fotoAltSintetico(buteco);
       />
     ) : (
       <div class="card__media-placeholder" aria-hidden="true">
-        <span>{buteco.prato.charAt(0)}</span>
+        <Illustration kind={placeholderKind} size="lg" />
       </div>
     )}
   </div>
@@ -146,9 +152,11 @@ const alt = fotoAltSintetico(buteco);
     justify-content: center;
     background: linear-gradient(135deg, var(--color-bg-soft), var(--color-surface));
     color: var(--color-text-muted);
-    font-size: 4rem;
-    font-weight: var(--font-weight-bold);
-    letter-spacing: -0.04em;
+  }
+  .card__media-placeholder :global(.illus--lg) {
+    width: 96px;
+    height: 96px;
+    transform: rotate(-8deg);
   }
 
   .card__body {

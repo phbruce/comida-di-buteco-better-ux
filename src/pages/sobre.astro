@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import Breadcrumb from "~/components/ui/Breadcrumb.astro";
+import Illustration from "~/components/ui/Illustration.astro";
 import { butecos, cidades, edicao } from "~/data/butecos";
 
 const base = import.meta.env.BASE_URL;
@@ -23,16 +24,24 @@ const repoUrl = "https://github.com/phbruce/comida-di-buteco-better-ux";
     <div class="container container--narrow">
 
       <header class="sobre__header">
-        <p class="sobre__eyebrow">Redesign não oficial</p>
-        <h1>Sobre este projeto</h1>
-        <p class="sobre__lede">
-          Este é um <strong>case study de UI/UX</strong> sobre o site do
-          concurso Comida di Buteco — não é o site oficial, não tem vínculo
-          com a organização do concurso, e não substitui nada que está em
-          comidadibuteco.com.br. É um experimento aberto de como o mesmo
-          conteúdo poderia ser apresentado com mais foco em mobile,
-          acessibilidade e performance.
-        </p>
+        <span class="sobre__header-art sobre__header-art--milho" aria-hidden="true">
+          <Illustration kind="milho" size="md" />
+        </span>
+        <span class="sobre__header-art sobre__header-art--tomate" aria-hidden="true">
+          <Illustration kind="tomate" size="sm" />
+        </span>
+        <div class="sobre__header-text">
+          <p class="sobre__eyebrow">Redesign não oficial</p>
+          <h1>Sobre este projeto</h1>
+          <p class="sobre__lede">
+            Este é um <strong>case study de UI/UX</strong> sobre o site do
+            concurso Comida di Buteco — não é o site oficial, não tem vínculo
+            com a organização do concurso, e não substitui nada que está em
+            comidadibuteco.com.br. É um experimento aberto de como o mesmo
+            conteúdo poderia ser apresentado com mais foco em mobile,
+            acessibilidade e performance.
+          </p>
+        </div>
       </header>
 
       <section aria-labelledby="navega">
@@ -243,9 +252,41 @@ const repoUrl = "https://github.com/phbruce/comida-di-buteco-better-ux";
     padding-block: var(--space-7) var(--space-9);
   }
   .sobre__header {
+    position: relative;
     margin-block-end: var(--space-7);
     padding-block-end: var(--space-5);
     border-block-end: var(--border-thin);
+  }
+  .sobre__header-art {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .sobre__header-text {
+    position: relative;
+    z-index: 1;
+  }
+  .sobre__header-art--milho {
+    inset-block-start: -8px;
+    inset-inline-end: 0;
+    transform: rotate(14deg);
+    opacity: 0.95;
+  }
+  .sobre__header-art--tomate {
+    /* só no desktop pra não disputar com o lede no mobile */
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .sobre__header-art--milho {
+      inset-block-start: 8px;
+      inset-inline-end: 6%;
+    }
+    .sobre__header-art--tomate {
+      display: inline-flex;
+      inset-block-end: 12px;
+      inset-inline-end: 14%;
+      transform: rotate(-12deg);
+    }
   }
   .sobre__eyebrow {
     margin: 0 0 var(--space-3);

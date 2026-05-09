@@ -3,6 +3,7 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
 import Breadcrumb from "~/components/ui/Breadcrumb.astro";
 import Button from "~/components/ui/Button.astro";
 import Tag from "~/components/ui/Tag.astro";
+import Illustration from "~/components/ui/Illustration.astro";
 import Map from "~/components/site/Map.astro";
 import Feedback from "~/components/site/Feedback.astro";
 import Comments from "~/components/site/Comments.astro";
@@ -128,7 +129,10 @@ const credito = creditoFoto(buteco);
             mapsUrl={mapsUrl}
           />
         ) : (
-          <div class="buteco__card">
+          <div class="buteco__card buteco__card--no-map">
+            <span class="buteco__card-art" aria-hidden="true">
+              <Illustration kind="folha" size="md" />
+            </span>
             <h3>Onde fica</h3>
             <address>{enderecoTextual}</address>
             <p>
@@ -296,10 +300,23 @@ const credito = creditoFoto(buteco);
     gap: var(--space-4);
   }
   .buteco__card {
+    position: relative;
     border: var(--border-thin);
     border-radius: var(--radius-md);
     background: var(--color-surface);
     padding: var(--space-5);
+  }
+  .buteco__card--no-map {
+    background: var(--color-bg-soft);
+    overflow: hidden;
+  }
+  .buteco__card-art {
+    position: absolute;
+    inset-block-start: -10px;
+    inset-inline-end: -10px;
+    transform: rotate(18deg);
+    opacity: 0.85;
+    pointer-events: none;
   }
   .buteco__card h3 {
     margin-block-end: var(--space-2);
