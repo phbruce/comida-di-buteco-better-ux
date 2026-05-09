@@ -407,6 +407,23 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
     } catch { /* ignora */ }
   }
 
+  /** Remove o registro mais recente de cada janela. Usado quando o usuário
+   *  clica em "Mudei de ideia": o email anterior já foi enviado (irreversível),
+   *  mas zeramos o contador local para permitir um envio corretivo imediato.
+   *  Os limites maiores (hora/dia) continuam acumulando registros antigos —
+   *  spam por undo loop bate no limite de 5/hora. */
+  function undoLastSubmit() {
+    try {
+      for (const limit of RATE_LIMITS) {
+        const arr: number[] = JSON.parse(localStorage.getItem(limit.key) ?? "[]");
+        if (arr.length === 0) continue;
+        arr.sort((a, b) => a - b);
+        arr.pop();
+        localStorage.setItem(limit.key, JSON.stringify(arr));
+      }
+    } catch { /* ignora */ }
+  }
+
   function setupOne(section: HTMLElement) {
     const form = section.querySelector<HTMLFormElement>("[data-feedback-form]");
     if (!form) return;
@@ -431,6 +448,10 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
 
     /** Reseta UI + estado para idle (chamado pelo "Mudei de ideia"). */
     function reset() {
+      // Se o usuário tinha enviado, libera o rate limit local (o email
+      // anterior já foi, mas permitimos um envio corretivo imediato).
+      // Se for chamado sem submit confirmado (cancelar, etc.), ignora.
+      if (submitted) undoLastSubmit();
       submitted = null;
       inFlight = false;
       // limpa textarea
