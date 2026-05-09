@@ -1,13 +1,10 @@
 ---
 /**
- * ButecoListItem — item de lista no estilo "Document list" do GOV.UK.
+ * ButecoListItem — item no estilo "Document list" do GOV.UK.
  *
- * Diferente do ButecoCard:
- * - Sem fundo, sem borda em torno do item; só separador 1px abaixo.
- * - Foto pequena à esquerda (96x64) opcional — densidade alta.
- * - Tipografia hierárquica: h3 link grande + prato em texto + metadata caption.
- *
- * Atende RF-0001 melhor para listas longas (>30 butecos por cidade).
+ * Layout: foto opcional | corpo (título, prato, meta) | chevron
+ * - Chevron fica como coluna própria à direita, vertical-centro do item.
+ * - Item inteiro clicável via "stretched link" (ele.__link::before cobre o <li>).
  */
 
 import { fotoAltSintetico, type Buteco } from "~/data/butecos";
@@ -15,7 +12,6 @@ import { fotoAltSintetico, type Buteco } from "~/data/butecos";
 interface Props {
   buteco: Buteco;
   destacarCidade?: boolean;
-  /** Mostrar foto à esquerda. Padrão true; false = density máxima estilo gov.uk puro. */
   comFoto?: boolean;
 }
 
@@ -24,13 +20,9 @@ const base = import.meta.env.BASE_URL;
 const detalheUrl = `${base}butecos/${buteco.cidade_slug}/${buteco.slug}/`;
 const alt = fotoAltSintetico(buteco);
 
-/** Texto normalizado para busca (sem acentos, lowercase). */
 function normalize(s: string | null | undefined): string {
   if (!s) return "";
-  return s
-    .toLocaleLowerCase("pt-BR")
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "");
+  return s.toLocaleLowerCase("pt-BR").normalize("NFD").replace(/[̀-ͯ]/g, "");
 }
 
 const searchHaystack = [
@@ -51,7 +43,7 @@ const searchHaystack = [
 >
   <article>
     {comFoto && buteco.foto && (
-      <a class="item__media" href={detalheUrl} tabindex="-1" aria-hidden="true">
+      <div class="item__media" aria-hidden="true">
         <img
           src={buteco.foto}
           alt=""
@@ -61,14 +53,11 @@ const searchHaystack = [
           decoding="async"
           referrerpolicy="no-referrer-when-downgrade"
         />
-      </a>
+      </div>
     )}
     <div class="item__body">
       <h3 class="item__title">
-        <a class="item__link" href={detalheUrl}>
-          {buteco.nome}
-          <span aria-hidden="true" class="item__arrow">›</span>
-        </a>
+        <a class="item__link" href={detalheUrl}>{buteco.nome}</a>
       </h3>
       <p class="item__prato">{buteco.prato}</p>
       <p class="item__meta">
@@ -87,6 +76,7 @@ const searchHaystack = [
         )}
       </p>
     </div>
+    <span class="item__chevron" aria-hidden="true">›</span>
   </article>
 </li>
 
@@ -94,29 +84,35 @@ const searchHaystack = [
   .item {
     border-block-end: var(--border-thin);
     list-style: none;
+    position: relative; /* âncora do stretched link */
+    transition: background-color var(--motion-fast) var(--easing-standard);
   }
   .item:first-child {
     border-block-start: var(--border-thin);
   }
+  .item:hover {
+    background-color: var(--color-bg-soft);
+  }
   .item article {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-3);
+    grid-template-columns: 1fr auto;          /* corpo | chevron */
+    column-gap: var(--space-3);
     padding-block: var(--space-4);
-    align-items: center;
+    padding-inline-end: var(--space-2);
+    align-items: center;                      /* tudo verticalmente centralizado */
   }
   .item--with-photo article {
-    grid-template-columns: 96px 1fr;
+    grid-template-columns: 96px 1fr auto;     /* foto | corpo | chevron */
   }
 
   .item__media {
-    display: block;
     width: 96px;
     height: 64px;
     overflow: hidden;
     background: var(--color-bg-soft);
     border: var(--border-thin);
     flex-shrink: 0;
+    align-self: center;
   }
   .item__media img {
     width: 100%;
@@ -124,9 +120,7 @@ const searchHaystack = [
     object-fit: cover;
   }
 
-  .item__body {
-    min-width: 0;
-  }
+  .item__body { min-width: 0; }
 
   .item__title {
     margin: 0;
@@ -138,22 +132,25 @@ const searchHaystack = [
     text-decoration: underline;
     text-underline-offset: 0.2em;
     text-decoration-thickness: 1px;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
   }
   .item__link:hover {
     color: var(--color-brand-primary-hover);
     text-decoration-thickness: 2px;
   }
-  .item__arrow {
-    color: var(--color-text-muted);
-    font-weight: var(--font-weight-regular);
-    transition: transform var(--motion-fast) var(--easing-standard);
+  /* Stretched link — clique em qualquer ponto do <li> navega para o detalhe */
+  .item__link::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
   }
-  .item__link:hover .item__arrow {
-    transform: translateX(3px);
-    color: var(--color-brand-primary);
+  .item__link:focus-visible {
+    outline: none;
+  }
+  .item:has(.item__link:focus-visible) {
+    outline: var(--focus-outline-width) solid var(--color-focus-ring);
+    outline-offset: -2px;
+    box-shadow: inset 0 -4px 0 0 var(--color-focus-text);
   }
 
   .item__prato {
@@ -176,10 +173,31 @@ const searchHaystack = [
     font-weight: var(--font-weight-semibold);
   }
 
+  /* Chevron — coluna própria à direita, grande e centralizada verticalmente */
+  .item__chevron {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-regular);
+    transition: transform var(--motion-fast) var(--easing-standard),
+                color var(--motion-fast) var(--easing-standard);
+    flex-shrink: 0;
+    align-self: center;
+  }
+  .item:hover .item__chevron {
+    color: var(--color-brand-primary);
+    transform: translateX(4px);
+  }
+
   @media (min-width: 640px) {
     .item--with-photo article {
-      grid-template-columns: 144px 1fr;
-      gap: var(--space-5);
+      grid-template-columns: 144px 1fr auto;
+      column-gap: var(--space-5);
     }
     .item__media {
       width: 144px;
@@ -192,6 +210,11 @@ const searchHaystack = [
       display: -webkit-box;
       -webkit-line-clamp: 1;
       -webkit-box-orient: vertical;
+    }
+    .item__chevron {
+      width: 40px;
+      height: 40px;
+      font-size: 2.5rem;
     }
   }
 </style>
