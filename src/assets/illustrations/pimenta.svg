@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="presentation" aria-hidden="true">
+  <!--
+    Pimenta dedo-de-moça em paper-cut sharp.
+    Corpo fino e alongado, com leve curva à direita, ponta aguda em baixo.
+    Camadas: silhueta urucum, sombra à direita, highlight chapado no
+    ombro esquerdo, cabo lima com pequena folha.
+  -->
+  <g>
+    <!-- Silhueta vermelha (urucum) — fina e curva -->
+    <polygon
+      points="27,14 32,13 36,14 39,17 41,21 42,27 42,33 42,39 41,45 39,50 37,54 35,57 33,58 31,55 30,51 29,46 28,40 28,33 27,26 26,20 25,16"
+      fill="#b3261e"
+    />
+
+    <!-- Sombra à direita — urucum mais escuro -->
+    <polygon
+      points="36,14 39,17 41,21 42,27 42,33 42,39 41,45 39,50 37,54 35,57 33,58 33,54 35,49 37,43 38,36 38,28 38,21 36,17"
+      fill="#7a1a13"
+    />
+
+    <!-- Highlight chapado no ombro esquerdo -->
+    <polygon
+      points="28,18 30,18 30,26 29,32 27,28 27,22"
+      fill="#d94c3f"
+    />
+
+    <!-- Cabo (stem) lima -->
+    <polygon
+      points="25,15 27,9 31,7 36,7 39,11 37,14 32,14 28,14"
+      fill="#1f6f4a"
+    />
+
+    <!-- Folha do cabo, lima escura -->
+    <polygon
+      points="34,7 39,4 43,5 42,9 37,10"
+      fill="#155234"
+    />
+  </g>
+</svg>

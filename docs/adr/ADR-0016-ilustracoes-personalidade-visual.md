@@ -1,8 +1,9 @@
 # ADR-0016 — Sistema de ilustrações decorativas (personalidade visual)
 
-- **Status:** ACCEPTED
+- **Status:** ACCEPTED (revisado em 2026-05-09 — direção pivotada de Storyset → silhuetas CC0 vegetais + restyling próprio)
 - **Data:** 2026-05-09
-- **Decisor(es):** Dono do produto (aprovado em 2026-05-09 — Alternativa B: híbrido Storyset/unDraw + acentos próprios)
+- **Decisor(es):** Dono do produto (aprovado em 2026-05-09)
+- **Histórico de revisão:** v1 escolheu Storyset/unDraw como base; v2 (mesma data) pivotou para silhuetas CC0 de motivos vegetais (OpenClipart/SVG Repo) restilizadas, porque Storyset/unDraw têm cenas com pessoas e nada de comida brasileira — fora do tema "verduras / papel-recorte" do site oficial.
 - **RFs/RNFs relacionados:** RNF-0001 (a11y), RNF-0002 (performance), RNF-0003 (mobile-first), ADR-0002 (DS GOV.UK), ADR-0004 (tokens "Buteco Moderno")
 
 ## Contexto
@@ -24,18 +25,20 @@ Forças em jogo:
 - **Licenciamento**: este é um redesign público no GitHub Pages. Ativos precisam ser livres para uso comercial OU CC0.
 - **Habilidade de ilustração**: equipe (essencialmente o mantenedor + IA) não tem ilustrador profissional. Custom-puro tende ao "bloco de cor".
 
-## Decisão (proposta) — Alternativa B: Híbrido com Storyset/unDraw como base
+## Decisão (revisada v2) — Alternativa F: motivos vegetais próprios sobre silhuetas CC0
 
-Adotar uma **abordagem híbrida**:
+Adotar **biblioteca própria de motivos** (`pimenta`, `cebola roxa`, `milho`, `beterraba`, `mandioca`, `couve`, `alho`, `tomate`, `jiló`, `garrafa long-neck`) construída assim:
 
-1. **Base**: ilustrações de uma **lib profissional gratuita** (Storyset com atribuição OU unDraw MIT-like) recolorizadas para a paleta Buteco Moderno via SVG inline + tokens CSS.
-2. **Acentos brasileiros**: silhuetas curtas, próprias, em SVG inline para elementos que nenhuma lib genérica cobre bem (pimenta, mandioca, milho, vagem, garrafa long-neck), também coloridas via tokens.
-3. **Sistema componentizado**: tudo via `<Illustration kind="..." />` (ou similar) para uniformizar tamanho, ratio, accessibility e tokens.
-4. **Aplicação restrita** — não ornamentar tudo. Pontos onde agregam:
-   - Hero da home (uma cena grande, lateral à coluna de texto).
-   - Empty states (cidade sem butecos, busca sem resultados, página de buteco sem foto).
-   - Topo do footer (faixa decorativa fina).
-   - Possivelmente um motivo curto no canto de cards quando o card não tem foto.
+1. **Referência anatômica**: silhuetas CC0 de OpenClipart e SVG Repo (filtro CC0) usadas só como base de proporção e geometria — não vão pra produção como estão.
+2. **Restyle paper-cut sharp**: cada motivo redesenhado com polígonos de retas (sem curvas), 15-25 vértices por shape, em camadas chapadas (silhueta principal → sombra/profundidade → highlight → detalhe pontual). Coerente com o DS GOV.UK + Buteco Moderno (ADR-0002, ADR-0004).
+3. **Paleta nossa**: cores via tokens `--color-brand-primary` (urucum), `--color-brand-secondary` (lima), `--color-brand-accent` (dendê), além de variações pontuais documentadas (verde-folha mais claro, vinho mais escuro).
+4. **Sistema componentizado**: `<Illustration kind="pimenta|cebola|milho|..." size="sm|md|lg" />` em `src/components/ui/Illustration.astro`, com `aria-hidden` por padrão (decorativo).
+5. **Composições**: cenas próprias (band do footer, hero accent, empty state) construídas posicionando vários motivos — composição é nossa, motivos são nossos, anatomia inspirada em CC0.
+6. **Aplicação restrita** — não ornamentar tudo. Pontos onde agregam:
+   - Hero da home (cena lateral ou faixa).
+   - Empty states (cidade sem butecos, busca sem resultados, comentários vazios).
+   - Topo do footer (faixa decorativa).
+   - Possível acento em cards sem foto.
 
 ## Alternativas consideradas
 
@@ -54,7 +57,7 @@ Continuar 100% caseiro, mas dedicando tempo de desenho de verdade — talvez via
   - Risco de continuar parecendo "bloco de cor" se não houver vetorização cuidadosa.
 - **Por que não (recomendação principal):** o gargalo é talento de ilustração, não vontade. Sem isso, refinar o `OrnamentBand` continuará dando resultado morno.
 
-### Alternativa B — Híbrido: lib profissional + acentos próprios — RECOMENDADA
+### Alternativa B — Híbrido: lib profissional + acentos próprios — descartada na revisão v2
 
 Usar **Storyset** (https://storyset.com) ou **unDraw** (https://undraw.co) como base de cenas/figuras humanas e abstrações genéricas (mesa, prato, gente conversando, mapa do Brasil), recolorizadas via CSS pra paleta Buteco Moderno. Complementar com SVGs próprios curtos pra elementos brasileiros que a lib não cobre.
 
@@ -91,6 +94,23 @@ Usar **Storyset** (https://storyset.com) ou **unDraw** (https://undraw.co) como 
 - **Contras:** custa dinheiro; o redesign é experimento aberto sem orçamento.
 - **Por que não:** fora do escopo do projeto.
 
+### Alternativa F — Motivos vegetais próprios sobre silhuetas CC0 — RECOMENDADA (revisão v2)
+
+Construir biblioteca interna de motivos vegetais (pimenta, cebola roxa, milho, beterraba, mandioca, couve, alho, tomate, jiló, garrafa long-neck) usando SVGs CC0 públicos (OpenClipart, SVG Repo) **só como referência anatômica/proporção**. Cada motivo é redesenhado com polígonos de retas (15-25 vértices), em camadas chapadas, na paleta Buteco Moderno.
+
+- **Prós:**
+  - **Tema correto** (verduras/comida) — espelha o oficial.
+  - **Identidade própria** — composição + restyling + paleta são nossos.
+  - **CC0 sem atribuição** — uso comercial-safe.
+  - **Coerente com DS sharp** — todos polígonos retos, sem curvas.
+  - **Recolorível via tokens** — quando ADR-0004 evoluir, ilustrações acompanham.
+  - **Performance ótima** — SVG inline curto por motivo (~1-3 KB cada).
+- **Contras:**
+  - **Investimento de desenho** — 6-10 motivos exigem 1-2 dias de modelagem cuidadosa, com iteração visual.
+  - Cada motivo precisa "ler" como o vegetal correto (a primeira tentativa falhou nisso).
+  - Sem cenas de pessoas — pra hero, podemos compor uma "mesa de buteco com pratos/garrafas/folhas" usando os motivos, ou aceitar que o hero fique sem personagens.
+- **Por que sim:** combina tema correto + identidade própria + DS coerente. Substitui a Alternativa B descartada.
+
 ## Consequências
 
 ### Positivas
@@ -108,34 +128,32 @@ Usar **Storyset** (https://storyset.com) ou **unDraw** (https://undraw.co) como 
 - O componente atual `OrnamentBand.astro` fica como referência histórica; pode ser depreciado e removido depois que o sistema novo estiver de pé.
 - ADR-0017 (futuro, opcional) pode formalizar **onde NÃO usar** ilustração, pra evitar inflação visual.
 
-## Plano de implementação (se aprovado)
+## Plano de implementação (revisado v2)
 
-### Fase 1 — Decisão de lib + atribuição (1 dia)
-- [ ] Comparar Storyset vs unDraw em 3 casos concretos (hero, empty state, footer top) — mockups rápidos.
-- [ ] Escolher uma das duas. Registrar a decisão como apêndice deste ADR.
-- [ ] Adicionar bloco de atribuição no footer e/ou `sobre/#direitos` se Storyset.
+### Fase 1 — Modelagem dos motivos (iterativo)
+- [ ] Listar 8 motivos prioritários: pimenta dedo-de-moça, cebola roxa, milho, beterraba, mandioca, couve (folha), alho, garrafa long-neck.
+- [ ] Para cada motivo: olhar referência CC0 (OpenClipart/SVG Repo) só pra anatomia, depois desenhar à mão em SVG com 15-25 vértices por shape, em camadas (silhueta + sombra + highlight + detalhe).
+- [ ] Salvar cada um em `src/assets/illustrations/<kind>.svg` com viewBox 0 0 64 64, fills usando tokens via `currentColor` ou `data-fill="primary|secondary|accent|deep"` com CSS resolvendo.
+- [ ] Renderizar localmente (svglib → PNG) pra validar legibilidade antes de declarar pronto.
 
-### Fase 2 — Componente base e tokens (1-2 dias)
-- [ ] Criar `src/components/ui/Illustration.astro` com props: `kind` (enum), `size` (sm/md/lg), `aria-hidden` por padrão.
-- [ ] Tokens novos em `tokens.css`: `--illustration-color-primary`, `--illustration-color-secondary`, `--illustration-color-accent`, `--illustration-color-line` mapeados pra paleta Buteco Moderno.
-- [ ] Pipeline de recolorização: baixar SVG da lib → trocar fills/strokes hardcoded por `currentColor` ou `var(--illustration-color-*)` → salvar em `src/assets/illustrations/*.svg` ou inline em variants do componente.
+### Fase 2 — Tokens + componente
+- [ ] Adicionar em `tokens.css`: `--illustration-deep` (urucum mais escuro), `--illustration-leaf` (verde mais claro), e aliases `--illustration-{primary|secondary|accent}` mapeando pros tokens de marca.
+- [ ] Criar `src/components/ui/Illustration.astro` com props `kind`, `size` (sm 32px / md 64px / lg 128px), `aria-label?` (default decorativo).
+- [ ] O componente importa o SVG correspondente e injeta classes que o CSS resolve com tokens.
 
-### Fase 3 — Acentos brasileiros próprios (2-3 dias)
-- [ ] 6-8 motivos curtos: pimenta, cebola roxa, folha de couve, espiga de milho, vagem, garrafa long-neck, mandioca, beterraba.
-- [ ] Cada um com viewBox 0 0 64 64 (ou 96), usando padrão consistente (silhueta sólida + 1-2 sombras chapadas).
-- [ ] Desenhar em Figma/Inkscape, exportar limpo, integrar no `Illustration.astro` como variants.
+### Fase 3 — Composições / cenas
+- [ ] `IllustrationBand.astro` — faixa horizontal compondo 4-6 motivos espaçados (substitui o `OrnamentBand` da v1).
+- [ ] `IllustrationScene.astro` (opcional) — agrupamento "mesa de buteco" pra hero da home: garrafa + prato + folha + pimenta posicionados.
 
-### Fase 4 — Aplicação criteriosa (1-2 dias)
-- [ ] Hero da home — cena lateral grande (Storyset/unDraw), substitui ou complementa o gradiente atual.
-- [ ] Empty states: "nenhum buteco em X", "nenhum comentário ainda", "buteco sem foto".
-- [ ] Topo do footer — substituir `OrnamentBand` por uma faixa nova mais densa.
-- [ ] Cards: opcional acento em ButecoCard quando não há foto (motivo brasileiro pequeno no canto).
-- [ ] Sobre — uma ilustração no topo de cada seção, nem todas (escolha curatorial).
+### Fase 4 — Aplicação criteriosa
+- [ ] Hero da home: scene ou band lateral, sem invadir o lede.
+- [ ] Empty states: cidade sem butecos, busca vazia, comentários vazios.
+- [ ] Topo do footer: band fina.
+- [ ] Cards: acento sutil quando não há foto (TBD após Fase 3).
 
 ### Fase 5 — Limpeza
-- [ ] Depreciar `OrnamentBand.astro` (manter no repo até a v1 do sistema novo estar estável; depois remover).
-- [ ] Atualizar `sobre/#stack` com a referência à lib usada.
-- [ ] Lighthouse antes/depois para garantir que RNF-0002 não regrediu.
+- [ ] Documentar a biblioteca em `docs/design-system/illustrations.md` (lista de motivos + tokens + uso).
+- [ ] Lighthouse antes/depois pra garantir que RNF-0002 não regrediu.
 
 ## Como reverter
 

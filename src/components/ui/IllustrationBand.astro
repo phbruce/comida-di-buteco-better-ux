@@ -1,0 +1,69 @@
+---
+/**
+ * IllustrationBand — faixa decorativa horizontal compondo motivos.
+ *
+ * Substitui o antigo OrnamentBand (que ficou cru). Aqui as figuras são
+ * legíveis (pimenta, folha, milho, cebola) — ver ADR-0016.
+ *
+ * Decorativa: aria-hidden no nível do container.
+ */
+
+import Illustration from "./Illustration.astro";
+
+type Tone = "soft" | "transparent" | "dark";
+
+interface Props {
+  tone?: Tone;
+  class?: string;
+}
+
+const { tone = "soft", class: extra = "" } = Astro.props;
+
+// Sequência cuidadosamente alternada pra não repetir cor lado a lado.
+const sequence = [
+  "folha",
+  "pimenta",
+  "milho",
+  "cebola",
+  "folha",
+  "pimenta",
+  "milho",
+  "cebola",
+] as const;
+---
+
+<div class:list={["illus-band", `illus-band--${tone}`, extra]} aria-hidden="true">
+  {sequence.map((kind) => <Illustration kind={kind} size="md" />)}
+</div>
+
+<style>
+  .illus-band {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-5);
+    padding-block: var(--space-4);
+    padding-inline: var(--space-3);
+    flex-wrap: wrap;
+  }
+  .illus-band--soft {
+    background: var(--color-bg-soft);
+    border-block-start: var(--border-thin);
+    border-block-end: var(--border-thin);
+  }
+  .illus-band--transparent {
+    background: transparent;
+  }
+  .illus-band--dark {
+    background: var(--color-surface-strong);
+  }
+
+  /* Em mobile, mostra menos motivos pra não passar rapacelo */
+  @media (max-width: 640px) {
+    .illus-band :global(.illus:nth-child(n + 6)) { display: none; }
+    .illus-band { gap: var(--space-4); }
+  }
+  @media (max-width: 380px) {
+    .illus-band :global(.illus:nth-child(n + 5)) { display: none; }
+  }
+</style>

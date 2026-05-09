@@ -1,0 +1,60 @@
+---
+/**
+ * Illustration — motivo decorativo de comida brasileira em paper-cut sharp.
+ *
+ * Cada motivo é um SVG curto (~1-2 KB) em src/assets/illustrations/.
+ * Usado puramente decorativo: aria-hidden, sem texto. Para o motivo
+ * comunicar conteúdo, passe `aria-label` explícito (ex.: empty state
+ * que precisa ser lido).
+ *
+ * Tamanhos: sm 32px, md 64px (default), lg 128px.
+ *
+ * Decisão registrada em ADR-0016.
+ */
+
+import pimenta from "~/assets/illustrations/pimenta.svg?raw";
+import folha from "~/assets/illustrations/folha.svg?raw";
+import milho from "~/assets/illustrations/milho.svg?raw";
+import cebola from "~/assets/illustrations/cebola.svg?raw";
+
+type Kind = "pimenta" | "folha" | "milho" | "cebola";
+type Size = "sm" | "md" | "lg";
+
+interface Props {
+  kind: Kind;
+  size?: Size;
+  /** Use só quando o motivo precisar comunicar (ex.: empty state). */
+  ariaLabel?: string;
+  class?: string;
+}
+
+const { kind, size = "md", ariaLabel, class: extra = "" } = Astro.props;
+
+const motifs: Record<Kind, string> = { pimenta, folha, milho, cebola };
+const svg = motifs[kind];
+const decorative = !ariaLabel;
+---
+
+<span
+  class:list={["illus", `illus--${size}`, extra]}
+  role={decorative ? "presentation" : "img"}
+  aria-hidden={decorative ? "true" : undefined}
+  aria-label={ariaLabel}
+  set:html={svg}
+/>
+
+<style>
+  .illus {
+    display: inline-block;
+    line-height: 0;
+    flex-shrink: 0;
+  }
+  .illus :global(svg) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .illus--sm { width: 32px; height: 32px; }
+  .illus--md { width: 64px; height: 64px; }
+  .illus--lg { width: 128px; height: 128px; }
+</style>

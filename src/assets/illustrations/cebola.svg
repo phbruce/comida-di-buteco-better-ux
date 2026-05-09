@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="presentation" aria-hidden="true">
+  <!--
+    Cebola roxa em paper-cut sharp.
+    Bulbo arredondado com camadas sugeridas por linhas verticais finas.
+    Brotos lima saindo do topo. Cor: urucum (nosso "vinho" mais próximo).
+  -->
+  <g>
+    <!-- Silhueta do bulbo — urucum, oval com afunilamento embaixo -->
+    <polygon
+      points="32,16 39,17 45,21 50,27 52,34 51,42 47,49 41,54 32,56 23,54 17,49 13,42 12,34 14,27 19,21 25,17"
+      fill="#9c2a1b"
+    />
+
+    <!-- Sombra direita — urucum mais escuro -->
+    <polygon
+      points="32,16 39,17 45,21 50,27 52,34 51,42 47,49 41,54 32,56 36,49 41,42 43,34 41,27 38,22 35,18"
+      fill="#5a160e"
+    />
+
+    <!-- Linhas verticais sugerindo camadas — urucum mais escuro, finas -->
+    <polygon points="22,22 23,22 22,52 21,52" fill="#5a160e" />
+    <polygon points="28,18 29,18 28,55 27,55" fill="#5a160e" />
+    <polygon points="35,18 36,18 36,55 35,55" fill="#5a160e" />
+    <polygon points="41,22 42,22 43,52 42,52" fill="#5a160e" />
+
+    <!-- Highlight no canto superior-esquerdo — urucum claro -->
+    <polygon
+      points="20,24 25,21 26,26 23,30 19,29"
+      fill="#c4392d"
+    />
+
+    <!-- Pontinha embaixo (raiz) — urucum escuro -->
+    <polygon
+      points="30,55 34,55 34,60 32,62 30,60"
+      fill="#5a160e"
+    />
+
+    <!-- Brotos no topo — lima -->
+    <polygon
+      points="26,16 24,8 27,4 30,8 28,16"
+      fill="#1f6f4a"
+    />
+    <polygon
+      points="30,16 31,6 35,3 37,7 35,13 33,16"
+      fill="#1f6f4a"
+    />
+    <polygon
+      points="35,16 38,9 42,6 43,11 40,16"
+      fill="#155234"
+    />
+  </g>
+</svg>
