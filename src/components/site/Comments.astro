@@ -23,7 +23,10 @@ interface Props {
 
 const { pageId, pageTitle, pageUrl } = Astro.props;
 
-const APP_ID = (import.meta.env.PUBLIC_CUSDIS_APP_ID as string | undefined) ?? "";
+// APP_ID padrão do projeto Cusdis criado em 2026-05-09 para este redesign.
+// Pode ser sobrescrito via env PUBLIC_CUSDIS_APP_ID.
+const DEFAULT_APP_ID = "2d491a46-a7cc-48ce-ba2b-86a6265c499e";
+const APP_ID = (import.meta.env.PUBLIC_CUSDIS_APP_ID as string | undefined) || DEFAULT_APP_ID;
 const HOST = (import.meta.env.PUBLIC_CUSDIS_HOST as string | undefined) ?? "https://cusdis.com";
 const SCRIPT = `${HOST}/js/cusdis.es.js`;
 ---
