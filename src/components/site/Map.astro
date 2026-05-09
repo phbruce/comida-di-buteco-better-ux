@@ -1,15 +1,13 @@
 ---
 /**
- * Map.astro — mapa interativo com design "Buteco Moderno".
+ * Map — Google Maps Embed via iframe (ADR-0009).
  *
- * Conforme ADR-0005:
- * - MapLibre GL JS dinamicamente importado (lazy via IntersectionObserver).
- * - Estilo derivado dos tokens (src/data/map-style.ts).
- * - Pin SVG inline com cor de marca.
- * - Toggle "Mostrar mapa" — usuário inicia carregamento (respeita 4G/bateria).
- * - Fallback textual sempre presente (endereço + link "Como chegar").
+ * Sem chave de API, sem custo. Lazy via toggle "Mostrar mapa" — o iframe
+ * só é carregado depois do clique do usuário (consentimento implícito,
+ * preserva privacidade até a ação).
  *
- * Recebe: lat, lng, label (nome do buteco), enderecoTextual, mapsUrl.
+ * Quando JS está desabilitado, o toggle não funciona; o usuário continua
+ * vendo endereço + "Como chegar" (deep-link para o Google Maps).
  */
 
 interface Props {
@@ -22,18 +20,15 @@ interface Props {
 }
 
 const { lat, lng, label, enderecoTextual, mapsUrl, zoom = 16 } = Astro.props;
-
-// id único por instância (caso haja mais de um na mesma página)
 const id = `map-${Math.random().toString(36).slice(2, 9)}`;
+const embedSrc = `https://www.google.com/maps?q=${lat},${lng}&z=${zoom}&output=embed`;
 ---
 
 <section
   class="map"
   data-map
-  data-lat={lat}
-  data-lng={lng}
+  data-embed-src={embedSrc}
   data-label={label}
-  data-zoom={zoom}
   aria-labelledby={`${id}-title`}
 >
   <h3 id={`${id}-title`} class="map__title">Onde fica</h3>
@@ -51,23 +46,18 @@ const id = `map-${Math.random().toString(36).slice(2, 9)}`;
   </div>
 
   <div class="map__container" id={id} aria-hidden="true">
-    <div class="map__placeholder" data-map-placeholder>
-      <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect width="200" height="120" fill="var(--color-bg-soft)" />
-        <path d="M0 60 Q50 40 100 60 T200 60" stroke="var(--color-border)" stroke-width="2" fill="none" />
-        <path d="M0 80 Q50 100 100 80 T200 80" stroke="var(--color-border)" stroke-width="1" fill="none" />
-        <circle cx="100" cy="60" r="6" fill="var(--color-brand-primary)" />
-        <circle cx="100" cy="60" r="12" fill="var(--color-brand-primary)" fill-opacity="0.2" />
-      </svg>
-      <p>Toque em <strong>Mostrar mapa</strong> para carregar a visualização interativa.</p>
-    </div>
+    <p class="map__placeholder" data-map-placeholder>
+      Toque em <strong>Mostrar mapa</strong> para carregar a visualização do Google Maps.
+    </p>
+    <p class="map__privacy">
+      Ao mostrar o mapa, você carrega conteúdo do Google que pode usar cookies.
+    </p>
   </div>
 </section>
 
 <style>
   .map {
     border: var(--border-thin);
-    border-radius: var(--radius-md);
     background: var(--color-surface);
     padding: var(--space-5);
     display: flex;
@@ -81,9 +71,7 @@ const id = `map-${Math.random().toString(36).slice(2, 9)}`;
     color: var(--color-text-muted);
     margin: 0;
   }
-  .map__address {
-    margin: 0;
-  }
+  .map__address { margin: 0; }
   .map__address address {
     font-style: normal;
     line-height: var(--line-height-normal);
@@ -102,7 +90,6 @@ const id = `map-${Math.random().toString(36).slice(2, 9)}`;
     background-color: var(--color-text-strong);
     color: var(--color-text-on-dark);
     border: 2px solid var(--color-text-strong);
-    border-radius: var(--radius-md);
     font: inherit;
     font-weight: var(--font-weight-semibold);
     cursor: pointer;
@@ -123,182 +110,91 @@ const id = `map-${Math.random().toString(36).slice(2, 9)}`;
     color: var(--color-brand-primary);
     text-decoration: underline;
     text-underline-offset: 0.25em;
+    text-decoration-thickness: 1px;
     font-weight: var(--font-weight-semibold);
   }
+  .map__directions:hover {
+    color: var(--color-brand-primary-hover);
+    text-decoration-thickness: 2px;
+  }
+
   .map__container {
-    position: relative;
-    aspect-ratio: 16 / 10;
     background: var(--color-bg-soft);
-    border-radius: var(--radius-md);
+    aspect-ratio: 16 / 10;
     overflow: hidden;
     display: none;
+    position: relative;
   }
-  .map__container.is-active {
-    display: block;
-  }
+  .map__container.is-active { display: block; }
   .map__placeholder {
     position: absolute;
     inset: 0;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
+    margin: 0;
     padding: var(--space-4);
     color: var(--color-text-muted);
     font-size: var(--font-size-small);
-    gap: var(--space-3);
   }
-  .map__placeholder svg {
-    width: 60%;
-    max-width: 240px;
-  }
-  .map__placeholder.is-loading p::after {
-    content: " carregando…";
-  }
-  /* canvas do MapLibre quando ativo */
-  .map__container :global(.maplibregl-map) {
+  .map__privacy {
     position: absolute;
-    inset: 0;
+    inset-block-end: var(--space-2);
+    inset-inline: var(--space-3);
+    margin: 0;
+    font-size: var(--font-size-caption);
+    color: var(--color-text-muted);
+    text-align: center;
+  }
+  .map__container iframe {
     width: 100%;
     height: 100%;
-  }
-  .map__container :global(.maplibregl-canvas) {
-    outline: none;
-  }
-  .map__container :global(.maplibregl-ctrl-attrib) {
-    background: rgba(255, 255, 255, 0.9);
-    font-size: 11px;
+    border: 0;
+    display: block;
   }
 </style>
 
 <script>
-  // CSS do MapLibre — incluído junto ao bundle desta página (~10KB)
-  import "maplibre-gl/dist/maplibre-gl.css";
-  import type { Map as MapLibreMap, Marker } from "maplibre-gl";
-
-  type MapInstance = {
-    instance: MapLibreMap;
-    marker: Marker;
-  };
-
-  const cache = new WeakMap<HTMLElement, MapInstance>();
-
-  async function loadMaplibreOnce() {
-    // dynamic import — só baixa o JS pesado quando o usuário clica
-    const [maplibreModule, styleModule] = await Promise.all([
-      import("maplibre-gl"),
-      import("~/data/map-style"),
-    ]);
-    return { maplibregl: maplibreModule.default, style: styleModule.butecoMapStyle };
-  }
-
-  async function activateMap(section: HTMLElement) {
-    if (cache.has(section)) return;
-
-    const container = section.querySelector<HTMLElement>(".map__container");
-    const placeholder = section.querySelector<HTMLElement>(".map__placeholder");
-    if (!container) return;
-    placeholder?.classList.add("is-loading");
-    container.classList.add("is-active");
-    container.setAttribute("aria-hidden", "false");
-
-    const lat = parseFloat(section.dataset.lat ?? "0");
-    const lng = parseFloat(section.dataset.lng ?? "0");
-    const zoom = parseFloat(section.dataset.zoom ?? "16");
-    const label = section.dataset.label ?? "Buteco";
-
-    try {
-      const { maplibregl, style } = await loadMaplibreOnce();
-      const map = new maplibregl.Map({
-        container,
-        style,
-        center: [lng, lat],
-        zoom,
-        minZoom: 11,
-        maxZoom: 18,
-        attributionControl: { compact: true },
-      });
-      map.addControl(new maplibregl.NavigationControl({ showCompass: false, visualizePitch: false }), "top-right");
-
-      // pin custom — círculo + ponto
-      const el = document.createElement("button");
-      el.type = "button";
-      el.className = "buteco-marker";
-      el.setAttribute("aria-label", `${label}: localização aproximada`);
-      el.innerHTML = `
-        <svg viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-          <path d="M16 0 C7 0 0 7 0 16 c0 11 16 24 16 24 s16 -13 16 -24 C32 7 25 0 16 0 z"
-                fill="var(--color-brand-primary)" stroke="var(--color-text-strong)" stroke-width="1.5" />
-          <circle cx="16" cy="15" r="6" fill="var(--color-brand-accent)" />
-        </svg>
-      `;
-      const marker = new maplibregl.Marker({ element: el, anchor: "bottom" })
-        .setLngLat([lng, lat])
-        .addTo(map);
-
-      cache.set(section, { instance: map, marker });
-
-      map.once("load", () => {
-        placeholder?.remove();
-      });
-    } catch (err) {
-      // se MapLibre falhar, manter placeholder + endereço — degrade graceful
-      console.warn("[map] failed to load", err);
-      if (placeholder) {
-        placeholder.classList.remove("is-loading");
-        placeholder.innerHTML = "<p>Não foi possível carregar o mapa agora. Use <strong>Como chegar</strong> ao lado.</p>";
-      }
-    }
-  }
-
-  function setup(section: HTMLElement) {
+  function setupMap(section: HTMLElement) {
     const toggle = section.querySelector<HTMLButtonElement>("[data-map-toggle]");
-    if (!toggle) return;
-    toggle.addEventListener("click", async () => {
+    const container = section.querySelector<HTMLElement>(".map__container");
+    if (!toggle || !container) return;
+
+    let iframe: HTMLIFrameElement | null = null;
+
+    toggle.addEventListener("click", () => {
       const expanded = toggle.getAttribute("aria-expanded") === "true";
       if (expanded) {
-        // recolhe — só esconde, não destrói (cheap re-show)
-        section.querySelector(".map__container")?.classList.remove("is-active");
-        section.querySelector(".map__container")?.setAttribute("aria-hidden", "true");
+        container.classList.remove("is-active");
+        container.setAttribute("aria-hidden", "true");
         toggle.setAttribute("aria-expanded", "false");
         toggle.querySelector(".map__toggle-text")!.textContent = "Mostrar mapa";
       } else {
+        container.classList.add("is-active");
+        container.setAttribute("aria-hidden", "false");
         toggle.setAttribute("aria-expanded", "true");
         toggle.querySelector(".map__toggle-text")!.textContent = "Esconder mapa";
-        await activateMap(section);
+
+        if (!iframe) {
+          // Cria iframe só na primeira vez (lazy real)
+          const src = section.dataset.embedSrc!;
+          const label = section.dataset.label ?? "Mapa";
+          iframe = document.createElement("iframe");
+          iframe.src = src;
+          iframe.title = `Mapa do Google mostrando ${label}`;
+          iframe.loading = "lazy";
+          iframe.referrerPolicy = "no-referrer-when-downgrade";
+          // Remove placeholder antes de inserir
+          section.querySelector("[data-map-placeholder]")?.remove();
+          section.querySelector(".map__privacy")?.remove();
+          container.appendChild(iframe);
+        }
       }
     });
   }
 
   for (const el of document.querySelectorAll<HTMLElement>("[data-map]")) {
-    setup(el);
+    setupMap(el);
   }
 </script>
-
-<style is:global>
-  .buteco-marker {
-    background: transparent;
-    border: 0;
-    padding: 0;
-    cursor: pointer;
-    width: 32px;
-    height: 40px;
-    transform-origin: bottom center;
-    transition: transform var(--motion-fast) var(--easing-standard);
-  }
-  .buteco-marker:hover,
-  .buteco-marker:focus-visible {
-    transform: scale(1.1);
-  }
-  .buteco-marker:focus-visible {
-    outline: 3px solid var(--color-focus-ring);
-    outline-offset: 2px;
-    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  }
-  .buteco-marker svg {
-    width: 100%;
-    height: 100%;
-    filter: drop-shadow(0 2px 3px rgba(26, 24, 21, 0.3));
-  }
-</style>

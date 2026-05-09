@@ -30,10 +30,11 @@ Cada ADR responde:
 | [ADR-0002](./ADR-0002-design-system-base-govuk.md) | Design System inspirado em GOV.UK | ACCEPTED | Dono do produto | 2026-05-09 |
 | [ADR-0003](./ADR-0003-stack-tecnologico.md) | Stack tecnológico (Astro + GitHub Pages) | ACCEPTED | Dono do produto (com restrição GH Pages) | 2026-05-09 |
 | [ADR-0004](./ADR-0004-tokens-de-design.md) | Tokens de design (cor, tipografia, espaço) | ACCEPTED | Dono do produto | 2026-05-09 |
-| [ADR-0005](./ADR-0005-mapa-interativo.md) | Mapa interativo com design customizado | ACCEPTED | Dono do produto | 2026-05-09 |
+| [ADR-0005](./ADR-0005-mapa-interativo.md) | Mapa interativo com design customizado | ~~SUPERSEDED~~ | — | 2026-05-09 |
 | [ADR-0006](./ADR-0006-feedback-da-pagina.md) | Botão de feedback "esta info está correta?" | ACCEPTED | Dono do produto | 2026-05-09 |
 | [ADR-0007](./ADR-0007-comentarios-giscus.md) | Comentários nas páginas via giscus | ~~SUPERSEDED~~ | — | 2026-05-09 |
 | [ADR-0008](./ADR-0008-comentarios-cusdis.md) | Comentários nas páginas via Cusdis | ACCEPTED | Dono do produto | 2026-05-09 |
+| [ADR-0009](./ADR-0009-mapa-google.md) | Trocar mapa para Google Maps (Embed) | ACCEPTED | Dono do produto | 2026-05-09 |
 
 ## Como propor um ADR
 

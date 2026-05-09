@@ -1,8 +1,9 @@
 # ADR-0005 — Mapa interativo com design customizado
 
-- **Status:** ACCEPTED
+- **Status:** SUPERSEDED por [ADR-0009](./ADR-0009-mapa-google.md) em 2026-05-09
 - **Data:** 2026-05-09
 - **Decisor(es):** Dono do produto (aprovado em 2026-05-09 — opção A)
+- **Motivo da substituição:** o resultado visual do MapLibre + OpenFreeMap (mesmo após redesign com casing) não agradou. Trocado por Google Maps Embed.
 - **RFs/RNFs relacionados:** RF-0001 (listagem), RF-0003 (detalhe do buteco), RF-0004 (seleção de cidade), RNF-0001 (acessibilidade), RNF-0002 (performance), RNF-0005 (privacidade/segurança — chamadas a terceiros)
 
 ## Contexto

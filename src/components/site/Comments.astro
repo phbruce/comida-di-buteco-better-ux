@@ -51,9 +51,7 @@ const SCRIPT = `${HOST}/js/cusdis.es.js`;
           data-page-url={pageUrl}
           data-page-title={pageTitle}
           data-theme="light"
-        >
-          <p class="comments__loading" aria-live="polite">Carregando comentários…</p>
-        </div>
+        ></div>
         <script is:inline async defer src={SCRIPT}></script>
       </>
     ) : (
@@ -102,32 +100,14 @@ const SCRIPT = `${HOST}/js/cusdis.es.js`;
     font-size: 0.92em;
   }
 
-  /* Reserva espaço para o widget Cusdis para não colapsar antes do iframe carregar.
-     Quando o iframe entra, ele substitui o texto de loading. */
-  .comments__thread {
-    min-height: 360px;
-    background: var(--color-bg-soft);
-    border: var(--border-thin);
-    padding: var(--space-4);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-  .comments__loading {
-    margin: 0;
-    color: var(--color-text-muted);
-    font-size: var(--font-size-small);
-    text-align: center;
-    padding: var(--space-5);
-  }
-  /* Quando o iframe é injetado pelo cusdis.es.js, o texto "Carregando…"
-     fica oculto pelo iframe (que vem depois), e o iframe ocupa o espaço.
-     Garante que o iframe não estoure a largura do container. */
+  /* Cusdis injeta o iframe dentro deste div e gerencia o height via postMessage.
+     Não impomos min-height/padding/flex aqui — qualquer dimensão extra externa
+     ao iframe vira espaço vazio dentro da seção. */
   .comments__thread iframe {
     width: 100% !important;
     max-width: 100%;
     border: 0;
-    background: var(--color-bg-canvas);
+    display: block;
   }
 </style>
 

@@ -27,27 +27,22 @@ html {
 }
 
 body {
-  /* Sticky footer: body é coluna flex; main expande pra ocupar resto */
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
+  /* Sticky footer com grid — mais robusto que flex em iOS Safari.
+     Linhas: phase-banner | header | main(1fr — expande) | footer.
+     Skip-link é position:absolute → fica fora do grid flow. */
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  min-height: 100vh;             /* fallback sem dvh */
+  min-height: 100dvh;            /* dinâmico (iOS 15.4+) */
   background-color: var(--color-bg-canvas);
   color: var(--color-text-strong);
   font-family: var(--font-family-sans);
   font-size: var(--font-size-body);
   line-height: var(--line-height-relaxed);
-  font-feature-settings: "ss01", "cv11"; /* Inter: alt characters mais legíveis */
+  font-feature-settings: "ss01", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-}
-
-body > main {
-  flex: 1 0 auto;
-}
-body > footer,
-body > .site-footer {
-  flex: 0 0 auto;
 }
 
 /* Imagens fluidas com proporção mantida */
