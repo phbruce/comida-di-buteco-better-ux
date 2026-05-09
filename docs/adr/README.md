@@ -30,7 +30,7 @@ Cada ADR responde:
 | [ADR-0002](./ADR-0002-design-system-base-govuk.md) | Design System inspirado em GOV.UK | ACCEPTED | Dono do produto | 2026-05-09 |
 | [ADR-0003](./ADR-0003-stack-tecnologico.md) | Stack tecnológico (Astro + GitHub Pages) | ACCEPTED | Dono do produto (com restrição GH Pages) | 2026-05-09 |
 | [ADR-0004](./ADR-0004-tokens-de-design.md) | Tokens de design (cor, tipografia, espaço) | ACCEPTED | Dono do produto | 2026-05-09 |
-| [ADR-0005](./ADR-0005-mapa-interativo.md) | Mapa interativo com design customizado | **PROPOSED** | — | 2026-05-09 |
+| [ADR-0005](./ADR-0005-mapa-interativo.md) | Mapa interativo com design customizado | ACCEPTED | Dono do produto | 2026-05-09 |
 
 ## Como propor um ADR
 

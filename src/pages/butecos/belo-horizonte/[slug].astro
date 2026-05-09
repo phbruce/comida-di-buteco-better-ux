@@ -3,6 +3,7 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
 import Breadcrumb from "~/components/ui/Breadcrumb.astro";
 import Button from "~/components/ui/Button.astro";
 import Tag from "~/components/ui/Tag.astro";
+import Map from "~/components/site/Map.astro";
 import { butecosBH } from "~/data/butecos-bh";
 
 export async function getStaticPaths() {
@@ -99,13 +100,23 @@ const crumbs = [
       <aside class="buteco__aside" aria-labelledby="info">
         <h2 id="info" class="visually-hidden">Informações práticas</h2>
 
-        <div class="buteco__card">
-          <h3>Onde fica</h3>
-          <address>{enderecoFicticio}</address>
-          <p>
-            <a href={mapsUrl} rel="noopener">Como chegar (Google Maps)</a>
-          </p>
-        </div>
+        {buteco.coords ? (
+          <Map
+            lat={buteco.coords.lat}
+            lng={buteco.coords.lng}
+            label={buteco.nome}
+            enderecoTextual={enderecoFicticio}
+            mapsUrl={mapsUrl}
+          />
+        ) : (
+          <div class="buteco__card">
+            <h3>Onde fica</h3>
+            <address>{enderecoFicticio}</address>
+            <p>
+              <a href={mapsUrl} rel="noopener">Como chegar (Google Maps)</a>
+            </p>
+          </div>
+        )}
 
         <div class="buteco__card">
           <h3>Horário</h3>

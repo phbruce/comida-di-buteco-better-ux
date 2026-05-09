@@ -1,8 +1,8 @@
-# ADR-0005 — Mapa interativo com design customizado (proposta)
+# ADR-0005 — Mapa interativo com design customizado
 
-- **Status:** PROPOSED ⚠️ aguarda aprovação do dono do produto
+- **Status:** ACCEPTED
 - **Data:** 2026-05-09
-- **Decisor(es):** —
+- **Decisor(es):** Dono do produto (aprovado em 2026-05-09 — opção A)
 - **RFs/RNFs relacionados:** RF-0001 (listagem), RF-0003 (detalhe do buteco), RF-0004 (seleção de cidade), RNF-0001 (acessibilidade), RNF-0002 (performance), RNF-0005 (privacidade/segurança — chamadas a terceiros)
 
 ## Contexto
