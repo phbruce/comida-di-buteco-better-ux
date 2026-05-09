@@ -160,9 +160,13 @@ async function handlePost(request: Request, env: Env, cors: HeadersInit): Promis
   const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
   const ipHash = await sha256Hex(ip + ":" + (env.APP_SALT ?? ""));
 
-  const ok = await verifyTurnstile(turnstileToken, env.TURNSTILE_SECRET, ip);
-  if (!ok) {
-    return jsonResponse({ error: "captcha" }, 403, cors);
+  // Turnstile: se SECRET não está configurado, libera (proteção fica só
+  // com rate limit + honeypot — útil pra deploy inicial sem Turnstile).
+  if (env.TURNSTILE_SECRET) {
+    const ok = await verifyTurnstile(turnstileToken, env.TURNSTILE_SECRET, ip);
+    if (!ok) {
+      return jsonResponse({ error: "captcha" }, 403, cors);
+    }
   }
 
   if (await isRateLimited(env, ipHash, pageId)) {
