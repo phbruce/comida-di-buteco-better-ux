@@ -150,13 +150,38 @@ const credito = creditoFoto(buteco);
         )}
 
         <div class="buteco__card buteco__card--cta">
-          <h3>Quer votar?</h3>
-          <p>A votação acontece no site oficial do concurso.</p>
-          <Button href={oficialUrl} variant="primary" block>
-            Ver no site oficial
+          <h3>Como votar</h3>
+          <ol class="buteco__vote-steps">
+            <li>Vá ao buteco e peça o prato do concurso.</li>
+            <li>Avalie sua experiência no site oficial.</li>
+          </ol>
+          <Button
+            href={oficialUrl}
+            variant="primary"
+            block
+            target="_blank"
+            rel="noopener"
+          >
+            Avaliar no site oficial
+            <svg
+              class="buteco__vote-ext"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+              width="16"
+              height="16"
+            >
+              <path
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="square"
+                d="M14 5h5v5 M19 5l-9 9 M5 7v12h12v-5"
+              />
+            </svg>
           </Button>
           <p class="buteco__hint">
-            Sai deste redesign e abre <code>{oficialUrl.replace("https://", "")}</code>.
+            Abre <code>{oficialUrl.replace("https://", "").replace(/\/$/, "")}</code> em nova aba.
           </p>
         </div>
       </aside>
@@ -299,6 +324,45 @@ const credito = creditoFoto(buteco);
   .buteco__card--cta h3 { color: var(--color-brand-accent); }
   .buteco__card--cta p { color: var(--color-text-on-dark); }
   .buteco__card--cta a { color: var(--color-brand-accent); }
+
+  .buteco__vote-steps {
+    list-style: none;
+    counter-reset: vote-step;
+    margin: 0 0 var(--space-4);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .buteco__vote-steps li {
+    counter-increment: vote-step;
+    position: relative;
+    padding-inline-start: calc(1.75em + var(--space-2));
+    line-height: var(--line-height-normal);
+    color: var(--color-text-on-dark);
+  }
+  .buteco__vote-steps li::before {
+    content: counter(vote-step);
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0.05em;
+    width: 1.75em;
+    height: 1.75em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-small);
+    line-height: 1;
+    color: var(--color-text-strong);
+    background: var(--color-brand-accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .buteco__vote-ext {
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
   .buteco__hint {
     font-size: var(--font-size-small);
     color: var(--color-text-muted);
