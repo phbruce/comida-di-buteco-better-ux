@@ -1,0 +1,296 @@
+---
+/**
+ * Feedback — "Esta informação está correta?"
+ *
+ * Conforme ADR-0006 (ACCEPTED): envia para Cloudflare Worker que cria
+ * GitHub Issue. Funciona sem JS via <form> nativo (fallback).
+ *
+ * O endpoint é configurado via env PUBLIC_FEEDBACK_ENDPOINT em build.
+ * Se não configurado, mostra fallback mailto:.
+ */
+
+interface Props {
+  /** Identificador único da página (slug do buteco, etc.) — vai para o issue. */
+  pageId: string;
+  /** Título legível. */
+  pageTitle: string;
+  /** URL canônica desta página. */
+  pageUrl: string;
+}
+
+const { pageId, pageTitle, pageUrl } = Astro.props;
+
+const endpoint = import.meta.env.PUBLIC_FEEDBACK_ENDPOINT as string | undefined;
+const fallbackMail = "feedback@example.invalid"; // troque para um e-mail real ou deixe sem fallback
+
+const id = `fb-${pageId}-${Math.random().toString(36).slice(2, 7)}`;
+---
+
+<section class="feedback" data-feedback aria-labelledby={`${id}-title`}>
+  <div class="feedback__inner container">
+    <h2 id={`${id}-title`} class="feedback__title">Esta informação está correta?</h2>
+    <p class="feedback__lede">
+      Os dados deste buteco vêm do site oficial e podem estar desatualizados.
+      Se algo está errado, conta pra gente.
+    </p>
+
+    {endpoint ? (
+      <form
+        class="feedback__form"
+        method="POST"
+        action={endpoint}
+        data-feedback-form
+        novalidate
+      >
+        <input type="hidden" name="pageId" value={pageId} />
+        <input type="hidden" name="pageTitle" value={pageTitle} />
+        <input type="hidden" name="pageUrl" value={pageUrl} />
+        {/* honeypot — bots costumam preencher; humanos não veem */}
+        <input
+          type="text"
+          name="website"
+          tabindex="-1"
+          autocomplete="off"
+          aria-hidden="true"
+          class="feedback__honeypot"
+        />
+
+        <div class="feedback__quick" data-feedback-quick>
+          <button type="submit" name="rating" value="ok" class="feedback__btn feedback__btn--ok">
+            Sim, está correto
+          </button>
+          <button type="button" class="feedback__btn feedback__btn--bad" data-feedback-toggle aria-expanded="false" aria-controls={`${id}-detail`}>
+            Tem algo errado
+          </button>
+        </div>
+
+        <div class="feedback__detail" id={`${id}-detail`} hidden>
+          <label class="feedback__label" for={`${id}-text`}>O que está errado?</label>
+          <textarea
+            id={`${id}-text`}
+            name="message"
+            rows="3"
+            class="feedback__textarea"
+            placeholder="Endereço mudou, prato diferente, buteco fechou…"
+            maxlength="800"
+          ></textarea>
+          <p class="feedback__hint">
+            Seu feedback será publicado como issue pública no repositório do redesign.
+            Não inclua dados pessoais.
+          </p>
+          <div class="feedback__actions">
+            <button type="submit" name="rating" value="bad" class="feedback__btn feedback__btn--ok">
+              Enviar
+            </button>
+            <button type="button" class="feedback__btn feedback__btn--ghost" data-feedback-cancel>
+              Cancelar
+            </button>
+          </div>
+        </div>
+
+        <div class="feedback__thanks" data-feedback-thanks hidden role="status">
+          <p><strong>Obrigado!</strong> Anotamos seu retorno.</p>
+        </div>
+      </form>
+    ) : (
+      <p class="feedback__fallback">
+        <a href={`mailto:${fallbackMail}?subject=${encodeURIComponent(`[CdB Redesign] ${pageTitle}`)}&body=${encodeURIComponent(`URL: ${pageUrl}\n\nO que está errado?\n`)}`}>
+          Reportar via e-mail
+        </a>
+      </p>
+    )}
+  </div>
+</section>
+
+<style>
+  .feedback {
+    background: var(--color-bg-soft);
+    border-block-start: var(--border-strong);
+    border-block-end: var(--border-thin);
+    margin-block-start: var(--space-9);
+  }
+  .feedback__inner {
+    padding-block: var(--space-7);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .feedback__title {
+    font-size: var(--font-size-h2);
+    margin: 0;
+  }
+  .feedback__lede {
+    margin: 0;
+    color: var(--color-text-muted);
+    max-width: 60ch;
+  }
+  .feedback__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .feedback__honeypot {
+    position: absolute;
+    inset-inline-start: -9999px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .feedback__quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .feedback__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: var(--space-2) var(--space-5);
+    border: 2px solid var(--color-border-strong);
+    background: var(--color-bg-canvas);
+    color: var(--color-text-strong);
+    font: inherit;
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+  }
+  .feedback__btn:hover {
+    background: var(--color-text-strong);
+    color: var(--color-text-on-dark);
+  }
+  .feedback__btn--ok:hover {
+    background: var(--color-state-success);
+    border-color: var(--color-state-success);
+    color: var(--color-text-on-dark);
+  }
+  .feedback__btn--bad:hover {
+    background: var(--color-state-error);
+    border-color: var(--color-state-error);
+    color: var(--color-text-on-dark);
+  }
+  .feedback__btn--ghost {
+    border-color: var(--color-border);
+    color: var(--color-text-muted);
+  }
+  .feedback__btn--ghost:hover {
+    background: var(--color-border);
+    color: var(--color-text-strong);
+  }
+
+  .feedback__detail[hidden] { display: none; }
+  .feedback__detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .feedback__label {
+    font-weight: var(--font-weight-semibold);
+  }
+  .feedback__textarea {
+    width: 100%;
+    min-height: 88px;
+    padding: var(--space-3) var(--space-4);
+    border: 2px solid var(--color-border-strong);
+    background: var(--color-bg-canvas);
+    font: inherit;
+    line-height: var(--line-height-normal);
+    resize: vertical;
+  }
+  .feedback__hint {
+    margin: 0;
+    font-size: var(--font-size-small);
+    color: var(--color-text-muted);
+  }
+  .feedback__actions {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .feedback__thanks[hidden] { display: none; }
+  .feedback__thanks {
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-state-success-bg);
+    border: 2px solid var(--color-state-success);
+    color: var(--color-state-success);
+  }
+
+  .feedback__fallback {
+    margin: 0;
+  }
+</style>
+
+<script>
+  type Mode = "idle" | "detail" | "sending" | "thanks";
+
+  function setupOne(section: HTMLElement) {
+    const form = section.querySelector<HTMLFormElement>("[data-feedback-form]");
+    if (!form) return;
+    const detail = section.querySelector<HTMLElement>("[data-feedback-toggle]")?.getAttribute("aria-controls");
+    const detailEl = detail ? document.getElementById(detail) : null;
+    const thanks = section.querySelector<HTMLElement>("[data-feedback-thanks]");
+    const quick = section.querySelector<HTMLElement>("[data-feedback-quick]");
+    const toggle = section.querySelector<HTMLButtonElement>("[data-feedback-toggle]");
+    const cancel = section.querySelector<HTMLButtonElement>("[data-feedback-cancel]");
+
+    function setMode(mode: Mode) {
+      switch (mode) {
+        case "idle":
+          quick?.removeAttribute("hidden");
+          detailEl?.setAttribute("hidden", "");
+          thanks?.setAttribute("hidden", "");
+          toggle?.setAttribute("aria-expanded", "false");
+          break;
+        case "detail":
+          quick?.setAttribute("hidden", "");
+          detailEl?.removeAttribute("hidden");
+          toggle?.setAttribute("aria-expanded", "true");
+          (detailEl?.querySelector("textarea") as HTMLTextAreaElement | null)?.focus();
+          break;
+        case "thanks":
+          quick?.setAttribute("hidden", "");
+          detailEl?.setAttribute("hidden", "");
+          thanks?.removeAttribute("hidden");
+          break;
+      }
+    }
+
+    toggle?.addEventListener("click", () => setMode("detail"));
+    cancel?.addEventListener("click", () => setMode("idle"));
+
+    form.addEventListener("submit", async (e) => {
+      // honeypot — bot preencheu? aborta silenciosamente
+      if ((form.elements.namedItem("website") as HTMLInputElement | null)?.value) {
+        e.preventDefault();
+        setMode("thanks");
+        return;
+      }
+
+      // se browser não suporta fetch, deixa POST normal acontecer (form action)
+      if (!window.fetch) return;
+
+      e.preventDefault();
+      const data = new FormData(form);
+      try {
+        const res = await fetch(form.action, {
+          method: "POST",
+          body: data,
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok && res.status !== 0) {
+          // 0 = opaque (CORS) — algumas configs do worker. Tratamos como sucesso silencioso.
+          throw new Error(`HTTP ${res.status}`);
+        }
+      } catch (err) {
+        console.warn("[feedback] fallback envio:", err);
+        // último recurso: deixa o navegador submeter (vai abrir nova aba do action)
+        form.submit();
+        return;
+      }
+      setMode("thanks");
+    });
+  }
+
+  for (const el of document.querySelectorAll<HTMLElement>("[data-feedback]")) {
+    setupOne(el);
+  }
+</script>

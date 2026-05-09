@@ -1,0 +1,16 @@
+name = "cdb-feedback"
+main = "feedback.ts"
+compatibility_date = "2026-01-01"
+
+[vars]
+GITHUB_OWNER = "phbruce"
+GITHUB_REPO = "comida-di-buteco-better-ux"
+ALLOWED_ORIGINS = "https://phbruce.github.io,http://localhost:4321"
+
+# GITHUB_TOKEN é secret — definir com:
+#   npx wrangler secret put GITHUB_TOKEN
+
+# (opcional) KV para rate-limit persistente:
+# [[kv_namespaces]]
+# binding = "RATE_LIMIT_KV"
+# id = "<id-do-kv-namespace>"

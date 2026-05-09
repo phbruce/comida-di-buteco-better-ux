@@ -1,8 +1,8 @@
-# ADR-0006 — Botão de feedback "esta info está correta?" (proposta)
+# ADR-0006 — Botão de feedback "esta info está correta?"
 
-- **Status:** PROPOSED ⚠️ aguarda aprovação do dono do produto
+- **Status:** ACCEPTED
 - **Data:** 2026-05-09
-- **Decisor(es):** —
+- **Decisor(es):** Dono do produto (aprovado em 2026-05-09 — opção A: Cloudflare Worker → GitHub Issues)
 - **RFs/RNFs relacionados:** RNF-0001 (a11y), RNF-0002 (performance), RNF-0005 (privacidade)
 
 ## Contexto

@@ -1,0 +1,174 @@
+---
+/**
+ * ButecoListItem — item de lista no estilo "Document list" do GOV.UK.
+ *
+ * Diferente do ButecoCard:
+ * - Sem fundo, sem borda em torno do item; só separador 1px abaixo.
+ * - Foto pequena à esquerda (96x64) opcional — densidade alta.
+ * - Tipografia hierárquica: h3 link grande + prato em texto + metadata caption.
+ *
+ * Atende RF-0001 melhor para listas longas (>30 butecos por cidade).
+ */
+
+import { fotoAltSintetico, type Buteco } from "~/data/butecos";
+
+interface Props {
+  buteco: Buteco;
+  destacarCidade?: boolean;
+  /** Mostrar foto à esquerda. Padrão true; false = density máxima estilo gov.uk puro. */
+  comFoto?: boolean;
+}
+
+const { buteco, destacarCidade = false, comFoto = true } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const detalheUrl = `${base}butecos/${buteco.cidade_slug}/${buteco.slug}/`;
+const alt = fotoAltSintetico(buteco);
+---
+
+<li class={`item ${comFoto ? "item--with-photo" : ""}`}>
+  <article>
+    {comFoto && buteco.foto && (
+      <a class="item__media" href={detalheUrl} tabindex="-1" aria-hidden="true">
+        <img
+          src={buteco.foto}
+          alt=""
+          width="200"
+          height="134"
+          loading="lazy"
+          decoding="async"
+          referrerpolicy="no-referrer-when-downgrade"
+        />
+      </a>
+    )}
+    <div class="item__body">
+      <h3 class="item__title">
+        <a class="item__link" href={detalheUrl}>
+          {buteco.nome}
+          <span aria-hidden="true" class="item__arrow">›</span>
+        </a>
+      </h3>
+      <p class="item__prato">{buteco.prato}</p>
+      <p class="item__meta">
+        {destacarCidade && (
+          <>
+            <span class="item__meta-strong">{buteco.cidade}{buteco.uf ? ` — ${buteco.uf}` : ""}</span>
+            {buteco.bairro && <span aria-hidden="true"> · </span>}
+          </>
+        )}
+        {buteco.bairro && <span>{buteco.bairro}</span>}
+        {buteco.edicao_ano && (
+          <>
+            <span aria-hidden="true"> · </span>
+            <span>Edição {buteco.edicao_ano}</span>
+          </>
+        )}
+      </p>
+    </div>
+  </article>
+</li>
+
+<style>
+  .item {
+    border-block-end: var(--border-thin);
+    list-style: none;
+  }
+  .item:first-child {
+    border-block-start: var(--border-thin);
+  }
+  .item article {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    padding-block: var(--space-4);
+    align-items: center;
+  }
+  .item--with-photo article {
+    grid-template-columns: 96px 1fr;
+  }
+
+  .item__media {
+    display: block;
+    width: 96px;
+    height: 64px;
+    overflow: hidden;
+    background: var(--color-bg-soft);
+    border: var(--border-thin);
+    flex-shrink: 0;
+  }
+  .item__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .item__body {
+    min-width: 0;
+  }
+
+  .item__title {
+    margin: 0;
+    font-size: var(--font-size-h3);
+    line-height: var(--line-height-snug);
+  }
+  .item__link {
+    color: var(--color-brand-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .item__link:hover {
+    color: var(--color-brand-primary-hover);
+    text-decoration-thickness: 2px;
+  }
+  .item__arrow {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-regular);
+    transition: transform var(--motion-fast) var(--easing-standard);
+  }
+  .item__link:hover .item__arrow {
+    transform: translateX(3px);
+    color: var(--color-brand-primary);
+  }
+
+  .item__prato {
+    margin: var(--space-1) 0 0;
+    font-size: var(--font-size-body);
+    color: var(--color-text-strong);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .item__meta {
+    margin: var(--space-1) 0 0;
+    font-size: var(--font-size-small);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-normal);
+  }
+  .item__meta-strong {
+    color: var(--color-text-strong);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  @media (min-width: 640px) {
+    .item--with-photo article {
+      grid-template-columns: 144px 1fr;
+      gap: var(--space-5);
+    }
+    .item__media {
+      width: 144px;
+      height: 96px;
+    }
+    .item__prato {
+      font-size: var(--font-size-h3);
+      font-weight: var(--font-weight-regular);
+      white-space: normal;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+    }
+  }
+</style>
