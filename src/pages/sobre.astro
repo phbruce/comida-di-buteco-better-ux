@@ -1,0 +1,222 @@
+---
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import Breadcrumb from "~/components/ui/Breadcrumb.astro";
+import { butecos, cidades, edicao } from "~/data/butecos";
+
+const base = import.meta.env.BASE_URL;
+const totalButecos = butecos.length;
+const totalCidades = cidades.length;
+---
+
+<BaseLayout
+  title="Sobre este redesign"
+  description="Sobre o redesign não oficial do Comida di Buteco — case study de UI/UX, acessibilidade e mobile-first."
+>
+  <Breadcrumb items={[
+    { label: "Início", href: base },
+    { label: "Sobre" },
+  ]} />
+
+  <article class="sobre">
+    <div class="container container--narrow">
+
+      <header class="sobre__header">
+        <p class="sobre__eyebrow">Case study</p>
+        <h1>Sobre este redesign</h1>
+        <p class="sobre__lede">
+          Este é um redesign <strong>não oficial</strong> e exploratório do site
+          do concurso Comida di Buteco. É um case study de UI/UX, acessibilidade e
+          mobile-first sobre um produto público brasileiro existente. Não tem
+          vínculo com a organização do concurso.
+        </p>
+      </header>
+
+      <section aria-labelledby="oque">
+        <h2 id="oque">O que é</h2>
+        <p>
+          O concurso oficial Comida di Buteco acontece todo ano em diversas
+          cidades do Brasil — butecos competem com um prato autoral e o público
+          visita, prova e vota. O site oficial é o ponto central da edição, mas
+          tem oportunidades de melhoria em densidade visual, hierarquia,
+          mobile-first e performance.
+        </p>
+        <p>
+          Aqui exploramos como esse mesmo conteúdo poderia ser apresentado com
+          princípios do design system do GOV.UK — minimalismo, alto contraste,
+          tipografia clara, foco visível — adaptados a uma identidade
+          gastronômica brasileira.
+        </p>
+        <p>
+          Para o concurso oficial, votação e regulamento, acesse
+          <a href="https://comidadibuteco.com.br" rel="noopener">comidadibuteco.com.br</a>.
+        </p>
+      </section>
+
+      <section aria-labelledby="dados">
+        <h2 id="dados">Os dados</h2>
+        <p>
+          {totalButecos} butecos em {totalCidades} cidades, edição {edicao}. Foram
+          coletados via crawl polite (uma requisição por segundo, User-Agent
+          identificável apontando para este repositório) das URLs públicas do
+          sitemap oficial.
+        </p>
+        <p>
+          As fotos não são redistribuídas — cada foto é referenciada via hotlink
+          ao servidor original, com atribuição ao Comida di Buteco e ao
+          fotógrafo (quando identificável no nome do arquivo). As coordenadas dos
+          butecos foram inferidas em build via Nominatim (OpenStreetMap), também
+          respeitando rate limit.
+        </p>
+      </section>
+
+      <section aria-labelledby="tech">
+        <h2 id="tech">Stack</h2>
+        <ul>
+          <li>Astro 5 em modo estático, hospedado em GitHub Pages.</li>
+          <li>CSS nativo com Custom Properties (sem framework de utility).</li>
+          <li>Inter Variable auto-hospedada (sem Google Fonts).</li>
+          <li>Mapa via Google Maps Embed API.</li>
+          <li>Comentários via Cusdis (anônimo, sem login).</li>
+          <li>Feedback via GitHub Issues pré-preenchido.</li>
+          <li>1.050 páginas geradas em build, ~24 MB total incluindo fontes.</li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="processo">
+        <h2 id="processo">Processo</h2>
+        <p>
+          Toda decisão arquitetural é registrada como ADR (Architecture Decision
+          Record). Você consegue auditar a história de decisões em
+          <a href="https://github.com/phbruce/comida-di-buteco-better-ux/tree/claude/design-system-setup-6xB7T/docs/adr"
+             rel="noopener">docs/adr</a>
+          do repositório. Cada decisão lista alternativas consideradas,
+          consequências e como reverter.
+        </p>
+        <p>
+          Requisitos funcionais e não funcionais ficam em
+          <code>docs/requisitos/</code>, e o roadmap em <code>ROADMAP.md</code>.
+        </p>
+      </section>
+
+      <section aria-labelledby="acessibilidade">
+        <h2 id="acessibilidade">Acessibilidade</h2>
+        <p>
+          O alvo é WCAG 2.2 AA em todas as telas. Páginas usam HTML semântico,
+          foco visível com cor de assinatura amarela e sublinhado preto, contraste
+          mínimo 4.5:1 em texto, tap targets de pelo menos 44 pixels e suporte
+          completo a teclado.
+        </p>
+        <p>
+          Encontrou uma barreira? Em qualquer página de detalhe de buteco há um
+          botão <strong>Tem algo errado</strong>. Ele abre uma issue pública no
+          GitHub deste repositório — pode descrever o problema lá.
+        </p>
+      </section>
+
+      <section aria-labelledby="privacidade">
+        <h2 id="privacidade">Privacidade</h2>
+        <p>
+          Por padrão o site não tem analytics, não usa cookies próprios e não
+          rastreia o visitante. Conteúdo de terceiros (mapa do Google, widget
+          de comentários do Cusdis) só é carregado quando você interage com
+          ele — clicando em "Mostrar mapa" ou rolando até a seção de
+          comentários. Cada um desses serviços tem sua própria política de
+          dados, e o site avisa antes de carregar.
+        </p>
+      </section>
+
+      <section aria-labelledby="direitos">
+        <h2 id="direitos">Marca e direitos</h2>
+        <p>
+          "Comida di Buteco" é marca registrada da organização que promove o
+          concurso. Este redesign não reivindica qualquer direito sobre a marca
+          ou identidade visual oficial. Conteúdo (nomes de butecos, pratos,
+          fotos) pertence aos respectivos titulares e aparece aqui a título
+          exclusivamente informativo, com link de volta ao site oficial.
+        </p>
+        <p>
+          Se um titular pedir remoção de algum item, é feito imediatamente —
+          basta abrir uma issue em
+          <a href="https://github.com/phbruce/comida-di-buteco-better-ux/issues/new"
+             rel="noopener">github.com/phbruce/comida-di-buteco-better-ux/issues</a>.
+        </p>
+        <p>
+          O <strong>código</strong> deste repositório está sob licença MIT. A
+          licença cobre apenas o código (templates, CSS, scripts), não cobre
+          marca, logos ou conteúdo coletado.
+        </p>
+      </section>
+
+      <section aria-labelledby="contato">
+        <h2 id="contato">Contato</h2>
+        <p>
+          Mantido por <a href="https://github.com/phbruce" rel="noopener">@phbruce</a>.
+          Para dúvidas sobre o redesign, abra uma issue ou inicie uma discussion
+          em
+          <a href="https://github.com/phbruce/comida-di-buteco-better-ux"
+             rel="noopener">github.com/phbruce/comida-di-buteco-better-ux</a>.
+          Para qualquer coisa relacionada ao concurso oficial, acesse
+          <a href="https://comidadibuteco.com.br" rel="noopener">comidadibuteco.com.br</a>.
+        </p>
+      </section>
+
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .sobre {
+    padding-block: var(--space-7) var(--space-9);
+  }
+  .sobre__header {
+    margin-block-end: var(--space-7);
+    padding-block-end: var(--space-5);
+    border-block-end: var(--border-thin);
+  }
+  .sobre__eyebrow {
+    margin: 0 0 var(--space-3);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-brand-primary);
+  }
+  .sobre h1 {
+    font-size: var(--font-size-display);
+    line-height: var(--line-height-tight);
+    margin-block-end: var(--space-4);
+  }
+  .sobre__lede {
+    font-size: var(--font-size-h3);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .sobre section {
+    margin-block-start: var(--space-7);
+  }
+  .sobre h2 {
+    font-size: var(--font-size-h2);
+    margin-block-end: var(--space-3);
+    scroll-margin-block-start: var(--space-5);
+  }
+  .sobre p {
+    line-height: var(--line-height-relaxed);
+    margin-block-end: var(--space-3);
+    max-width: 65ch;
+  }
+  .sobre ul {
+    margin-block-end: var(--space-3);
+    padding-inline-start: 1.25em;
+    line-height: var(--line-height-relaxed);
+  }
+  .sobre li {
+    margin-block-end: var(--space-2);
+  }
+  .sobre code {
+    background: var(--color-bg-soft);
+    padding: 1px 6px;
+    font-size: 0.92em;
+    border: var(--border-thin);
+  }
+</style>
