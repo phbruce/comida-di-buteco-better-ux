@@ -163,6 +163,7 @@ const credito = creditoFoto(buteco);
             rel="noopener"
           >
             Avaliar no site oficial
+            <span class="visually-hidden"> (abre em nova aba)</span>
             <svg
               class="buteco__vote-ext"
               viewBox="0 0 24 24"
@@ -180,9 +181,6 @@ const credito = creditoFoto(buteco);
               />
             </svg>
           </Button>
-          <p class="buteco__hint">
-            Abre <code>{oficialUrl.replace("https://", "").replace(/\/$/, "")}</code> em nova aba.
-          </p>
         </div>
       </aside>
     </div>
