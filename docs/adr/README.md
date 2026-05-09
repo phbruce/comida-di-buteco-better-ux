@@ -36,6 +36,7 @@ Cada ADR responde:
 | [ADR-0008](./ADR-0008-comentarios-cusdis.md) | Comentários nas páginas via Cusdis | ACCEPTED | Dono do produto | 2026-05-09 |
 | [ADR-0009](./ADR-0009-mapa-google.md) | Trocar mapa para Google Maps (Embed) | ACCEPTED | Dono do produto | 2026-05-09 |
 | [ADR-0010](./ADR-0010-mapa-interativo-pan-zoom.md) | Destravar pan/zoom do mapa (Google API key) | ACCEPTED | Dono do produto | 2026-05-09 |
+| [ADR-0011](./ADR-0011-tags-alimentares.md) | Tags vegetariano/vegano e filtros alimentares | **PROPOSED** | — | 2026-05-09 |
 
 ## Como propor um ADR
 
