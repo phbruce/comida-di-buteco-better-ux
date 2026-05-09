@@ -105,7 +105,7 @@ const repoUrl = "https://github.com/phbruce/comida-di-buteco-better-ux";
           <li><strong>CSS nativo</strong> com Custom Properties (sem framework de utility nem CSS-in-JS).</li>
           <li><strong>Inter Variable</strong> auto-hospedada, sem Google Fonts.</li>
           <li><strong>Mapa</strong> via Google Maps Embed API, lazy-loaded — só carrega quando o visitante clica em "Mostrar mapa".</li>
-          <li><strong>Comentários</strong> via Cusdis, anônimos (basta digitar um nome livre), com tema CSS espelhando os tokens deste design system.</li>
+          <li><strong>Comentários</strong> via Cusdis, anônimos (basta digitar um nome livre). O widget é renderizado num iframe da Cusdis com a UI padrão deles — o redor (título, container) segue nosso design system, mas o formulário interno tem o look do Cusdis.</li>
           <li><strong>Feedback</strong> via Web3Forms — visitante envia sem cadastro, recebimento por email do mantenedor. Defesas em camadas: honeypot, time-check, rate limit local, e Cloudflare Turnstile invisível como anti-bot server-side.</li>
           <li><strong>~1.000 páginas</strong> pré-renderizadas em build, total ~24 MB incluindo a fonte. Zero JS no caminho crítico do conteúdo.</li>
         </ul>
