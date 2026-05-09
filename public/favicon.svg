@@ -1,5 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Comida di Buteco">
-  <rect width="32" height="32" rx="6" fill="#9c2a1b"/>
-  <text x="16" y="21" text-anchor="middle" font-family="Inter, system-ui, sans-serif"
-        font-size="14" font-weight="800" fill="#fbf7f0" letter-spacing="-0.5">CdB</text>
+  <rect width="32" height="32" fill="#9c2a1b"/>
+  <!-- Toldo -->
+  <path d="M 4 13 L 16 6 L 28 13 Z" fill="#fbf7f0"/>
+  <!-- Fachada -->
+  <path d="M 7 13 L 7 27 L 25 27 L 25 13 Z" fill="#fbf7f0"/>
+  <!-- Porta -->
+  <rect x="13.5" y="18" width="5" height="9" fill="#9c2a1b"/>
 </svg>
