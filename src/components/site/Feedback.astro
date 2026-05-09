@@ -283,7 +283,51 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
 </style>
 
 <script>
-  type Mode = "idle" | "detail" | "sending" | "thanks";
+  type Mode = "idle" | "detail" | "sending" | "thanks" | "throttled";
+
+  /** Rate limit cliente — armazenado em localStorage. Estende o free tier
+      do Web3Forms e barra abuso casual. NÃO substitui defesa server-side
+      (Turnstile, Web3Forms próprio rate limit por IP). */
+  const RATE_LIMITS = [
+    { windowMs: 60 * 1000,            max: 1,  key: "cdb-fb-rl-min" },
+    { windowMs: 60 * 60 * 1000,       max: 5,  key: "cdb-fb-rl-hour" },
+    { windowMs: 24 * 60 * 60 * 1000,  max: 20, key: "cdb-fb-rl-day" },
+  ];
+  /** Tempo mínimo entre o form abrir e o submit (anti-bot leve). */
+  const MIN_DWELL_MS = 2000;
+
+  function checkRateLimit(): { ok: true } | { ok: false; retryAfterMs: number; label: string } {
+    const now = Date.now();
+    try {
+      for (const limit of RATE_LIMITS) {
+        const arr: number[] = JSON.parse(localStorage.getItem(limit.key) ?? "[]");
+        const recent = arr.filter((t) => now - t < limit.windowMs);
+        if (recent.length >= limit.max) {
+          const oldest = Math.min(...recent);
+          const retryAfterMs = limit.windowMs - (now - oldest);
+          const label =
+            limit.windowMs <= 60_000 ? "alguns segundos" :
+            limit.windowMs <= 3_600_000 ? "alguns minutos" : "algumas horas";
+          return { ok: false, retryAfterMs, label };
+        }
+      }
+    } catch {
+      // localStorage indisponível (ex.: modo privado strict) — não bloqueia
+    }
+    return { ok: true };
+  }
+
+  function recordSubmit() {
+    const now = Date.now();
+    try {
+      for (const limit of RATE_LIMITS) {
+        const arr: number[] = JSON.parse(localStorage.getItem(limit.key) ?? "[]");
+        arr.push(now);
+        const trimmed = arr.filter((t) => now - t < limit.windowMs);
+        localStorage.setItem(limit.key, JSON.stringify(trimmed));
+      }
+    } catch { /* ignora */ }
+  }
 
   function setupOne(section: HTMLElement) {
     const form = section.querySelector<HTMLFormElement>("[data-feedback-form]");
@@ -294,6 +338,9 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
     const quick = section.querySelector<HTMLElement>("[data-feedback-quick]");
     const toggle = section.querySelector<HTMLButtonElement>("[data-feedback-toggle]");
     const cancel = section.querySelector<HTMLButtonElement>("[data-feedback-cancel]");
+
+    /** Quando a seção foi montada — usado pra checar tempo mínimo de dwell. */
+    const mountedAt = Date.now();
 
     function setMode(mode: Mode) {
       switch (mode) {
@@ -332,17 +379,46 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
         return;
       }
 
+      // Anti-bot leve: form precisa estar visível há pelo menos 2s
+      if (Date.now() - mountedAt < MIN_DWELL_MS) {
+        e.preventDefault();
+        setMode("thanks");
+        return;
+      }
+
+      // Rate limit cliente — bloqueia abuso casual (estende free tier)
+      const rl = checkRateLimit();
+      if (!rl.ok) {
+        e.preventDefault();
+        if (thanks) {
+          thanks.innerHTML =
+            "<p><strong>Espera só um pouco.</strong> Já recebemos um " +
+            "feedback seu há pouco — tenta de novo em " + rl.label + ".</p>";
+        }
+        setMode("thanks");
+        return;
+      }
+
       e.preventDefault();
-      const data = new FormData(form);
+
+      // Captura o botão que disparou o submit — sem isso,
+      // FormData(form) não inclui o name="rating" do <button submit>.
+      const submitter = (e as SubmitEvent).submitter as HTMLButtonElement | null;
+      const data = new FormData(form, submitter ?? undefined);
+      // fallback caso o browser não suporte o 2º argumento de FormData
+      if (!data.get("rating") && submitter?.getAttribute("name") === "rating") {
+        data.set("rating", submitter.value || "bad");
+      }
+
       const rating = (data.get("rating") as string | null) ?? "bad";
       const message = (data.get("message") as string | null) ?? "";
+      const pageId = form.dataset.pageId ?? "";
+      const pageTitle = form.dataset.pageTitle ?? "";
+      const pageUrl = form.dataset.pageUrl ?? "";
 
       if (mode === "github") {
         // monta URL do GitHub Issue pré-preenchido e abre em nova aba
         const ghBase = form.dataset.ghBadBase ?? "https://github.com/issues/new";
-        const pageId = form.dataset.pageId ?? "";
-        const pageTitle = form.dataset.pageTitle ?? "";
-        const pageUrl = form.dataset.pageUrl ?? "";
         const params = new URLSearchParams({
           title: `[feedback] ${pageTitle}`,
           labels: `feedback,${rating === "ok" ? "feedback-ok" : "feedback-corrigir"}`,
@@ -356,11 +432,33 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
           ].join("\n"),
         });
         window.open(`${ghBase}?${params.toString()}`, "_blank", "noopener");
+        recordSubmit();
         setMode("thanks");
         return;
       }
 
-      // modo w3f / worker: POST com fetch silencioso, "Obrigado!" inline
+      if (mode === "w3f") {
+        // Consolida tudo num único campo `message` para email mais legível
+        // e remove os campos extras (Web3Forms encaminha tudo o que vier).
+        const composite = [
+          `Avaliação: ${rating === "ok" ? "OK — está correto" : "TEM ALGO ERRADO"}`,
+          `Página: ${pageTitle}`,
+          `URL: ${pageUrl}`,
+          `ID interno: ${pageId}`,
+          "",
+          "Mensagem do visitante:",
+          message || "(sem mensagem)",
+        ].join("\n");
+        data.delete("pageId");
+        data.delete("pageTitle");
+        data.delete("pageUrl");
+        data.delete("rating");
+        data.delete("website");   // honeypot custom
+        data.delete("botcheck");  // honeypot Web3Forms
+        data.set("message", composite);
+      }
+
+      // POST com fetch silencioso (modo w3f / worker), "Obrigado!" inline
       try {
         const res = await fetch(form.action, {
           method: "POST",
@@ -370,6 +468,7 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
         if (!res.ok && res.status !== 0) {
           throw new Error(`HTTP ${res.status}`);
         }
+        recordSubmit();
       } catch (err) {
         console.warn("[feedback] fallback envio:", err);
         form.submit();
