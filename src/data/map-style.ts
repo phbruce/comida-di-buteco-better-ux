@@ -4,21 +4,47 @@
  * Source: OpenFreeMap (https://openfreemap.org) — vector tiles OSM, free, sem chave.
  * Schema: OpenMapTiles.
  *
- * Para mudar cores, ajuste os tokens. Estes valores espelham docs/adr/ADR-0004.
+ * Inspiração: Mapbox Light + GOV.UK minimalismo. Cada via tem técnica de
+ * "casing" (linha de contorno escura embaixo + preenchimento claro em cima)
+ * para legibilidade profissional. Cores derivadas dos tokens com tons
+ * dessaturados — o vermelho urucum fica reservado pro marker, mapa é fundo.
  */
 
 import type { StyleSpecification } from "maplibre-gl";
 
-const COLORS = {
-  canvas: "#ffffff",
-  soft: "#faf6ee",
-  surface: "#fbf7f0",
-  border: "#cfc6b5",
-  textMuted: "#5b554c",
+const C = {
+  /* Base */
+  bgLand: "#f5efe2",          /* cream warm — mais saturado que --bg-soft, contrasta com edifícios */
+  bgWater: "#b8d4e6",         /* azul suave, não compete com marca */
+  bgWaterway: "#9bc1d8",      /* rios mais escuros que mar */
+  bgPark: "#d6e3c9",          /* verde dessaturado */
+  bgPitch: "#cee0c1",         /* esporte/quadras */
+  bgWood: "#cad9c0",
+  bgSand: "#ece2bf",
+  bgWetland: "#cfdacb",
+
+  /* Edifícios */
+  building: "#e8dec9",
+  buildingBorder: "#d8c9a8",
+  buildingResidential: "#ebe1cd",
+
+  /* Vias — técnica de casing (outline + fill) */
+  roadCasing: "#9b8d76",
+  roadFill: "#ffffff",
+  roadMinor: "#bdac8e",       /* minor: linha única sem casing */
+  roadService: "#cfbf9f",
+  motorwayCasing: "#7a6852",
+  motorwayFill: "#fff7e0",    /* leve tom warm pra destacar das primárias */
+
+  /* Texto */
   textStrong: "#1a1815",
-  brandPrimary: "#9c2a1b",
-  brandSecondary: "#1f6f4a",
-  brandAccent: "#f4b400",
+  textMuted: "#5b554c",
+  haloLight: "#f7f1e4",
+  haloMuted: "rgba(247,241,228,0.85)",
+
+  /* Bordas administrativas */
+  boundaryState: "#a39785",
+  boundaryCountry: "#5b554c",
 };
 
 export const butecoMapStyle: StyleSpecification = {
@@ -37,186 +63,281 @@ export const butecoMapStyle: StyleSpecification = {
   },
   sprite: undefined,
   layers: [
+    /* ---------- Base ---------- */
+    { id: "background", type: "background", paint: { "background-color": C.bgLand } },
+
+    /* ---------- Landcover (parques, mata, areia, etc.) ---------- */
     {
-      id: "background",
-      type: "background",
-      paint: { "background-color": COLORS.soft },
+      id: "lc-wood", type: "fill", source: "openfreemap", "source-layer": "landcover",
+      filter: ["in", ["get", "class"], ["literal", ["wood", "forest"]]],
+      paint: { "fill-color": C.bgWood, "fill-opacity": 0.9 },
     },
     {
-      id: "park",
-      type: "fill",
-      source: "openfreemap",
-      "source-layer": "park",
+      id: "lc-grass", type: "fill", source: "openfreemap", "source-layer": "landcover",
+      filter: ["in", ["get", "class"], ["literal", ["grass", "scrub", "farmland", "meadow"]]],
+      paint: { "fill-color": C.bgPark, "fill-opacity": 0.85 },
+    },
+    {
+      id: "lc-sand", type: "fill", source: "openfreemap", "source-layer": "landcover",
+      filter: ["==", ["get", "class"], "sand"],
+      paint: { "fill-color": C.bgSand },
+    },
+    {
+      id: "lc-wetland", type: "fill", source: "openfreemap", "source-layer": "landcover",
+      filter: ["==", ["get", "class"], "wetland"],
+      paint: { "fill-color": C.bgWetland, "fill-opacity": 0.9 },
+    },
+
+    /* ---------- Landuse específicos ---------- */
+    {
+      id: "lu-residential", type: "fill", source: "openfreemap", "source-layer": "landuse",
+      filter: ["==", ["get", "class"], "residential"],
+      paint: { "fill-color": C.bgLand, "fill-opacity": 0.6 },
+    },
+    {
+      id: "park", type: "fill", source: "openfreemap", "source-layer": "park",
+      paint: { "fill-color": C.bgPark, "fill-opacity": 0.9 },
+    },
+    {
+      id: "park-outline", type: "line", source: "openfreemap", "source-layer": "park",
+      paint: { "line-color": "#a8b89a", "line-width": 0.5, "line-opacity": 0.8 },
+    },
+
+    /* ---------- Água ---------- */
+    {
+      id: "water", type: "fill", source: "openfreemap", "source-layer": "water",
+      paint: { "fill-color": C.bgWater },
+    },
+    {
+      id: "waterway", type: "line", source: "openfreemap", "source-layer": "waterway",
       paint: {
-        "fill-color": COLORS.brandSecondary,
-        "fill-opacity": 0.12,
+        "line-color": C.bgWaterway,
+        "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.5, 14, 2, 18, 4],
       },
     },
+
+    /* ---------- Edifícios ---------- */
     {
-      id: "landcover-grass",
-      type: "fill",
-      source: "openfreemap",
-      "source-layer": "landcover",
-      filter: ["==", ["get", "class"], "grass"],
-      paint: {
-        "fill-color": COLORS.brandSecondary,
-        "fill-opacity": 0.08,
-      },
-    },
-    {
-      id: "water",
-      type: "fill",
-      source: "openfreemap",
-      "source-layer": "water",
-      paint: {
-        "fill-color": "#cdd9e6",
-      },
-    },
-    {
-      id: "waterway",
-      type: "line",
-      source: "openfreemap",
-      "source-layer": "waterway",
-      paint: {
-        "line-color": "#9bb1c8",
-        "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.5, 14, 1.5],
-      },
-    },
-    {
-      id: "buildings",
-      type: "fill",
-      source: "openfreemap",
-      "source-layer": "building",
-      minzoom: 14,
-      paint: {
-        "fill-color": COLORS.surface,
-        "fill-outline-color": COLORS.border,
-        "fill-opacity": 0.7,
-      },
-    },
-    {
-      id: "roads-minor",
-      type: "line",
-      source: "openfreemap",
-      "source-layer": "transportation",
-      filter: ["in", ["get", "class"], ["literal", ["minor", "service", "path", "track"]]],
+      id: "building", type: "fill", source: "openfreemap", "source-layer": "building",
       minzoom: 13,
       paint: {
-        "line-color": COLORS.border,
-        "line-width": ["interpolate", ["linear"], ["zoom"], 13, 0.5, 18, 2],
+        "fill-color": C.building,
+        "fill-outline-color": C.buildingBorder,
+        "fill-opacity": ["interpolate", ["linear"], ["zoom"], 13, 0, 15, 0.8, 18, 0.95],
       },
     },
+
+    /* ---------- VIAS — técnica de casing ----------
+       Cada nível de via tem 2 camadas:
+       1) -casing : linha mais larga, cor escura
+       2) -fill   : linha mais estreita, cor clara — desenhada DEPOIS (em cima) */
+
+    /* Service & paths — via única, fina */
     {
-      id: "roads-tertiary",
-      type: "line",
-      source: "openfreemap",
-      "source-layer": "transportation",
+      id: "road-service", type: "line", source: "openfreemap", "source-layer": "transportation",
+      filter: ["in", ["get", "class"], ["literal", ["service", "track", "path"]]],
+      minzoom: 14,
+      paint: {
+        "line-color": C.roadService,
+        "line-width": ["interpolate", ["linear"], ["zoom"], 14, 0.5, 18, 2.5],
+      },
+    },
+
+    /* Minor — sem casing, fica leve */
+    {
+      id: "road-minor", type: "line", source: "openfreemap", "source-layer": "transportation",
+      filter: ["==", ["get", "class"], "minor"],
+      minzoom: 12,
+      paint: {
+        "line-color": C.roadMinor,
+        "line-width": ["interpolate", ["linear"], ["zoom"], 12, 0.4, 18, 5],
+      },
+    },
+
+    /* Tertiary — casing leve */
+    {
+      id: "road-tertiary-casing", type: "line", source: "openfreemap", "source-layer": "transportation",
       filter: ["==", ["get", "class"], "tertiary"],
+      minzoom: 11,
       paint: {
-        "line-color": COLORS.border,
-        "line-width": ["interpolate", ["linear"], ["zoom"], 11, 0.5, 18, 3],
+        "line-color": C.roadCasing,
+        "line-width": ["interpolate", ["linear"], ["zoom"], 11, 0.6, 18, 8],
       },
     },
     {
-      id: "roads-secondary",
-      type: "line",
-      source: "openfreemap",
-      "source-layer": "transportation",
+      id: "road-tertiary-fill", type: "line", source: "openfreemap", "source-layer": "transportation",
+      filter: ["==", ["get", "class"], "tertiary"],
+      minzoom: 11,
+      paint: {
+        "line-color": C.roadFill,
+        "line-width": ["interpolate", ["linear"], ["zoom"], 11, 0.2, 18, 6],
+      },
+    },
+
+    /* Secondary */
+    {
+      id: "road-secondary-casing", type: "line", source: "openfreemap", "source-layer": "transportation",
       filter: ["==", ["get", "class"], "secondary"],
+      minzoom: 10,
       paint: {
-        "line-color": COLORS.textMuted,
-        "line-width": ["interpolate", ["linear"], ["zoom"], 10, 0.5, 18, 4],
+        "line-color": C.roadCasing,
+        "line-width": ["interpolate", ["linear"], ["zoom"], 10, 0.6, 18, 11],
       },
     },
     {
-      id: "roads-primary",
-      type: "line",
-      source: "openfreemap",
-      "source-layer": "transportation",
+      id: "road-secondary-fill", type: "line", source: "openfreemap", "source-layer": "transportation",
+      filter: ["==", ["get", "class"], "secondary"],
+      minzoom: 10,
+      paint: {
+        "line-color": C.roadFill,
+        "line-width": ["interpolate", ["linear"], ["zoom"], 10, 0.2, 18, 8],
+      },
+    },
+
+    /* Primary & Trunk */
+    {
+      id: "road-primary-casing", type: "line", source: "openfreemap", "source-layer": "transportation",
       filter: ["in", ["get", "class"], ["literal", ["primary", "trunk"]]],
+      minzoom: 8,
       paint: {
-        "line-color": COLORS.textMuted,
-        "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.5, 18, 5],
+        "line-color": C.roadCasing,
+        "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.8, 18, 14],
       },
     },
     {
-      id: "roads-motorway",
-      type: "line",
-      source: "openfreemap",
-      "source-layer": "transportation",
+      id: "road-primary-fill", type: "line", source: "openfreemap", "source-layer": "transportation",
+      filter: ["in", ["get", "class"], ["literal", ["primary", "trunk"]]],
+      minzoom: 8,
+      paint: {
+        "line-color": C.roadFill,
+        "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.4, 18, 10],
+      },
+    },
+
+    /* Motorway — fill com tom warm pra distinguir sem agredir */
+    {
+      id: "road-motorway-casing", type: "line", source: "openfreemap", "source-layer": "transportation",
       filter: ["==", ["get", "class"], "motorway"],
+      minzoom: 6,
       paint: {
-        "line-color": COLORS.brandPrimary,
-        "line-width": ["interpolate", ["linear"], ["zoom"], 6, 0.5, 18, 6],
+        "line-color": C.motorwayCasing,
+        "line-width": ["interpolate", ["linear"], ["zoom"], 6, 0.8, 18, 18],
       },
     },
     {
-      id: "boundary-state",
-      type: "line",
-      source: "openfreemap",
-      "source-layer": "boundary",
+      id: "road-motorway-fill", type: "line", source: "openfreemap", "source-layer": "transportation",
+      filter: ["==", ["get", "class"], "motorway"],
+      minzoom: 6,
+      paint: {
+        "line-color": C.motorwayFill,
+        "line-width": ["interpolate", ["linear"], ["zoom"], 6, 0.4, 18, 14],
+      },
+    },
+
+    /* ---------- Bordas administrativas ---------- */
+    {
+      id: "boundary-state", type: "line", source: "openfreemap", "source-layer": "boundary",
       filter: ["==", ["get", "admin_level"], 4],
       paint: {
-        "line-color": COLORS.border,
-        "line-width": 1,
-        "line-dasharray": [2, 2],
+        "line-color": C.boundaryState,
+        "line-width": ["interpolate", ["linear"], ["zoom"], 4, 0.5, 10, 1.2],
+        "line-dasharray": [3, 2],
       },
     },
     {
-      id: "place-city",
-      type: "symbol",
-      source: "openfreemap",
-      "source-layer": "place",
-      filter: ["in", ["get", "class"], ["literal", ["city", "town"]]],
-      layout: {
-        "text-field": ["get", "name"],
-        "text-font": ["Noto Sans Bold"],
-        "text-size": ["interpolate", ["linear"], ["zoom"], 6, 11, 14, 16],
-        "text-anchor": "center",
-      },
+      id: "boundary-country", type: "line", source: "openfreemap", "source-layer": "boundary",
+      filter: ["==", ["get", "admin_level"], 2],
       paint: {
-        "text-color": COLORS.textStrong,
-        "text-halo-color": COLORS.canvas,
-        "text-halo-width": 1.5,
+        "line-color": C.boundaryCountry,
+        "line-width": ["interpolate", ["linear"], ["zoom"], 2, 0.6, 10, 2],
       },
     },
+
+    /* ---------- Labels ---------- */
+
+    /* Nomes de via grandes — texto seguindo a linha */
     {
-      id: "place-suburb",
-      type: "symbol",
-      source: "openfreemap",
-      "source-layer": "place",
-      filter: ["in", ["get", "class"], ["literal", ["suburb", "neighbourhood"]]],
-      minzoom: 12,
-      layout: {
-        "text-field": ["get", "name"],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": 11,
-        "text-anchor": "center",
-        "text-letter-spacing": 0.05,
-      },
-      paint: {
-        "text-color": COLORS.textMuted,
-        "text-halo-color": COLORS.canvas,
-        "text-halo-width": 1.2,
-      },
-    },
-    {
-      id: "road-name-major",
-      type: "symbol",
-      source: "openfreemap",
-      "source-layer": "transportation_name",
+      id: "road-name-major", type: "symbol", source: "openfreemap", "source-layer": "transportation_name",
       filter: ["in", ["get", "class"], ["literal", ["motorway", "trunk", "primary", "secondary"]]],
       minzoom: 13,
       layout: {
         "symbol-placement": "line",
-        "text-field": ["get", "name"],
+        "text-field": ["coalesce", ["get", "name:pt"], ["get", "name"]],
         "text-font": ["Noto Sans Regular"],
+        "text-size": ["interpolate", ["linear"], ["zoom"], 13, 10, 18, 13],
+        "text-letter-spacing": 0.02,
+      },
+      paint: {
+        "text-color": C.textMuted,
+        "text-halo-color": C.haloLight,
+        "text-halo-width": 1.5,
+      },
+    },
+    {
+      id: "road-name-minor", type: "symbol", source: "openfreemap", "source-layer": "transportation_name",
+      filter: ["in", ["get", "class"], ["literal", ["tertiary", "minor"]]],
+      minzoom: 15,
+      layout: {
+        "symbol-placement": "line",
+        "text-field": ["coalesce", ["get", "name:pt"], ["get", "name"]],
+        "text-font": ["Noto Sans Regular"],
+        "text-size": 10,
+      },
+      paint: {
+        "text-color": C.textMuted,
+        "text-halo-color": C.haloLight,
+        "text-halo-width": 1.2,
+      },
+    },
+
+    /* Nome de água */
+    {
+      id: "water-name", type: "symbol", source: "openfreemap", "source-layer": "water_name",
+      layout: {
+        "text-field": ["coalesce", ["get", "name:pt"], ["get", "name"]],
+        "text-font": ["Noto Sans Italic"],
         "text-size": 11,
       },
       paint: {
-        "text-color": COLORS.textMuted,
-        "text-halo-color": COLORS.canvas,
+        "text-color": "#3a6c84",
+        "text-halo-color": C.haloMuted,
         "text-halo-width": 1.2,
+      },
+    },
+
+    /* Nome de bairro/suburb */
+    {
+      id: "place-suburb", type: "symbol", source: "openfreemap", "source-layer": "place",
+      filter: ["in", ["get", "class"], ["literal", ["suburb", "neighbourhood", "quarter"]]],
+      minzoom: 12,
+      layout: {
+        "text-field": ["coalesce", ["get", "name:pt"], ["get", "name"]],
+        "text-font": ["Noto Sans Bold"],
+        "text-size": ["interpolate", ["linear"], ["zoom"], 12, 10, 16, 13],
+        "text-letter-spacing": 0.06,
+        "text-transform": "uppercase",
+      },
+      paint: {
+        "text-color": C.textMuted,
+        "text-halo-color": C.haloLight,
+        "text-halo-width": 1.5,
+      },
+    },
+
+    /* Nome de cidade — destaque maior */
+    {
+      id: "place-city", type: "symbol", source: "openfreemap", "source-layer": "place",
+      filter: ["in", ["get", "class"], ["literal", ["city", "town"]]],
+      maxzoom: 14,
+      layout: {
+        "text-field": ["coalesce", ["get", "name:pt"], ["get", "name"]],
+        "text-font": ["Noto Sans Bold"],
+        "text-size": ["interpolate", ["linear"], ["zoom"], 5, 11, 14, 18],
+      },
+      paint: {
+        "text-color": C.textStrong,
+        "text-halo-color": C.haloLight,
+        "text-halo-width": 1.8,
       },
     },
   ],

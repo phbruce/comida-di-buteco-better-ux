@@ -61,8 +61,12 @@ const sobreUrl = `${base}sobre/`;
     align-items: center;
     gap: var(--space-3);
     color: var(--color-text-strong);
-    text-decoration: none;
+    text-decoration: none; /* logo/wordmark — convenção: sem underline */
     margin-inline-end: auto;
+  }
+  .site-header__brand:hover .site-header__brand-name {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
   .site-header__brand:hover {
     color: var(--color-brand-primary);
@@ -104,15 +108,16 @@ const sobreUrl = `${base}sobre/`;
     gap: var(--space-4);
   }
   .site-header__nav a {
-    color: var(--color-text-strong);
-    text-decoration: none;
+    color: var(--color-brand-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    text-decoration-thickness: 1px;
     font-weight: var(--font-weight-semibold);
     padding: var(--space-2) var(--space-1);
-    border-block-end: 2px solid transparent;
   }
   .site-header__nav a:hover {
-    color: var(--color-brand-primary);
-    border-block-end-color: var(--color-brand-primary);
+    color: var(--color-brand-primary-hover);
+    text-decoration-thickness: 2px;
   }
 
   .site-header__city {
