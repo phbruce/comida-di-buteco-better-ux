@@ -19,6 +19,58 @@ const year = new Date().getFullYear();
         Concurso oficial:
         <a href="https://comidadibuteco.com.br/" rel="noopener">comidadibuteco.com.br</a>
       </p>
+      <ul class="site-footer__social" aria-label="Comida di Buteco nas redes sociais (oficial)">
+        <li>
+          <a
+            href="https://www.instagram.com/_comidadibuteco/"
+            target="_blank"
+            rel="noopener"
+            aria-label="Instagram do Comida di Buteco oficial (abre em nova aba)"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="3" y="3" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+              <rect x="16.25" y="6.25" width="1.5" height="1.5" fill="currentColor"/>
+            </svg>
+          </a>
+        </li>
+        <li>
+          <a
+            href="https://www.facebook.com/comidadibuteco"
+            target="_blank"
+            rel="noopener"
+            aria-label="Facebook do Comida di Buteco oficial (abre em nova aba)"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M14 9h3V6h-3a4 4 0 0 0-4 4v2H7v3h3v6h3v-6h3l1-3h-4v-2a1 1 0 0 1 1-1z"/>
+            </svg>
+          </a>
+        </li>
+        <li>
+          <a
+            href="https://twitter.com/_comidadibuteco"
+            target="_blank"
+            rel="noopener"
+            aria-label="X (Twitter) do Comida di Buteco oficial (abre em nova aba)"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M18.244 3H21l-6.5 7.43L22 21h-6.078l-4.762-6.227L5.7 21H3l6.94-7.93L2 3h6.234l4.305 5.692L18.244 3zm-1.07 16.2h1.69L7.91 4.69H6.1l11.074 14.51z"/>
+            </svg>
+          </a>
+        </li>
+        <li>
+          <a
+            href="https://www.youtube.com/user/canaldocomida"
+            target="_blank"
+            rel="noopener"
+            aria-label="YouTube do Comida di Buteco oficial (abre em nova aba)"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path fill="currentColor" fill-rule="evenodd" d="M2 6h20v12H2V6zm8 2.5l6 3.5-6 3.5v-7z"/>
+            </svg>
+          </a>
+        </li>
+      </ul>
     </section>
 
     <nav class="site-footer__col" aria-labelledby="ft-nav">
@@ -101,6 +153,37 @@ const year = new Date().getFullYear();
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
+  }
+
+  /* Linha de redes sociais — sobrescreve a direção do ul padrão */
+  .site-footer__social {
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    margin-block-start: var(--space-3);
+  }
+  .site-footer__social a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 2px solid currentColor;
+    color: var(--color-text-on-dark);
+    text-decoration: none;
+    transition:
+      background-color var(--motion-fast) var(--easing-standard),
+      color var(--motion-fast) var(--easing-standard);
+  }
+  .site-footer__social a:hover,
+  .site-footer__social a:focus-visible {
+    background: var(--color-brand-accent);
+    color: var(--color-text-strong);
+    border-color: var(--color-brand-accent);
+  }
+  .site-footer__social svg {
+    width: 22px;
+    height: 22px;
+    display: block;
   }
 
   .site-footer__bottom {
