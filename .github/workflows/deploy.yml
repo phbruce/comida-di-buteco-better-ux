@@ -2,7 +2,11 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    # `main` é o destino canônico; a branch claude/* é temporária enquanto não
+    # mergeamos para main (Fase 0). Remover quando main passar a existir.
+    branches:
+      - main
+      - claude/design-system-setup-6xB7T
   workflow_dispatch:
 
 # Permissões necessárias para o deploy via actions/deploy-pages
