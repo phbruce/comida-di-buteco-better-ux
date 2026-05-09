@@ -16,8 +16,10 @@ import pimenta from "~/assets/illustrations/pimenta.svg?raw";
 import folha from "~/assets/illustrations/folha.svg?raw";
 import milho from "~/assets/illustrations/milho.svg?raw";
 import cebola from "~/assets/illustrations/cebola.svg?raw";
+import tomate from "~/assets/illustrations/tomate.svg?raw";
+import garrafa from "~/assets/illustrations/garrafa.svg?raw";
 
-type Kind = "pimenta" | "folha" | "milho" | "cebola";
+type Kind = "pimenta" | "folha" | "milho" | "cebola" | "tomate" | "garrafa";
 type Size = "sm" | "md" | "lg";
 
 interface Props {
@@ -30,7 +32,7 @@ interface Props {
 
 const { kind, size = "md", ariaLabel, class: extra = "" } = Astro.props;
 
-const motifs: Record<Kind, string> = { pimenta, folha, milho, cebola };
+const motifs: Record<Kind, string> = { pimenta, folha, milho, cebola, tomate, garrafa };
 const svg = motifs[kind];
 const decorative = !ariaLabel;
 ---
