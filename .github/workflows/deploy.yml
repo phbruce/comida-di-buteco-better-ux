@@ -45,6 +45,11 @@ jobs:
           # Para builds com custom domain, exporte BASE_PATH="" antes do build.
           BASE_PATH: /comida-di-buteco-better-ux
           SITE_URL: https://phbruce.github.io
+          # Chave do Google Maps Embed API (ADR-0010). Vem de Repo Secrets
+          # (Settings → Secrets and variables → Actions → New repository secret
+          # com nome GOOGLE_MAPS_KEY). Se não estiver definida, o build segue
+          # com fallback ?output=embed (não interativo no mobile).
+          PUBLIC_GOOGLE_MAPS_KEY: ${{ secrets.GOOGLE_MAPS_KEY }}
         run: npm run build
 
       - name: Add .nojekyll
