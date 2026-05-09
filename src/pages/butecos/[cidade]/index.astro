@@ -19,7 +19,6 @@ const lista = butecos
 const bairros = Array.from(new Set(lista.map((b) => b.bairro).filter(Boolean))) as string[];
 bairros.sort((a, b) => a.localeCompare(b, "pt-BR"));
 
-// sugestões de autocomplete: nome do buteco + nome do prato (deduplicado)
 const sugestoes = Array.from(
   new Set([
     ...lista.map((b) => b.nome),
@@ -29,6 +28,7 @@ const sugestoes = Array.from(
 
 const base = import.meta.env.BASE_URL;
 const datalistId = `sugestoes-${cidade.slug}`;
+const PER_PAGE_DEFAULT = 20;
 ---
 
 <BaseLayout
@@ -109,7 +109,7 @@ const datalistId = `sugestoes-${cidade.slug}`;
 
   <section class="results" aria-labelledby="results-heading">
     <div class="container">
-      <div class="results__header">
+      <div class="results__header" data-results-anchor>
         <h2 id="results-heading">
           <span class="results__count" data-results-count>{lista.length}</span>
           de <span data-results-total>{lista.length}</span> butecos
@@ -119,7 +119,7 @@ const datalistId = `sugestoes-${cidade.slug}`;
         </p>
       </div>
 
-      <ul class="results__list" role="list" data-results-list>
+      <ul class="results__list" role="list" data-results-list data-per-page={PER_PAGE_DEFAULT}>
         {lista.map((b) => <ButecoListItem buteco={b} />)}
       </ul>
 
@@ -127,6 +127,16 @@ const datalistId = `sugestoes-${cidade.slug}`;
         Nenhum buteco encontrado com esses filtros.
         <button type="button" class="results__clear" data-filter-reset>Limpar filtros</button>
       </p>
+
+      <nav class="pagination" aria-label="Paginação" data-pagination hidden>
+        <button type="button" class="pagination__btn pagination__btn--prev" data-pag-prev disabled>
+          <span aria-hidden="true">←</span> Anterior
+        </button>
+        <span class="pagination__status" aria-live="polite" data-pag-status>Página 1</span>
+        <button type="button" class="pagination__btn pagination__btn--next" data-pag-next disabled>
+          Próxima <span aria-hidden="true">→</span>
+        </button>
+      </nav>
     </div>
   </section>
 </BaseLayout>
@@ -140,27 +150,11 @@ const datalistId = `sugestoes-${cidade.slug}`;
     background: var(--color-bg-soft);
     border-block: var(--border-thin);
     padding-block: var(--space-5);
-    /* sticky removido: estava tomando muita área útil em mobile durante o scroll */
   }
-  .filters__form {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-  .field__label {
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-strong);
-  }
-  .field__hint {
-    font-size: var(--font-size-small);
-    color: var(--color-text-muted);
-    margin: 0;
-  }
+  .filters__form { display: flex; flex-direction: column; gap: var(--space-4); }
+  .field { display: flex; flex-direction: column; gap: var(--space-2); }
+  .field__label { font-weight: var(--font-weight-semibold); color: var(--color-text-strong); }
+  .field__hint { font-size: var(--font-size-small); color: var(--color-text-muted); margin: 0; }
   .field__input {
     width: 100%;
     padding: var(--space-3) var(--space-4);
@@ -171,17 +165,8 @@ const datalistId = `sugestoes-${cidade.slug}`;
     font: inherit;
   }
 
-  .filters__row {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-  }
-  .filters__select {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    font-weight: var(--font-weight-semibold);
-  }
+  .filters__row { display: grid; grid-template-columns: 1fr; gap: var(--space-4); }
+  .filters__select { display: flex; flex-direction: column; gap: var(--space-2); font-weight: var(--font-weight-semibold); }
   .filters__select select {
     appearance: none;
     background:
@@ -196,13 +181,8 @@ const datalistId = `sugestoes-${cidade.slug}`;
     color: var(--color-text-strong);
   }
 
-  .filters__actions {
-    display: flex;
-    gap: var(--space-3);
-    flex-wrap: wrap;
-  }
-  .filters__reset,
-  .filters__submit {
+  .filters__actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .filters__reset, .filters__submit {
     min-height: 44px;
     padding: var(--space-2) var(--space-4);
     border: 2px solid var(--color-border-strong);
@@ -223,7 +203,7 @@ const datalistId = `sugestoes-${cidade.slug}`;
   }
 
   .results { padding-block: var(--space-7); }
-  .results__header { margin-block-end: var(--space-6); }
+  .results__header { margin-block-end: var(--space-6); scroll-margin-block-start: var(--space-3); }
   .results__count { color: var(--color-brand-primary); font-variant-numeric: tabular-nums; }
   .results__hint {
     color: var(--color-text-muted);
@@ -252,6 +232,45 @@ const datalistId = `sugestoes-${cidade.slug}`;
   .results__clear:hover {
     background: var(--color-text-strong);
     color: var(--color-text-on-dark);
+  }
+
+  /* Pagination — apenas client-side; oculta sem JS (hidden) */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-block-start: var(--space-7);
+    padding-block: var(--space-5);
+    border-block-start: var(--border-thin);
+  }
+  .pagination__btn {
+    min-height: 44px;
+    padding: var(--space-2) var(--space-4);
+    border: 2px solid var(--color-border-strong);
+    background: var(--color-bg-canvas);
+    color: var(--color-text-strong);
+    font: inherit;
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .pagination__btn:not(:disabled):hover {
+    background: var(--color-text-strong);
+    color: var(--color-text-on-dark);
+  }
+  .pagination__btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .pagination__status {
+    flex: 1;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+    font-variant-numeric: tabular-nums;
   }
 
   @media (min-width: 640px) {
@@ -290,29 +309,36 @@ const datalistId = `sugestoes-${cidade.slug}`;
     const countEl = document.querySelector<HTMLElement>("[data-results-count]");
     const hintEl = document.querySelector<HTMLElement>("[data-results-hint]");
     const emptyEl = document.querySelector<HTMLElement>("[data-results-empty]");
+    const anchor = document.querySelector<HTMLElement>("[data-results-anchor]");
+
+    /* Pagination */
+    const pagNav = document.querySelector<HTMLElement>("[data-pagination]");
+    const prevBtn = document.querySelector<HTMLButtonElement>("[data-pag-prev]");
+    const nextBtn = document.querySelector<HTMLButtonElement>("[data-pag-next]");
+    const statusEl = document.querySelector<HTMLElement>("[data-pag-status]");
+    const PER_PAGE = parseInt(list.dataset.perPage ?? "20", 10);
+    let currentPage = 1;
 
     if (totalEl) totalEl.textContent = String(items.length);
 
-    /** Aplica filtros + ordenação aos items existentes; atualiza UI. */
-    function apply() {
+    function apply(opts?: { resetPage?: boolean }) {
+      if (opts?.resetPage) currentPage = 1;
+
       const q = normalize(inputQ?.value ?? "");
       const bairro = selBairro?.value ?? "";
       const ordem = (selOrdem?.value ?? "nome") as Sort;
       const tokens = q.split(/\s+/).filter(Boolean);
 
-      let visible = 0;
-      for (const li of items) {
+      // 1. filtra
+      const matches = items.filter((li) => {
         const haystack = li.dataset.search ?? "";
         const matchQ = tokens.length === 0 || tokens.every((t) => haystack.includes(t));
         const matchBairro = !bairro || (li.dataset.bairro ?? "") === bairro;
-        const ok = matchQ && matchBairro;
-        li.hidden = !ok;
-        if (ok) visible++;
-      }
+        return matchQ && matchBairro;
+      });
 
-      // ordenação: reordenar items visíveis na DOM
-      const visibleItems = items.filter((li) => !li.hidden);
-      visibleItems.sort((a, b) => {
+      // 2. ordena
+      matches.sort((a, b) => {
         if (ordem === "bairro") {
           const ba = a.dataset.bairroKey ?? "";
           const bb = b.dataset.bairroKey ?? "";
@@ -320,55 +346,107 @@ const datalistId = `sugestoes-${cidade.slug}`;
         }
         return (a.dataset.nomeKey ?? "").localeCompare(b.dataset.nomeKey ?? "");
       });
-      // re-anexa na ordem (move via appendChild — preserva foco)
-      for (const li of visibleItems) list!.appendChild(li);
 
-      if (countEl) countEl.textContent = String(visible);
-      if (emptyEl) emptyEl.hidden = visible !== 0;
+      // 3. pagina (calcula totalPages, ajusta currentPage se ficou fora)
+      const total = matches.length;
+      const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+      const start = (currentPage - 1) * PER_PAGE;
+      const end = start + PER_PAGE;
+      const pageItems = matches.slice(start, end);
+      const pageSet = new Set(pageItems);
+
+      // 4. atualiza visibilidade — só mostra os da página atual
+      for (const li of items) li.hidden = !pageSet.has(li);
+
+      // 5. reordena items visíveis na DOM (preserva ordem da página)
+      for (const li of pageItems) list!.appendChild(li);
+
+      // 6. atualiza UI
+      if (countEl) countEl.textContent = String(total);
+      if (emptyEl) emptyEl.hidden = total !== 0;
       if (hintEl) {
-        if (visible === items.length) {
-          hintEl.textContent = `Mostrando todos os ${items.length} butecos.`;
-        } else if (visible === 0) {
-          hintEl.textContent = `Nenhum buteco com esses filtros.`;
+        if (total === 0) {
+          hintEl.textContent = "Nenhum buteco com esses filtros.";
+        } else if (total <= PER_PAGE) {
+          hintEl.textContent =
+            total === items.length
+              ? `Mostrando todos os ${total} butecos.`
+              : `Mostrando ${total} de ${items.length} butecos.`;
         } else {
-          hintEl.textContent = `Mostrando ${visible} de ${items.length} butecos.`;
+          const from = start + 1;
+          const to = Math.min(end, total);
+          hintEl.textContent = `Mostrando ${from}–${to} de ${total} butecos.`;
         }
       }
 
-      // sincroniza URL — sem reload
+      if (pagNav && prevBtn && nextBtn && statusEl) {
+        if (totalPages <= 1) {
+          pagNav.hidden = true;
+        } else {
+          pagNav.hidden = false;
+          prevBtn.disabled = currentPage === 1;
+          nextBtn.disabled = currentPage === totalPages;
+          statusEl.textContent = `Página ${currentPage} de ${totalPages}`;
+        }
+      }
+
+      // 7. URL — preserva filtros + página
       const params = new URLSearchParams();
       if (q) params.set("q", inputQ!.value);
       if (bairro) params.set("bairro", bairro);
       if (ordem && ordem !== "nome") params.set("ordem", ordem);
+      if (currentPage > 1) params.set("page", String(currentPage));
       const qs = params.toString();
       const url = qs ? `?${qs}` : window.location.pathname;
       history.replaceState(null, "", url);
     }
 
-    /** Lê URL e popula inputs. */
     function loadFromUrl() {
       const params = new URLSearchParams(window.location.search);
       if (inputQ && params.has("q")) inputQ.value = params.get("q") ?? "";
       if (selBairro && params.has("bairro")) selBairro.value = params.get("bairro") ?? "";
       if (selOrdem && params.has("ordem")) selOrdem.value = params.get("ordem") ?? "nome";
+      const pageStr = params.get("page");
+      if (pageStr) {
+        const n = parseInt(pageStr, 10);
+        if (n > 0) currentPage = n;
+      }
     }
 
     function clearAll() {
       if (inputQ) inputQ.value = "";
       if (selBairro) selBairro.value = "";
       if (selOrdem) selOrdem.value = "nome";
-      apply();
+      apply({ resetPage: true });
     }
 
-    inputQ?.addEventListener("input", debounce(apply, 150));
-    selBairro?.addEventListener("change", apply);
-    selOrdem?.addEventListener("change", apply);
+    function scrollToList() {
+      anchor?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    inputQ?.addEventListener("input", debounce(() => apply({ resetPage: true }), 150));
+    selBairro?.addEventListener("change", () => apply({ resetPage: true }));
+    selOrdem?.addEventListener("change", () => apply({ resetPage: true }));
     resets.forEach((b) => b.addEventListener("click", (e) => { e.preventDefault(); clearAll(); }));
 
-    // intercepta submit (caso user aperte Enter): aplica e impede reload
+    prevBtn?.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        apply();
+        scrollToList();
+      }
+    });
+    nextBtn?.addEventListener("click", () => {
+      currentPage++;
+      apply();
+      scrollToList();
+    });
+
     root.querySelector("form")?.addEventListener("submit", (e) => {
       e.preventDefault();
-      apply();
+      apply({ resetPage: true });
     });
 
     loadFromUrl();
