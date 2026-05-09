@@ -2,9 +2,12 @@
 import { defineConfig } from 'astro/config';
 
 // Base path: o repositório é servido por GitHub Pages em
-// https://phbruce.github.io/comida-di-buteco-better-ux/. Para builds com
+// https://phbruce.github.io/Comida-di-Buteco-Better-UX/. Para builds com
 // custom domain, exporte BASE_PATH="" antes de `npm run build`.
-const BASE = process.env.BASE_PATH ?? '/comida-di-buteco-better-ux';
+//
+// IMPORTANTE: GH Pages é CASE-SENSITIVE no path do repo. O case aqui precisa
+// bater com o nome real do repositório no GitHub.
+const BASE = process.env.BASE_PATH ?? '/Comida-di-Buteco-Better-UX';
 const SITE = process.env.SITE_URL ?? 'https://phbruce.github.io';
 
 export default defineConfig({
