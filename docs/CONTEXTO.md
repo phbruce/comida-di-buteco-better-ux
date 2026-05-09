@@ -2,6 +2,18 @@
 
 > Briefing do projeto. Atualize quando a estratégia mudar.
 
+## Natureza do projeto — IMPORTANTE
+
+Este é um **redesign exploratório, NÃO oficial**, sem vínculo com a organização do concurso Comida di Buteco. Implicações:
+
+- Não falamos em nome da marca.
+- Não coletamos votos reais — qualquer ação de votação **deve** redirecionar ao site oficial (`https://comidadibuteco.com.br/`).
+- Conteúdo (butecos, pratos, fotos) usado em protótipos é **mock** ou citação — substituir por dados reais só com autorização da organização ou via fontes públicas claramente atribuídas.
+- O domínio do redesign é `phbruce.github.io/comida-di-buteco-better-ux/` — diferente do oficial.
+- Banner de fase, footer e meta-tags devem deixar a natureza não oficial visível para qualquer visitante.
+
+Esse é o **tom de toda a comunicação do site**: explorar UX/UI sem se passar pelo produto oficial.
+
 ## O que é o Comida di Buteco
 
 Concurso gastronômico tradicional brasileiro em que butecos (bares de bairro) competem com um **prato autoral**, geralmente regional. O concurso acontece anualmente em diversas cidades do Brasil. Durante o período do concurso, o público:

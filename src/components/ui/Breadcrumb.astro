@@ -1,0 +1,67 @@
+---
+/**
+ * Breadcrumb — caminho hierárquico até a página atual.
+ *
+ * Recebe array de itens; o último é a página atual (sem link).
+ */
+
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: Crumb[];
+  ariaLabel?: string;
+}
+
+const { items, ariaLabel = "Você está em" } = Astro.props;
+const last = items.length - 1;
+---
+
+<nav class="breadcrumb container" aria-label={ariaLabel}>
+  <ol>
+    {items.map((c, i) => (
+      <li>
+        {i < last && c.href ? (
+          <a href={c.href}>{c.label}</a>
+        ) : (
+          <span aria-current="page">{c.label}</span>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumb {
+    padding-block: var(--space-3);
+    font-size: var(--font-size-small);
+  }
+  .breadcrumb ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    color: var(--color-text-muted);
+  }
+  .breadcrumb li:not(:last-child)::after {
+    content: "›";
+    margin-inline-start: var(--space-2);
+    color: var(--color-text-muted);
+  }
+  .breadcrumb a {
+    color: var(--color-brand-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+  .breadcrumb a:hover {
+    color: var(--color-brand-primary-hover);
+  }
+  .breadcrumb [aria-current="page"] {
+    color: var(--color-text-strong);
+    font-weight: var(--font-weight-semibold);
+  }
+</style>

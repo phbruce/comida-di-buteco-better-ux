@@ -77,11 +77,11 @@ Cada componente terá: especificação, estados, exemplos, anatomia, acessibilid
 
 **Objetivo:** aplicar o design system às páginas principais.
 
-- [ ] Seleção de cidade
-- [ ] Listagem de butecos por cidade
-- [ ] Detalhe do buteco (com prato, fotos, votação)
-- [ ] Página de votação
-- [ ] Página estática (regulamento, sobre)
+- [x] Seleção de cidade (`/`)
+- [x] Listagem de butecos por cidade (`/butecos/belo-horizonte/`)
+- [x] Detalhe do buteco com prato, fotos, "votar" → site oficial (`/butecos/belo-horizonte/<slug>/`)
+- [ ] Página de votação — N/A neste redesign (não oficial; redirecionamos)
+- [ ] Página estática "Sobre o redesign"
 
 ---
 

@@ -1,8 +1,11 @@
 # Comida di Buteco — Better UX
 
-> Projeto de redesign completo da experiência (UI/UX) do site Comida di Buteco, com foco em **mobile first**, acessibilidade e um design system minimalista inspirado no [GOV.UK Design System](https://design-system.service.gov.uk/).
+> ⚠️ **Redesign exploratório, NÃO oficial**, sem vínculo com a organização do concurso Comida di Buteco. Site oficial: https://comidadibuteco.com.br/.
+>
+> Projeto de redesign de UI/UX com foco em **mobile first**, acessibilidade e um design system minimalista inspirado no [GOV.UK Design System](https://design-system.service.gov.uk/).
 
-Site de referência (atual): https://comidadibuteco.com.br/butecos/belo-horizonte/
+Site de referência (oficial, alvo de inspiração): https://comidadibuteco.com.br/butecos/belo-horizonte/
+Demo deste redesign: https://phbruce.github.io/comida-di-buteco-better-ux/
 
 ---
 
