@@ -1,10 +1,14 @@
-# ADR-0014 — Self-host do Cusdis para controle total da UI (proposta)
+# ADR-0014 — Self-host do Cusdis para controle total da UI
 
-- **Status:** PROPOSED — aguarda aprovação informada do dono do produto
+- **Status:** REJECTED em 2026-05-09
 - **Data:** 2026-05-09
-- **Decisor(es):** —
-- **Relacionado:** ADR-0008 (Cusdis hospedado, mantido como decisão original), ADR-0013 (Turnstile já integrado)
-- **RFs/RNFs relacionados:** RNF-0001 (a11y), RNF-0002 (performance), RNF-0005 (privacidade)
+- **Decisor(es):** Dono do produto (após apresentação honesta da
+  complexidade real, escolheu construir solução própria — ADR-0015)
+- **Motivo da rejeição:** auto-host do Cusdis envolve operar um Next.js +
+  Postgres + email service, com 2-4h de setup e manutenção contínua
+  para acompanhar releases upstream. A alternativa proposta (ADR-0015)
+  reaproveita Cloudflare Worker + Turnstile já configurados e fica
+  alinhada ao espírito de case study do projeto.
 
 ## Contexto
 

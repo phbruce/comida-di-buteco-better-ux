@@ -33,12 +33,14 @@ Cada ADR responde:
 | [ADR-0005](./ADR-0005-mapa-interativo.md) | Mapa interativo com design customizado | ~~SUPERSEDED~~ | — | 2026-05-09 |
 | [ADR-0006](./ADR-0006-feedback-da-pagina.md) | Botão de feedback "esta info está correta?" | ACCEPTED | Dono do produto | 2026-05-09 |
 | [ADR-0007](./ADR-0007-comentarios-giscus.md) | Comentários nas páginas via giscus | ~~SUPERSEDED~~ | — | 2026-05-09 |
-| [ADR-0008](./ADR-0008-comentarios-cusdis.md) | Comentários nas páginas via Cusdis | ACCEPTED | Dono do produto | 2026-05-09 |
+| [ADR-0008](./ADR-0008-comentarios-cusdis.md) | Comentários nas páginas via Cusdis | ~~SUPERSEDED~~ por ADR-0015 | Dono do produto | 2026-05-09 |
 | [ADR-0009](./ADR-0009-mapa-google.md) | Trocar mapa para Google Maps (Embed) | ACCEPTED | Dono do produto | 2026-05-09 |
 | [ADR-0010](./ADR-0010-mapa-interativo-pan-zoom.md) | Destravar pan/zoom do mapa (Google API key) | ACCEPTED | Dono do produto | 2026-05-09 |
 | [ADR-0011](./ADR-0011-tags-alimentares.md) | Tags vegetariano/vegano e filtros alimentares | ~~REJECTED~~ (adiado) | Dono do produto | 2026-05-09 |
 | [ADR-0012](./ADR-0012-feedback-publico.md) | Feedback acessível a qualquer visitante (Web3Forms) | ACCEPTED | Dono do produto | 2026-05-09 |
 | [ADR-0013](./ADR-0013-turnstile-anti-bot.md) | Cloudflare Turnstile como anti-bot do feedback | ACCEPTED | Dono do produto (delegado) | 2026-05-09 |
+| [ADR-0014](./ADR-0014-self-host-cusdis.md) | Self-host do Cusdis | ~~REJECTED~~ | Dono do produto | 2026-05-09 |
+| [ADR-0015](./ADR-0015-comentarios-proprios.md) | Sistema de comentários próprio (Worker + D1) | ACCEPTED | Dono do produto (delegado) | 2026-05-09 |
 
 ## Como propor um ADR
 

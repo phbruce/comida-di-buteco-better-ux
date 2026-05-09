@@ -1,0 +1,20 @@
+# Wrangler config para o Worker de COMENTÁRIOS (ADR-0015)
+# Deploy com: wrangler deploy --config worker/wrangler.comments.toml
+
+name = "cdb-comments"
+main = "comments.ts"
+compatibility_date = "2026-01-01"
+
+[vars]
+ALLOWED_ORIGINS = "https://phbruce.github.io,http://localhost:4321"
+
+# Secrets a definir pelo dono (uma vez):
+#   wrangler secret put TURNSTILE_SECRET --config worker/wrangler.comments.toml
+#   wrangler secret put APP_SALT --config worker/wrangler.comments.toml
+#   (APP_SALT pode ser qualquer string aleatória longa; usado no hash do IP)
+
+# D1 binding — preencher database_id após `wrangler d1 create cdb-comments`
+[[d1_databases]]
+binding = "DB"
+database_name = "cdb-comments"
+database_id = "REPLACE-ME-AFTER-CREATE"
