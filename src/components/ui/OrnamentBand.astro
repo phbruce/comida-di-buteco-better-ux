@@ -1,0 +1,147 @@
+---
+/**
+ * OrnamentBand — faixa decorativa de "papel-recorte" com vegetais.
+ *
+ * Inspirada (mas não copiada) das ilustrações da edição 2026 do site
+ * oficial — papel rasgado / colagem com pimenta, folha, espiga, beterraba.
+ * Em vez das bordas orgânicas curvas do oficial, usamos somente polígonos
+ * de retas (mantém a "personalidade DS" sharp do GOV.UK + Buteco Moderno).
+ *
+ * Decorativa — não comunica conteúdo. Marca-se com role=presentation e
+ * aria-hidden=true para leitores de tela ignorarem.
+ *
+ * Props:
+ *   variant: "top" — borda zig-zag em cima (encaixa abaixo de área clara)
+ *            "bottom" — borda zig-zag embaixo (encaixa acima de área clara)
+ *            "both" (default) — zig-zag dos dois lados
+ *   tone:    "soft" (default, fundo cream) — para usar sobre canvas branco
+ *            "transparent" — só os vegetais, sem fundo
+ *   height:  altura CSS final (default "5rem")
+ */
+
+interface Props {
+  variant?: "top" | "bottom" | "both";
+  tone?: "soft" | "transparent";
+  height?: string;
+  class?: string;
+}
+
+const {
+  variant = "both",
+  tone = "soft",
+  height = "5rem",
+  class: extra = "",
+} = Astro.props;
+
+// Paths das bordas em zig-zag (irregular mas só com retas — sharp).
+// Topo: dente-de-serra com alturas variadas; Base: idem invertido.
+const topZig =
+  "0,18 50,8 110,22 170,6 230,20 290,10 360,24 420,6 490,18 560,8 630,22 700,10 760,20 820,6 890,18 960,10 1030,22 1090,8 1150,20 1200,12";
+const bottomZig =
+  "1200,80 1200,68 1140,76 1080,62 1020,72 950,60 880,72 810,64 740,74 670,60 600,70 530,62 460,72 390,60 320,72 250,64 180,74 110,62 50,72 0,64 0,80";
+
+const fillTop = variant === "top" || variant === "both" ? topZig : "0,0 1200,0";
+const fillBottomReady =
+  variant === "bottom" || variant === "both"
+    ? bottomZig
+    : "1200,80 0,80";
+
+// Concatena topo + base num polígono fechado.
+const bgPoints = `${fillTop} ${fillBottomReady}`;
+---
+
+<div
+  class:list={["ornament-band", `ornament-band--${tone}`, extra]}
+  style={`--ornament-band-h: ${height};`}
+  aria-hidden="true"
+>
+  <svg
+    viewBox="0 0 1200 80"
+    preserveAspectRatio="none"
+    role="presentation"
+    focusable="false"
+  >
+    {tone === "soft" && (
+      <polygon points={bgPoints} fill="var(--color-bg-soft)" />
+    )}
+
+    {/* Pimenta — corpo urucum + cabo lima */}
+    <g>
+      <polygon points="100,58 122,42 144,52 138,70 116,72" fill="#9c2a1b" />
+      <polygon points="118,40 132,30 140,38 128,46" fill="#1f6f4a" />
+      <polygon points="128,28 138,24 142,32 134,36" fill="#155234" />
+    </g>
+
+    {/* Folha lima dupla */}
+    <g>
+      <polygon points="240,62 268,40 296,52 286,70 254,74" fill="#1f6f4a" />
+      <polygon points="262,52 280,42 290,52 274,62" fill="#2d8a5d" />
+    </g>
+
+    {/* Espiga dendê com folha urucum */}
+    <g>
+      <polygon points="395,42 425,32 442,46 432,70 402,72" fill="#f4b400" />
+      <polygon points="380,38 405,28 415,38 392,48" fill="#9c2a1b" />
+      <polygon points="412,40 430,36 438,46 422,52" fill="#c89200" />
+    </g>
+
+    {/* Beterraba urucum + folhagem lima */}
+    <g>
+      <polygon points="555,60 580,46 605,58 595,74 565,76" fill="#9c2a1b" />
+      <polygon points="572,46 590,32 605,40 595,52" fill="#1f6f4a" />
+      <polygon points="582,30 595,22 605,32 590,42" fill="#2d8a5d" />
+    </g>
+
+    {/* Limão / goiaba dendê */}
+    <g>
+      <polygon points="710,60 740,46 762,56 754,74 720,76" fill="#f4b400" />
+      <polygon points="730,46 745,38 752,46 740,52" fill="#1f6f4a" />
+    </g>
+
+    {/* Folha grande lima */}
+    <g>
+      <polygon points="855,68 885,40 920,52 908,72 870,76" fill="#1f6f4a" />
+      <polygon points="880,52 900,46 908,56 890,64" fill="#2d8a5d" />
+    </g>
+
+    {/* Pimenta menor urucum */}
+    <g>
+      <polygon points="1010,62 1030,48 1050,56 1042,72 1018,74" fill="#9c2a1b" />
+      <polygon points="1028,46 1040,38 1046,46 1034,52" fill="#1f6f4a" />
+    </g>
+
+    {/* Polvilho dendê (pontos) */}
+    <g fill="#f4b400">
+      <polygon points="180,30 184,28 186,32 182,34" />
+      <polygon points="320,30 324,28 326,32 322,34" />
+      <polygon points="475,30 479,28 481,32 477,34" />
+      <polygon points="640,30 644,28 646,32 642,34" />
+      <polygon points="795,30 799,28 801,32 797,34" />
+      <polygon points="950,30 954,28 956,32 952,34" />
+    </g>
+  </svg>
+</div>
+
+<style>
+  .ornament-band {
+    width: 100%;
+    height: var(--ornament-band-h);
+    line-height: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .ornament-band svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  /* Em telas muito largas evita as figuras esticarem demais.
+     SVG usa preserveAspectRatio="none" propositalmente — a faixa estica
+     no eixo X mas as figuras ficam em proporção razoável até ~2000px. */
+  @media (min-width: 2000px) {
+    .ornament-band {
+      max-width: 2000px;
+      margin-inline: auto;
+    }
+  }
+</style>

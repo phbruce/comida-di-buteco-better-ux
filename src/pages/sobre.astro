@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import Breadcrumb from "~/components/ui/Breadcrumb.astro";
+import OrnamentBand from "~/components/ui/OrnamentBand.astro";
 import { butecos, cidades, edicao } from "~/data/butecos";
 
 const base = import.meta.env.BASE_URL;
@@ -34,6 +35,8 @@ const repoUrl = "https://github.com/phbruce/comida-di-buteco-better-ux";
           acessibilidade e performance.
         </p>
       </header>
+
+      <OrnamentBand variant="both" tone="soft" height="4rem" class="sobre__ornament" />
 
       <section aria-labelledby="navega">
         <h2 id="navega">Atalhos desta página</h2>

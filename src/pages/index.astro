@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "~/layouts/BaseLayout.astro";
+import OrnamentBand from "~/components/ui/OrnamentBand.astro";
 import { butecos, cidades, edicao } from "~/data/butecos";
 
 const populares = cidades.filter((c) => c.popular);
@@ -24,6 +25,8 @@ const totalButecos = butecos.length;
       </p>
     </div>
   </section>
+
+  <OrnamentBand variant="both" tone="soft" height="4.5rem" />
 
   <section class="section" id="cidades" aria-labelledby="cidades-heading">
     <div class="container">
