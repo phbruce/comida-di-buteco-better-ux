@@ -117,11 +117,24 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
             Sim, está correto
           </a>
         ) : (
-          <button type="submit" name="rating" value="ok" class="feedback__btn feedback__btn--ok">
+          <button
+            type="submit"
+            name="rating"
+            value="ok"
+            class="feedback__btn feedback__btn--ok"
+            data-rating="ok"
+          >
             Sim, está correto
           </button>
         )}
-        <button type="button" class="feedback__btn feedback__btn--bad" data-feedback-toggle aria-expanded="false" aria-controls={`${id}-detail`}>
+        <button
+          type="button"
+          class="feedback__btn feedback__btn--bad"
+          data-feedback-toggle
+          data-rating="bad"
+          aria-expanded="false"
+          aria-controls={`${id}-detail`}
+        >
           Tem algo errado
         </button>
       </div>
@@ -154,7 +167,13 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
           </div>
         )}
         <div class="feedback__actions">
-          <button type="submit" name="rating" value="bad" class="feedback__btn feedback__btn--ok">
+          <button
+            type="submit"
+            name="rating"
+            value="bad"
+            class="feedback__btn feedback__btn--ok"
+            data-rating="bad"
+          >
             {mode === "github" ? "Abrir issue no GitHub" : "Enviar"}
           </button>
           <button type="button" class="feedback__btn feedback__btn--ghost" data-feedback-cancel>
@@ -164,7 +183,10 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
       </div>
 
       <div class="feedback__thanks" data-feedback-thanks hidden role="status">
-        <p><strong>Obrigado!</strong> Anotamos seu retorno.</p>
+        <p data-feedback-thanks-msg><strong>Obrigado!</strong> Anotamos seu retorno.</p>
+        <p class="feedback__hint">
+          <button type="button" class="feedback__undo" data-feedback-undo>Mudei de ideia</button>
+        </p>
       </div>
     </form>
 
@@ -258,6 +280,36 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
   .feedback__btn--ghost:hover {
     background: var(--color-border);
     color: var(--color-text-strong);
+  }
+  /* Botão travado depois do submit (clicado ou inverso) */
+  .feedback__btn[disabled],
+  .feedback__btn[aria-disabled="true"] {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .feedback__btn--sending {
+    opacity: 0.7;
+    cursor: progress;
+    pointer-events: none;
+  }
+
+  /* Link "Mudei de ideia" — visual de link plain dentro do thanks */
+  .feedback__undo {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: var(--color-brand-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    text-decoration-thickness: 1px;
+    font: inherit;
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+  }
+  .feedback__undo:hover {
+    color: var(--color-brand-primary-hover);
+    text-decoration-thickness: 2px;
   }
 
   .feedback__detail[hidden] { display: none; }
@@ -358,74 +410,134 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
   function setupOne(section: HTMLElement) {
     const form = section.querySelector<HTMLFormElement>("[data-feedback-form]");
     if (!form) return;
-    const detail = section.querySelector<HTMLElement>("[data-feedback-toggle]")?.getAttribute("aria-controls");
-    const detailEl = detail ? document.getElementById(detail) : null;
+    const detailId = section.querySelector<HTMLElement>("[data-feedback-toggle]")?.getAttribute("aria-controls");
+    const detailEl = detailId ? document.getElementById(detailId) : null;
     const thanks = section.querySelector<HTMLElement>("[data-feedback-thanks]");
+    const thanksMsg = section.querySelector<HTMLElement>("[data-feedback-thanks-msg]");
     const quick = section.querySelector<HTMLElement>("[data-feedback-quick]");
     const toggle = section.querySelector<HTMLButtonElement>("[data-feedback-toggle]");
     const cancel = section.querySelector<HTMLButtonElement>("[data-feedback-cancel]");
+    const undoBtn = section.querySelector<HTMLButtonElement>("[data-feedback-undo]");
+    const submitButtons = Array.from(form.querySelectorAll<HTMLButtonElement>('button[type="submit"]'));
+    const ratingButtons = Array.from(section.querySelectorAll<HTMLElement>("[data-rating]"));
 
     /** Quando a seção foi montada — usado pra checar tempo mínimo de dwell. */
     const mountedAt = Date.now();
 
+    /** Trava global do componente: enquanto há request em voo OU já foi
+        enviado nesta sessão da página. Evita race entre cliques duplos. */
+    let inFlight = false;
+    let submitted: "ok" | "bad" | null = null;
+
+    /** Reseta UI + estado para idle (chamado pelo "Mudei de ideia"). */
+    function reset() {
+      submitted = null;
+      inFlight = false;
+      // limpa textarea
+      const ta = section.querySelector<HTMLTextAreaElement>('textarea[name="message"]');
+      if (ta) ta.value = "";
+      // restaura botões de submit
+      submitButtons.forEach((b) => {
+        b.disabled = false;
+        b.classList.remove("feedback__btn--sending");
+      });
+      ratingButtons.forEach((b) => {
+        b.removeAttribute("aria-disabled");
+      });
+      if (toggle) toggle.removeAttribute("aria-disabled");
+      // restaura mensagem de Obrigado padrão
+      if (thanksMsg) thanksMsg.innerHTML = "<strong>Obrigado!</strong> Anotamos seu retorno.";
+      setMode("idle");
+    }
+
+    /** Bloqueia ambos os caminhos de voto após submit confirmado.
+        Mantém só o link "Mudei de ideia" como saída. */
+    function lockAfterSubmit(rating: "ok" | "bad") {
+      submitted = rating;
+      submitButtons.forEach((b) => {
+        b.disabled = true;
+        b.classList.remove("feedback__btn--sending");
+      });
+      ratingButtons.forEach((b) => b.setAttribute("aria-disabled", "true"));
+      if (toggle) toggle.setAttribute("aria-disabled", "true");
+    }
+
     function setMode(mode: Mode) {
+      // SEMPRE esconde os 3 painéis e revela só o ativo — evita
+      // sobreposição (bug em que "Obrigado" persistia ao expandir o detail).
+      quick?.setAttribute("hidden", "");
+      detailEl?.setAttribute("hidden", "");
+      thanks?.setAttribute("hidden", "");
+      toggle?.setAttribute("aria-expanded", "false");
+
       switch (mode) {
         case "idle":
           quick?.removeAttribute("hidden");
-          detailEl?.setAttribute("hidden", "");
-          thanks?.setAttribute("hidden", "");
-          toggle?.setAttribute("aria-expanded", "false");
           break;
         case "detail":
-          quick?.setAttribute("hidden", "");
           detailEl?.removeAttribute("hidden");
           toggle?.setAttribute("aria-expanded", "true");
           (detailEl?.querySelector("textarea") as HTMLTextAreaElement | null)?.focus();
           break;
         case "thanks":
-          quick?.setAttribute("hidden", "");
-          detailEl?.setAttribute("hidden", "");
+        case "throttled":
           thanks?.removeAttribute("hidden");
           break;
       }
     }
 
-    toggle?.addEventListener("click", () => setMode("detail"));
-    cancel?.addEventListener("click", () => setMode("idle"));
+    toggle?.addEventListener("click", (e) => {
+      // se já enviou ou está em voo, ignora — só "Mudei de ideia" libera
+      if (submitted || inFlight) {
+        e.preventDefault();
+        return;
+      }
+      setMode("detail");
+    });
+    cancel?.addEventListener("click", () => {
+      if (inFlight) return;
+      setMode("idle");
+    });
+    undoBtn?.addEventListener("click", () => reset());
 
     const mode = (form.dataset.mode ?? "github") as "github" | "worker" | "w3f";
 
     form.addEventListener("submit", async (e) => {
-      // honeypot — bot preencheu? aborta silenciosamente
+      e.preventDefault();
+
+      // Trava 1: já há request em voo OU já foi enviado nesta sessão.
+      // Evita race em duplo-clique e enviar inverso depois de votar.
+      if (inFlight || submitted) {
+        return;
+      }
+
+      // Trava 2: honeypot — bot preencheu? aborta silenciosamente.
       const wp = form.elements.namedItem("website") as HTMLInputElement | null;
       const bc = form.elements.namedItem("botcheck") as HTMLInputElement | null;
       if (wp?.value || bc?.checked) {
-        e.preventDefault();
+        if (thanksMsg) thanksMsg.innerHTML = "<strong>Obrigado!</strong> Anotamos seu retorno.";
         setMode("thanks");
         return;
       }
 
-      // Anti-bot leve: form precisa estar visível há pelo menos 2s
+      // Trava 3: anti-bot leve — form precisa estar visível há pelo menos 2s.
       if (Date.now() - mountedAt < MIN_DWELL_MS) {
-        e.preventDefault();
+        if (thanksMsg) thanksMsg.innerHTML = "<strong>Obrigado!</strong> Anotamos seu retorno.";
         setMode("thanks");
         return;
       }
 
-      // Rate limit cliente — bloqueia abuso casual (estende free tier)
+      // Trava 4: rate limit cliente — bloqueia abuso casual.
       const rl = checkRateLimit();
       if (!rl.ok) {
-        e.preventDefault();
-        if (thanks) {
-          thanks.innerHTML =
-            "<p><strong>Espera só um pouco.</strong> Já recebemos um " +
-            "feedback seu há pouco — tenta de novo em " + rl.label + ".</p>";
+        if (thanksMsg) {
+          thanksMsg.innerHTML =
+            "<strong>Espera só um pouco.</strong> Já recebemos um " +
+            "feedback seu há pouco — tente de novo em " + rl.label + ".";
         }
-        setMode("thanks");
+        setMode("throttled");
         return;
       }
-
-      e.preventDefault();
 
       // Captura o botão que disparou o submit — sem isso,
       // FormData(form) não inclui o name="rating" do <button submit>.
@@ -436,11 +548,18 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
         data.set("rating", submitter.value || "bad");
       }
 
-      const rating = (data.get("rating") as string | null) ?? "bad";
+      const rating = ((data.get("rating") as string | null) ?? "bad") as "ok" | "bad";
       const message = (data.get("message") as string | null) ?? "";
       const pageId = form.dataset.pageId ?? "";
       const pageTitle = form.dataset.pageTitle ?? "";
       const pageUrl = form.dataset.pageUrl ?? "";
+
+      // Trava: marca em voo e desabilita botões ANTES de qualquer ação async.
+      inFlight = true;
+      submitButtons.forEach((b) => {
+        b.disabled = true;
+        if (submitter && b === submitter) b.classList.add("feedback__btn--sending");
+      });
 
       if (mode === "github") {
         // monta URL do GitHub Issue pré-preenchido e abre em nova aba
@@ -459,6 +578,8 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
         });
         window.open(`${ghBase}?${params.toString()}`, "_blank", "noopener");
         recordSubmit();
+        if (thanksMsg) thanksMsg.innerHTML = "<strong>Obrigado!</strong> Anotamos seu retorno.";
+        lockAfterSubmit(rating);
         setMode("thanks");
         return;
       }
@@ -497,9 +618,18 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
         recordSubmit();
       } catch (err) {
         console.warn("[feedback] fallback envio:", err);
+        // libera trava e deixa o navegador submeter (URL fora de eixo)
+        inFlight = false;
+        submitButtons.forEach((b) => {
+          b.disabled = false;
+          b.classList.remove("feedback__btn--sending");
+        });
         form.submit();
         return;
       }
+      if (thanksMsg) thanksMsg.innerHTML = "<strong>Obrigado!</strong> Anotamos seu retorno.";
+      lockAfterSubmit(rating);
+      inFlight = false;
       setMode("thanks");
     });
   }
