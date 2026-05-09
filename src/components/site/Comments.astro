@@ -29,6 +29,13 @@ const DEFAULT_APP_ID = "2d491a46-a7cc-48ce-ba2b-86a6265c499e";
 const APP_ID = (import.meta.env.PUBLIC_CUSDIS_APP_ID as string | undefined) || DEFAULT_APP_ID;
 const HOST = (import.meta.env.PUBLIC_CUSDIS_HOST as string | undefined) ?? "https://cusdis.com";
 const SCRIPT = `${HOST}/js/cusdis.es.js`;
+
+// URL absoluta do tema customizado — carregado pelo iframe do Cusdis
+// para estilizar inputs/botões/comentários com nossos tokens.
+const themeUrl = new URL(
+  "cusdis-theme.css",
+  new URL(import.meta.env.BASE_URL, Astro.site).toString()
+).toString();
 ---
 
 <section class="comments" aria-labelledby="comments-title">
@@ -50,7 +57,7 @@ const SCRIPT = `${HOST}/js/cusdis.es.js`;
           data-page-id={pageId}
           data-page-url={pageUrl}
           data-page-title={pageTitle}
-          data-theme="light"
+          data-theme={themeUrl}
         ></div>
         <script is:inline async defer src={SCRIPT}></script>
       </>

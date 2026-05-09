@@ -1,0 +1,197 @@
+/*
+ * Cusdis theme — Buteco Moderno
+ *
+ * Carregado dentro do iframe do Cusdis via data-theme. Como o iframe
+ * roda em outro domínio (cusdis.com), não acessa nossos tokens via
+ * --vars; valores são hardcoded e devem espelhar src/styles/tokens.css.
+ *
+ * Mantém: zero round, fonte system-ui (Inter quando o sistema tiver),
+ * foco amarelo + sublinhado preto, botão urucum, contraste AA.
+ */
+
+/* Reset suave + tipografia */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body {
+  background: #ffffff;
+  color: #1a1815;
+  font-family: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+/* Cabeçalhos / labels */
+h1, h2, h3, h4 {
+  color: #1a1815;
+  font-weight: 700;
+}
+label {
+  font-weight: 600;
+  color: #1a1815;
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* Inputs e textarea — sem arredondamento, borda forte preta */
+input[type="text"],
+input[type="email"],
+input[type="url"],
+textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1.4;
+  color: #1a1815;
+  background: #ffffff;
+  border: 2px solid #1a1815;
+  border-radius: 0;
+  padding: 10px 14px;
+  min-height: 44px;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+}
+textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+/* Foco — assinatura amarela + sublinhado preto (igual ao site) */
+input:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid #ffcc00;
+  outline-offset: 2px;
+  box-shadow: 0 4px 0 0 #1a1815;
+}
+
+/* Botões — urucum como primário, sem round */
+button,
+.btn,
+input[type="submit"] {
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #fbf7f0;
+  background: #9c2a1b;
+  border: 2px solid #9c2a1b;
+  border-radius: 0;
+  padding: 10px 20px;
+  min-height: 44px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+button:hover,
+.btn:hover,
+input[type="submit"]:hover {
+  background: #741f14;
+  border-color: #741f14;
+}
+button:disabled,
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Links */
+a {
+  color: #9c2a1b;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+}
+a:hover {
+  color: #741f14;
+  text-decoration-thickness: 2px;
+}
+
+/* Container do thread, comentários, paginação */
+.thread,
+.comments,
+.comment {
+  font-family: inherit;
+  color: #1a1815;
+}
+
+/* Cada comentário individual */
+.comment,
+.comments-list li,
+.comment-item {
+  border-bottom: 1px solid #cfc6b5;
+  padding: 16px 0;
+}
+.comment:last-child { border-bottom: 0; }
+
+/* Avatar / iniciais */
+.avatar,
+.comment-avatar {
+  background: #faf6ee;
+  color: #1a1815;
+  border: 1px solid #cfc6b5;
+  border-radius: 0;
+  font-weight: 700;
+}
+
+/* Nome do autor */
+.author,
+.comment-author {
+  font-weight: 700;
+  color: #1a1815;
+}
+
+/* Data, meta */
+.timestamp,
+.comment-date,
+.muted {
+  color: #5b554c;
+  font-size: 14px;
+}
+
+/* Counter do thread */
+.count,
+.thread-count {
+  color: #5b554c;
+  font-weight: 600;
+}
+
+/* Texto-instrução / placeholder */
+.placeholder,
+::placeholder {
+  color: #5b554c;
+  opacity: 0.8;
+}
+
+/* Mensagem vazia / loading */
+.empty,
+.loading {
+  color: #5b554c;
+  text-align: center;
+  padding: 24px 16px;
+  font-size: 14px;
+}
+
+/* Variáveis CSS que algumas builds do Cusdis ainda usam — ficam como fallback */
+:root {
+  --background: #ffffff;
+  --foreground: #1a1815;
+  --color: #1a1815;
+  --color-light: #5b554c;
+  --color-secondary: #5b554c;
+  --button-color: #fbf7f0;
+  --button-bg: #9c2a1b;
+  --button-color-hover: #fbf7f0;
+  --button-bg-hover: #741f14;
+  --link: #9c2a1b;
+  --border: #1a1815;
+  --border-light: #cfc6b5;
+}

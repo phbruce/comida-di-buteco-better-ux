@@ -6,6 +6,8 @@ import { butecos, cidades, edicao } from "~/data/butecos";
 const base = import.meta.env.BASE_URL;
 const totalButecos = butecos.length;
 const totalCidades = cidades.length;
+const comCoords = butecos.filter((b) => b.coords).length;
+const repoUrl = "https://github.com/phbruce/comida-di-buteco-better-ux";
 ---
 
 <BaseLayout
@@ -21,144 +23,215 @@ const totalCidades = cidades.length;
     <div class="container container--narrow">
 
       <header class="sobre__header">
-        <p class="sobre__eyebrow">Case study</p>
-        <h1>Sobre este redesign</h1>
+        <p class="sobre__eyebrow">Redesign não oficial</p>
+        <h1>Sobre este projeto</h1>
         <p class="sobre__lede">
-          Este é um redesign <strong>não oficial</strong> e exploratório do site
-          do concurso Comida di Buteco. É um case study de UI/UX, acessibilidade e
-          mobile-first sobre um produto público brasileiro existente. Não tem
-          vínculo com a organização do concurso.
+          Este é um <strong>case study de UI/UX</strong> sobre o site do
+          concurso Comida di Buteco — não é o site oficial, não tem vínculo
+          com a organização do concurso, e não substitui nada que está em
+          comidadibuteco.com.br. É um experimento aberto de como o mesmo
+          conteúdo poderia ser apresentado com mais foco em mobile,
+          acessibilidade e performance.
         </p>
       </header>
+
+      <section aria-labelledby="navega">
+        <h2 id="navega">Atalhos desta página</h2>
+        <ul class="sobre__toc">
+          <li><a href="#oque">O que é</a></li>
+          <li><a href="#dados">Dados e fotos</a></li>
+          <li><a href="#stack">Stack técnica</a></li>
+          <li><a href="#processo">Processo e ADRs</a></li>
+          <li><a href="#acessibilidade">Acessibilidade</a></li>
+          <li><a href="#privacidade">Privacidade</a></li>
+          <li><a href="#direitos">Marca e direitos</a></li>
+          <li><a href="#contribuir">Como contribuir</a></li>
+        </ul>
+      </section>
 
       <section aria-labelledby="oque">
         <h2 id="oque">O que é</h2>
         <p>
-          O concurso oficial Comida di Buteco acontece todo ano em diversas
-          cidades do Brasil — butecos competem com um prato autoral e o público
-          visita, prova e vota. O site oficial é o ponto central da edição, mas
-          tem oportunidades de melhoria em densidade visual, hierarquia,
-          mobile-first e performance.
+          O concurso Comida di Buteco acontece todo ano em diversas cidades
+          do Brasil. Butecos competem com um prato autoral, o público visita
+          e vota. O site oficial é o ponto central — quem está participando,
+          em qual cidade, qual prato.
         </p>
         <p>
-          Aqui exploramos como esse mesmo conteúdo poderia ser apresentado com
-          princípios do design system do GOV.UK — minimalismo, alto contraste,
-          tipografia clara, foco visível — adaptados a uma identidade
-          gastronômica brasileira.
+          Aqui experimentamos uma alternativa visual e de arquitetura,
+          aplicando princípios do <a href="https://design-system.service.gov.uk"
+          rel="noopener">GOV.UK Design System</a> (minimalismo, alto contraste,
+          tipografia clara, foco visível) com identidade gastronômica
+          brasileira. O conteúdo é o mesmo do site oficial, apresentado de
+          forma exploratória.
         </p>
         <p>
-          Para o concurso oficial, votação e regulamento, acesse
+          Para o concurso de verdade — votação, regulamento, parceiros —
+          acesse
           <a href="https://comidadibuteco.com.br" rel="noopener">comidadibuteco.com.br</a>.
         </p>
       </section>
 
       <section aria-labelledby="dados">
-        <h2 id="dados">Os dados</h2>
+        <h2 id="dados">Dados e fotos</h2>
         <p>
-          {totalButecos} butecos em {totalCidades} cidades, edição {edicao}. Foram
-          coletados via crawl polite (uma requisição por segundo, User-Agent
-          identificável apontando para este repositório) das URLs públicas do
-          sitemap oficial.
+          O site mostra <strong>{totalButecos} butecos em {totalCidades}
+          cidades</strong> (edição {edicao}). Os dados foram coletados das
+          URLs públicas do sitemap oficial via crawl polite — uma requisição
+          por segundo, com User-Agent identificável apontando para o
+          repositório deste redesign.
         </p>
         <p>
-          As fotos não são redistribuídas — cada foto é referenciada via hotlink
-          ao servidor original, com atribuição ao Comida di Buteco e ao
-          fotógrafo (quando identificável no nome do arquivo). As coordenadas dos
-          butecos foram inferidas em build via Nominatim (OpenStreetMap), também
-          respeitando rate limit.
+          As fotos <strong>não são copiadas</strong>. Cada imagem é
+          referenciada via hotlink direto ao servidor original do Comida di
+          Buteco, com atribuição visível no rodapé da foto e ao fotógrafo
+          quando o nome aparece no arquivo. Coordenadas dos butecos foram
+          inferidas em build via Nominatim (OpenStreetMap), respeitando o
+          rate limit deles — {comCoords} dos {totalButecos} butecos têm pin
+          exato no mapa, o restante mostra só o card "Como chegar".
+        </p>
+        <p>
+          Se algo aqui está errado ou desatualizado (endereço mudou, prato
+          trocou, buteco fechou), o botão <strong>Tem algo errado</strong>
+          em qualquer página de detalhe de buteco manda um retorno anônimo
+          pra quem mantém o redesign.
         </p>
       </section>
 
-      <section aria-labelledby="tech">
-        <h2 id="tech">Stack</h2>
+      <section aria-labelledby="stack">
+        <h2 id="stack">Stack técnica</h2>
         <ul>
-          <li>Astro 5 em modo estático, hospedado em GitHub Pages.</li>
-          <li>CSS nativo com Custom Properties (sem framework de utility).</li>
-          <li>Inter Variable auto-hospedada (sem Google Fonts).</li>
-          <li>Mapa via Google Maps Embed API.</li>
-          <li>Comentários via Cusdis (anônimo, sem login).</li>
-          <li>Feedback via GitHub Issues pré-preenchido.</li>
-          <li>1.050 páginas geradas em build, ~24 MB total incluindo fontes.</li>
+          <li><strong>Astro 5</strong> em modo estático, hospedado no GitHub Pages.</li>
+          <li><strong>CSS nativo</strong> com Custom Properties (sem framework de utility nem CSS-in-JS).</li>
+          <li><strong>Inter Variable</strong> auto-hospedada, sem Google Fonts.</li>
+          <li><strong>Mapa</strong> via Google Maps Embed API, lazy-loaded — só carrega quando o visitante clica em "Mostrar mapa".</li>
+          <li><strong>Comentários</strong> via Cusdis, anônimos (basta digitar um nome livre), com tema CSS espelhando os tokens deste design system.</li>
+          <li><strong>Feedback</strong> via Web3Forms — visitante envia sem cadastro, recebimento por email do mantenedor. Defesas em camadas: honeypot, time-check, rate limit local, e Cloudflare Turnstile invisível como anti-bot server-side.</li>
+          <li><strong>~1.000 páginas</strong> pré-renderizadas em build, total ~24 MB incluindo a fonte. Zero JS no caminho crítico do conteúdo.</li>
         </ul>
       </section>
 
       <section aria-labelledby="processo">
-        <h2 id="processo">Processo</h2>
+        <h2 id="processo">Processo e ADRs</h2>
         <p>
-          Toda decisão arquitetural é registrada como ADR (Architecture Decision
-          Record). Você consegue auditar a história de decisões em
-          <a href="https://github.com/phbruce/comida-di-buteco-better-ux/tree/claude/design-system-setup-6xB7T/docs/adr"
-             rel="noopener">docs/adr</a>
-          do repositório. Cada decisão lista alternativas consideradas,
-          consequências e como reverter.
+          Toda decisão estrutural — escolha de framework, paleta, provedor
+          de mapa, formato dos cards, sistema de comentários — é registrada
+          como <strong>ADR (Architecture Decision Record)</strong>. Cada ADR
+          lista o contexto, a decisão tomada, alternativas que foram
+          consideradas, consequências e como reverter caso seja necessário.
         </p>
         <p>
-          Requisitos funcionais e não funcionais ficam em
-          <code>docs/requisitos/</code>, e o roadmap em <code>ROADMAP.md</code>.
+          Você pode auditar a história completa em
+          <a href={`${repoUrl}/tree/HEAD/docs/adr`} rel="noopener">docs/adr</a>
+          do repositório, requisitos funcionais e não funcionais em
+          <a href={`${repoUrl}/tree/HEAD/docs/requisitos`} rel="noopener">docs/requisitos</a>,
+          e o roadmap em
+          <a href={`${repoUrl}/blob/HEAD/ROADMAP.md`} rel="noopener">ROADMAP.md</a>.
         </p>
       </section>
 
       <section aria-labelledby="acessibilidade">
         <h2 id="acessibilidade">Acessibilidade</h2>
         <p>
-          O alvo é WCAG 2.2 AA em todas as telas. Páginas usam HTML semântico,
-          foco visível com cor de assinatura amarela e sublinhado preto, contraste
-          mínimo 4.5:1 em texto, tap targets de pelo menos 44 pixels e suporte
-          completo a teclado.
+          O alvo é <strong>WCAG 2.2 AA</strong> em todas as telas. Na
+          prática isso significa HTML semântico antes de ARIA, foco visível
+          com a cor de assinatura amarela e sublinhado preto em qualquer
+          elemento focável, contraste mínimo 4,5:1 em texto, tap targets de
+          pelo menos 44 pixels e navegação completa por teclado.
         </p>
         <p>
-          Encontrou uma barreira? Em qualquer página de detalhe de buteco há um
-          botão <strong>Tem algo errado</strong>. Ele abre uma issue pública no
-          GitHub deste repositório — pode descrever o problema lá.
+          Encontrou uma barreira que estamos perdendo? Em qualquer página
+          de detalhe de buteco há um botão <strong>Tem algo errado</strong>
+          que aceita texto livre. O retorno chega por email para o
+          mantenedor, sem coletar nome ou email do visitante.
         </p>
       </section>
 
       <section aria-labelledby="privacidade">
         <h2 id="privacidade">Privacidade</h2>
         <p>
-          Por padrão o site não tem analytics, não usa cookies próprios e não
-          rastreia o visitante. Conteúdo de terceiros (mapa do Google, widget
-          de comentários do Cusdis) só é carregado quando você interage com
-          ele — clicando em "Mostrar mapa" ou rolando até a seção de
-          comentários. Cada um desses serviços tem sua própria política de
-          dados, e o site avisa antes de carregar.
+          Por padrão o site <strong>não tem analytics</strong>, não usa
+          cookies próprios e não rastreia visitantes. As páginas são HTML
+          estático servido direto pelo GitHub Pages.
+        </p>
+        <p>
+          Conteúdo de terceiros é carregado <strong>só quando você
+          interage</strong> com ele:
+        </p>
+        <ul>
+          <li>Mapa do Google: aparece só depois de tocar em "Mostrar mapa", com aviso de que pode definir cookies do Google.</li>
+          <li>Cusdis (comentários): widget carrega na rolagem; ele guarda nome e mensagem que você digita para exibir o comentário.</li>
+          <li>Web3Forms (feedback): submissão envia o que você digitou para a Web3Forms, que repassa por email. O visitante não precisa fornecer nome ou email.</li>
+          <li>Cloudflare Turnstile (anti-bot do feedback): roda invisível, sem cookies de tracking persistente.</li>
+        </ul>
+        <p>
+          Cada um desses serviços tem sua própria política de privacidade.
+          O site avisa explicitamente antes de carregar o que carrega
+          terceiros (mapa) e mostra qual é o destino dos dados (feedback).
         </p>
       </section>
 
       <section aria-labelledby="direitos">
         <h2 id="direitos">Marca e direitos</h2>
         <p>
-          "Comida di Buteco" é marca registrada da organização que promove o
-          concurso. Este redesign não reivindica qualquer direito sobre a marca
-          ou identidade visual oficial. Conteúdo (nomes de butecos, pratos,
-          fotos) pertence aos respectivos titulares e aparece aqui a título
-          exclusivamente informativo, com link de volta ao site oficial.
+          <strong>"Comida di Buteco"</strong> é marca registrada da
+          organização que promove o concurso. Este redesign não reivindica
+          qualquer direito sobre a marca, logo ou identidade visual oficial.
+          Conteúdo dos butecos (nomes, pratos, descrições, fotos) pertence
+          aos respectivos titulares e aparece aqui exclusivamente a título
+          informativo, com link de volta para a página oficial de cada
+          buteco.
         </p>
         <p>
-          Se um titular pedir remoção de algum item, é feito imediatamente —
-          basta abrir uma issue em
-          <a href="https://github.com/phbruce/comida-di-buteco-better-ux/issues/new"
-             rel="noopener">github.com/phbruce/comida-di-buteco-better-ux/issues</a>.
+          Se um titular pedir remoção, é feito imediatamente — basta
+          <a href={`${repoUrl}/issues/new`} rel="noopener">abrir uma issue
+          no repositório</a> ou usar o botão de feedback em qualquer
+          página de detalhe.
         </p>
         <p>
-          O <strong>código</strong> deste repositório está sob licença MIT. A
-          licença cobre apenas o código (templates, CSS, scripts), não cobre
-          marca, logos ou conteúdo coletado.
+          O <strong>código</strong> deste repositório está sob licença MIT.
+          A licença cobre apenas o código (templates, CSS, scripts, docs);
+          não cobre marca, logos nem o conteúdo coletado.
         </p>
       </section>
 
-      <section aria-labelledby="contato">
-        <h2 id="contato">Contato</h2>
+      <section aria-labelledby="contribuir">
+        <h2 id="contribuir">Como contribuir</h2>
         <p>
-          Mantido por <a href="https://github.com/phbruce" rel="noopener">@phbruce</a>.
-          Para dúvidas sobre o redesign, abra uma issue ou inicie uma discussion
-          em
-          <a href="https://github.com/phbruce/comida-di-buteco-better-ux"
-             rel="noopener">github.com/phbruce/comida-di-buteco-better-ux</a>.
-          Para qualquer coisa relacionada ao concurso oficial, acesse
-          <a href="https://comidadibuteco.com.br" rel="noopener">comidadibuteco.com.br</a>.
+          O repositório é aberto e qualquer pessoa pode contribuir:
         </p>
+        <ul>
+          <li>
+            <strong>Reportar erro de dado</strong> (endereço mudou, prato
+            trocou, buteco fechou) → use o botão "Tem algo errado" no detalhe
+            do buteco. Não precisa de cadastro.
+          </li>
+          <li>
+            <strong>Sugerir feature ou design</strong> →
+            <a href={`${repoUrl}/discussions`} rel="noopener"> abrir uma
+            discussion</a> no GitHub.
+          </li>
+          <li>
+            <strong>Reportar bug do site</strong> →
+            <a href={`${repoUrl}/issues/new`} rel="noopener"> abrir issue</a>.
+          </li>
+          <li>
+            <strong>Pull requests</strong> são bem-vindos para correções,
+            melhorias de a11y, novos componentes do design system, etc. Veja
+            <code>CONTRIBUTING.md</code> no repositório para o fluxo de
+            decisões via ADR.
+          </li>
+        </ul>
       </section>
+
+      <footer class="sobre__colofao">
+        <p>
+          Mantido por
+          <a href="https://github.com/phbruce" rel="noopener">@phbruce</a>.
+          Repositório:
+          <a href={repoUrl} rel="noopener">{repoUrl.replace("https://", "")}</a>.
+        </p>
+      </footer>
 
     </div>
   </article>
@@ -190,6 +263,7 @@ const totalCidades = cidades.length;
     font-size: var(--font-size-h3);
     color: var(--color-text-muted);
     line-height: var(--line-height-relaxed);
+    font-weight: var(--font-weight-regular);
   }
 
   .sobre section {
@@ -209,6 +283,7 @@ const totalCidades = cidades.length;
     margin-block-end: var(--space-3);
     padding-inline-start: 1.25em;
     line-height: var(--line-height-relaxed);
+    max-width: 65ch;
   }
   .sobre li {
     margin-block-end: var(--space-2);
@@ -218,5 +293,37 @@ const totalCidades = cidades.length;
     padding: 1px 6px;
     font-size: 0.92em;
     border: var(--border-thin);
+    font-family: var(--font-family-mono);
+  }
+
+  /* Sumário no topo — duas colunas em desktop, uma no mobile */
+  .sobre__toc {
+    list-style: none;
+    padding: var(--space-4) var(--space-5);
+    background: var(--color-bg-soft);
+    border: var(--border-thin);
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-2) var(--space-5);
+  }
+  .sobre__toc li {
+    margin: 0;
+  }
+  @media (min-width: 640px) {
+    .sobre__toc {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .sobre__colofao {
+    margin-block-start: var(--space-9);
+    padding-block-start: var(--space-5);
+    border-block-start: var(--border-thin);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+  }
+  .sobre__colofao p {
+    margin: 0;
   }
 </style>
