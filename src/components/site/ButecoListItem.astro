@@ -87,6 +87,12 @@ const searchHaystack = [
   .item:first-child {
     border-block-start: var(--border-thin);
   }
+  /* O último item visível da página perde a borda inferior — evita
+     separador duplicado com a borda superior do paginador. Classe
+     setada via JS no apply() da listagem. */
+  .item.item--last {
+    border-block-end: 0;
+  }
   .item:hover {
     background-color: var(--color-bg-soft);
   }

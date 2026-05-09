@@ -700,10 +700,18 @@ const PER_PAGE_DEFAULT = 20;
       const pageSet = new Set(pageItems);
 
       // 4. atualiza visibilidade — só mostra os da página atual
-      for (const li of items) li.hidden = !pageSet.has(li);
+      for (const li of items) {
+        li.hidden = !pageSet.has(li);
+        li.classList.remove("item--last");
+      }
 
       // 5. reordena items visíveis na DOM (preserva ordem da página)
       for (const li of pageItems) list!.appendChild(li);
+
+      // 5b. marca o último visível para zerar separador antes do paginador
+      if (pageItems.length > 0) {
+        pageItems[pageItems.length - 1].classList.add("item--last");
+      }
 
       // 6. atualiza UI
       if (countEl) countEl.textContent = String(total);
