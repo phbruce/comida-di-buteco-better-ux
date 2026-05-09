@@ -169,7 +169,11 @@ const credito = creditoFoto(buteco);
     pageUrl={Astro.url.toString()}
   />
 
-  <Comments />
+  <Comments
+    pageId={`${buteco.cidade_slug}/${buteco.slug}`}
+    pageTitle={`${buteco.nome} — ${buteco.cidade}`}
+    pageUrl={Astro.url.toString()}
+  />
 </BaseLayout>
 
 <style>

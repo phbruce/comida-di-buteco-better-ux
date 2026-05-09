@@ -1,8 +1,9 @@
 # ADR-0007 — Comentários nas páginas via giscus
 
-- **Status:** ACCEPTED
+- **Status:** SUPERSEDED por [ADR-0008](./ADR-0008-comentarios-cusdis.md) em 2026-05-09
 - **Data:** 2026-05-09
 - **Decisor(es):** Dono do produto (delegado ao agente em 2026-05-09 — "pode escolher o mais legalzinho")
+- **Motivo da substituição:** giscus exige conta GitHub para comentar — barreira inaceitável para público não-técnico ("tia da escola"). Substituído por Cusdis (anônimo).
 - **RFs/RNFs relacionados:** RNF-0001 (a11y), RNF-0002 (performance), RNF-0005 (privacidade)
 
 ## Contexto

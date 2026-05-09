@@ -23,9 +23,32 @@ const { buteco, destacarCidade = false, comFoto = true } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const detalheUrl = `${base}butecos/${buteco.cidade_slug}/${buteco.slug}/`;
 const alt = fotoAltSintetico(buteco);
+
+/** Texto normalizado para busca (sem acentos, lowercase). */
+function normalize(s: string | null | undefined): string {
+  if (!s) return "";
+  return s
+    .toLocaleLowerCase("pt-BR")
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "");
+}
+
+const searchHaystack = [
+  buteco.nome,
+  buteco.prato,
+  buteco.bairro ?? "",
+  buteco.prato_descricao ?? "",
+].map(normalize).join(" ");
 ---
 
-<li class={`item ${comFoto ? "item--with-photo" : ""}`}>
+<li
+  class={`item ${comFoto ? "item--with-photo" : ""}`}
+  data-buteco-item
+  data-search={searchHaystack}
+  data-bairro={buteco.bairro ?? ""}
+  data-nome-key={normalize(buteco.nome)}
+  data-bairro-key={normalize(buteco.bairro ?? "")}
+>
   <article>
     {comFoto && buteco.foto && (
       <a class="item__media" href={detalheUrl} tabindex="-1" aria-hidden="true">

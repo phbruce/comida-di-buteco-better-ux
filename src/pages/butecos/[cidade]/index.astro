@@ -2,8 +2,6 @@
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import Breadcrumb from "~/components/ui/Breadcrumb.astro";
 import ButecoListItem from "~/components/site/ButecoListItem.astro";
-import Input from "~/components/ui/Input.astro";
-import Button from "~/components/ui/Button.astro";
 import { butecos, cidades } from "~/data/butecos";
 
 export async function getStaticPaths() {
@@ -21,12 +19,21 @@ const lista = butecos
 const bairros = Array.from(new Set(lista.map((b) => b.bairro).filter(Boolean))) as string[];
 bairros.sort((a, b) => a.localeCompare(b, "pt-BR"));
 
+// sugestões de autocomplete: nome do buteco + nome do prato (deduplicado)
+const sugestoes = Array.from(
+  new Set([
+    ...lista.map((b) => b.nome),
+    ...lista.map((b) => b.prato),
+  ])
+).sort((a, b) => a.localeCompare(b, "pt-BR"));
+
 const base = import.meta.env.BASE_URL;
+const datalistId = `sugestoes-${cidade.slug}`;
 ---
 
 <BaseLayout
   title={`Butecos de ${cidade.nome}`}
-  description={`${lista.length} butecos em ${cidade.nome} no concurso Comida di Buteco. Redesign não oficial. Explore os pratos concorrentes.`}
+  description={`${lista.length} butecos em ${cidade.nome} no concurso Comida di Buteco. Redesign não oficial.`}
   cidadeAtual={cidade.nome}
 >
   <Breadcrumb items={[
@@ -44,25 +51,37 @@ const base = import.meta.env.BASE_URL;
     </div>
   </section>
 
-  <section class="filters" aria-labelledby="filters-heading">
+  <section class="filters" aria-labelledby="filters-heading" data-filters>
     <div class="container">
       <h2 id="filters-heading" class="visually-hidden">Filtros e busca</h2>
 
       <form class="filters__form" role="search" method="get" action="" novalidate>
-        <Input
-          id="busca"
-          name="q"
-          label="Buscar"
-          type="search"
-          hint="Digite parte do nome do buteco ou do prato"
-          placeholder="ex.: feijoada, costela, picanha…"
-        />
+        <div class="field">
+          <label class="field__label" for="busca">Buscar</label>
+          <p class="field__hint" id="busca-hint">
+            Nome do buteco, prato ou bairro. Sugestões aparecem enquanto você digita.
+          </p>
+          <input
+            id="busca"
+            name="q"
+            type="search"
+            list={datalistId}
+            placeholder="ex.: feijoada, costela, Santa Tereza"
+            aria-describedby="busca-hint"
+            autocomplete="off"
+            class="field__input"
+            data-filter-q
+          />
+          <datalist id={datalistId}>
+            {sugestoes.map((s) => <option value={s}></option>)}
+          </datalist>
+        </div>
 
         {bairros.length > 1 && (
           <div class="filters__row">
             <label class="filters__select" for="bairro">
               <span>Bairro</span>
-              <select id="bairro" name="bairro">
+              <select id="bairro" name="bairro" data-filter-bairro>
                 <option value="">Todos os bairros ({bairros.length})</option>
                 {bairros.map((b) => <option value={b}>{b}</option>)}
               </select>
@@ -70,7 +89,7 @@ const base = import.meta.env.BASE_URL;
 
             <label class="filters__select" for="ordem">
               <span>Ordenar</span>
-              <select id="ordem" name="ordem">
+              <select id="ordem" name="ordem" data-filter-ordem>
                 <option value="nome">Nome do buteco (A→Z)</option>
                 <option value="bairro">Bairro</option>
               </select>
@@ -79,8 +98,10 @@ const base = import.meta.env.BASE_URL;
         )}
 
         <div class="filters__actions">
-          <Button type="submit" variant="primary">Aplicar filtros</Button>
-          <Button type="reset" variant="tertiary">Limpar</Button>
+          <button type="reset" class="filters__reset" data-filter-reset>Limpar filtros</button>
+          <noscript>
+            <button type="submit" class="filters__submit">Aplicar</button>
+          </noscript>
         </div>
       </form>
     </div>
@@ -90,43 +111,69 @@ const base = import.meta.env.BASE_URL;
     <div class="container">
       <div class="results__header">
         <h2 id="results-heading">
-          <span class="results__count">{lista.length}</span> butecos encontrados
+          <span class="results__count" data-results-count>{lista.length}</span>
+          de <span data-results-total>{lista.length}</span> butecos
         </h2>
-        <p class="results__hint" aria-live="polite">
-          Mostrando todos os butecos. Use os filtros acima para refinar.
+        <p class="results__hint" aria-live="polite" data-results-hint>
+          Mostrando todos os butecos.
         </p>
       </div>
 
-      <ul class="results__list" role="list">
+      <ul class="results__list" role="list" data-results-list>
         {lista.map((b) => <ButecoListItem buteco={b} />)}
       </ul>
+
+      <p class="results__empty" data-results-empty hidden>
+        Nenhum buteco encontrado com esses filtros.
+        <button type="button" class="results__clear" data-filter-reset>Limpar filtros</button>
+      </p>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .page-header {
-    padding-block: var(--space-6) var(--space-7);
-  }
-  .page-header h1 {
-    font-size: var(--font-size-h1);
-    margin-block-end: var(--space-3);
-  }
-  .page-header__lede {
-    color: var(--color-text-muted);
-    max-width: 60ch;
-  }
+  .page-header { padding-block: var(--space-6) var(--space-7); }
+  .page-header h1 { font-size: var(--font-size-h1); margin-block-end: var(--space-3); }
+  .page-header__lede { color: var(--color-text-muted); max-width: 60ch; }
 
   .filters {
     background: var(--color-bg-soft);
     border-block: var(--border-thin);
     padding-block: var(--space-5);
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--z-header);
+    backdrop-filter: blur(6px);
   }
   .filters__form {
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
   }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .field__label {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-strong);
+  }
+  .field__hint {
+    font-size: var(--font-size-small);
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+  .field__input {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-bg-canvas);
+    border: 2px solid var(--color-border-strong);
+    color: var(--color-text-strong);
+    min-height: 44px;
+    font: inherit;
+  }
+
   .filters__row {
     display: grid;
     grid-template-columns: 1fr;
@@ -145,36 +192,189 @@ const base = import.meta.env.BASE_URL;
       linear-gradient(135deg, var(--color-text-strong) 50%, transparent 50%) calc(100% - 12px) 50% / 6px 6px no-repeat,
       var(--color-bg-canvas);
     padding-inline-end: var(--space-7);
+    padding-inline-start: var(--space-3);
+    min-height: 44px;
+    border: 2px solid var(--color-border-strong);
+    font: inherit;
+    color: var(--color-text-strong);
   }
+
   .filters__actions {
     display: flex;
     gap: var(--space-3);
     flex-wrap: wrap;
   }
+  .filters__reset,
+  .filters__submit {
+    min-height: 44px;
+    padding: var(--space-2) var(--space-4);
+    border: 2px solid var(--color-border-strong);
+    background: transparent;
+    color: var(--color-text-strong);
+    font: inherit;
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+  }
+  .filters__reset:hover {
+    background: var(--color-text-strong);
+    color: var(--color-text-on-dark);
+  }
+  .filters__submit {
+    background: var(--color-brand-primary);
+    color: var(--color-text-on-brand);
+    border-color: var(--color-brand-primary);
+  }
 
-  .results {
-    padding-block: var(--space-7);
-  }
-  .results__header {
-    margin-block-end: var(--space-6);
-  }
-  .results__count {
-    color: var(--color-brand-primary);
-  }
+  .results { padding-block: var(--space-7); }
+  .results__header { margin-block-end: var(--space-6); }
+  .results__count { color: var(--color-brand-primary); font-variant-numeric: tabular-nums; }
   .results__hint {
     color: var(--color-text-muted);
     font-size: var(--font-size-small);
     margin-block-start: var(--space-2);
+    min-height: 1.4em;
   }
-  .results__list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  .results__list { list-style: none; padding: 0; margin: 0; }
+  .results__empty {
+    padding: var(--space-7) var(--space-5);
+    text-align: center;
+    color: var(--color-text-muted);
+    background: var(--color-bg-soft);
+    border: var(--border-thin);
+  }
+  .results__clear {
+    margin-inline-start: var(--space-2);
+    background: transparent;
+    border: 2px solid var(--color-border-strong);
+    padding: var(--space-2) var(--space-4);
+    color: var(--color-text-strong);
+    cursor: pointer;
+    font: inherit;
+    font-weight: var(--font-weight-semibold);
+  }
+  .results__clear:hover {
+    background: var(--color-text-strong);
+    color: var(--color-text-on-dark);
   }
 
   @media (min-width: 640px) {
-    .filters__row {
-      grid-template-columns: 1fr 1fr;
-    }
+    .filters__row { grid-template-columns: 1fr 1fr; }
   }
 </style>
+
+<script>
+  type Sort = "nome" | "bairro";
+
+  function normalize(s: string): string {
+    return s
+      .toLocaleLowerCase("pt-BR")
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .trim();
+  }
+
+  function debounce<T extends (...a: any[]) => void>(fn: T, ms: number) {
+    let h: number | undefined;
+    return (...args: Parameters<T>) => {
+      window.clearTimeout(h);
+      h = window.setTimeout(() => fn(...args), ms);
+    };
+  }
+
+  const root = document.querySelector<HTMLElement>("[data-filters]");
+  const list = document.querySelector<HTMLElement>("[data-results-list]");
+  if (root && list) {
+    const inputQ = root.querySelector<HTMLInputElement>("[data-filter-q]");
+    const selBairro = root.querySelector<HTMLSelectElement>("[data-filter-bairro]");
+    const selOrdem = root.querySelector<HTMLSelectElement>("[data-filter-ordem]");
+    const resets = document.querySelectorAll<HTMLButtonElement>("[data-filter-reset]");
+    const items = Array.from(list.querySelectorAll<HTMLElement>("[data-buteco-item]"));
+    const totalEl = document.querySelector<HTMLElement>("[data-results-total]");
+    const countEl = document.querySelector<HTMLElement>("[data-results-count]");
+    const hintEl = document.querySelector<HTMLElement>("[data-results-hint]");
+    const emptyEl = document.querySelector<HTMLElement>("[data-results-empty]");
+
+    if (totalEl) totalEl.textContent = String(items.length);
+
+    /** Aplica filtros + ordenação aos items existentes; atualiza UI. */
+    function apply() {
+      const q = normalize(inputQ?.value ?? "");
+      const bairro = selBairro?.value ?? "";
+      const ordem = (selOrdem?.value ?? "nome") as Sort;
+      const tokens = q.split(/\s+/).filter(Boolean);
+
+      let visible = 0;
+      for (const li of items) {
+        const haystack = li.dataset.search ?? "";
+        const matchQ = tokens.length === 0 || tokens.every((t) => haystack.includes(t));
+        const matchBairro = !bairro || (li.dataset.bairro ?? "") === bairro;
+        const ok = matchQ && matchBairro;
+        li.hidden = !ok;
+        if (ok) visible++;
+      }
+
+      // ordenação: reordenar items visíveis na DOM
+      const visibleItems = items.filter((li) => !li.hidden);
+      visibleItems.sort((a, b) => {
+        if (ordem === "bairro") {
+          const ba = a.dataset.bairroKey ?? "";
+          const bb = b.dataset.bairroKey ?? "";
+          if (ba !== bb) return ba.localeCompare(bb);
+        }
+        return (a.dataset.nomeKey ?? "").localeCompare(b.dataset.nomeKey ?? "");
+      });
+      // re-anexa na ordem (move via appendChild — preserva foco)
+      for (const li of visibleItems) list!.appendChild(li);
+
+      if (countEl) countEl.textContent = String(visible);
+      if (emptyEl) emptyEl.hidden = visible !== 0;
+      if (hintEl) {
+        if (visible === items.length) {
+          hintEl.textContent = `Mostrando todos os ${items.length} butecos.`;
+        } else if (visible === 0) {
+          hintEl.textContent = `Nenhum buteco com esses filtros.`;
+        } else {
+          hintEl.textContent = `Mostrando ${visible} de ${items.length} butecos.`;
+        }
+      }
+
+      // sincroniza URL — sem reload
+      const params = new URLSearchParams();
+      if (q) params.set("q", inputQ!.value);
+      if (bairro) params.set("bairro", bairro);
+      if (ordem && ordem !== "nome") params.set("ordem", ordem);
+      const qs = params.toString();
+      const url = qs ? `?${qs}` : window.location.pathname;
+      history.replaceState(null, "", url);
+    }
+
+    /** Lê URL e popula inputs. */
+    function loadFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      if (inputQ && params.has("q")) inputQ.value = params.get("q") ?? "";
+      if (selBairro && params.has("bairro")) selBairro.value = params.get("bairro") ?? "";
+      if (selOrdem && params.has("ordem")) selOrdem.value = params.get("ordem") ?? "nome";
+    }
+
+    function clearAll() {
+      if (inputQ) inputQ.value = "";
+      if (selBairro) selBairro.value = "";
+      if (selOrdem) selOrdem.value = "nome";
+      apply();
+    }
+
+    inputQ?.addEventListener("input", debounce(apply, 150));
+    selBairro?.addEventListener("change", apply);
+    selOrdem?.addEventListener("change", apply);
+    resets.forEach((b) => b.addEventListener("click", (e) => { e.preventDefault(); clearAll(); }));
+
+    // intercepta submit (caso user aperte Enter): aplica e impede reload
+    root.querySelector("form")?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      apply();
+    });
+
+    loadFromUrl();
+    apply();
+  }
+</script>

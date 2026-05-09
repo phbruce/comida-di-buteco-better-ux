@@ -1,90 +1,69 @@
 ---
 /**
- * Comments — comentários via giscus (ADR-0007).
+ * Comments — comentários via Cusdis (ADR-0008, supersede ADR-0007).
  *
- * Pré-requisitos no GitHub:
- * - Discussions habilitadas no repo (Settings → Features).
- * - App giscus instalado (https://github.com/apps/giscus).
+ * Cusdis é open source, free hosted (cusdis.com), permite comentários
+ * anônimos OU com nome+email — visitante NÃO precisa de conta.
  *
- * O tema custom é servido a partir do próprio site
- * (public/giscus-theme.css) → resulta numa URL absoluta no domínio do site,
- * usada pelo iframe do giscus para estilizar o widget.
+ * Setup do dono (5 min, uma vez só):
+ * 1. Criar conta em https://cusdis.com (free, sem cartão).
+ * 2. Criar projeto, pegar APP_ID.
+ * 3. Definir env PUBLIC_CUSDIS_APP_ID no workflow de deploy
+ *    (ou em .env.production local).
+ *
+ * Sem APP_ID, o componente mostra fallback informativo.
  */
 
 interface Props {
-  mapping?: "pathname" | "url" | "title";
-  category?: string;
-  categoryId?: string;
-  repoId?: string;
+  /** ID único da página (ex.: cidade/slug). Cusdis usa para agrupar threads. */
+  pageId: string;
+  pageTitle: string;
+  pageUrl: string;
 }
 
-const {
-  mapping = "pathname",
-  category = "General",
-  categoryId = "DIC_kwDOSYTFec4C8odd",
-  repoId = "R_kgDOSYTFeQ",
-} = Astro.props;
+const { pageId, pageTitle, pageUrl } = Astro.props;
 
-const repo = "phbruce/comida-di-buteco-better-ux";
-
-// URL ABSOLUTA do nosso CSS custom — necessária porque o giscus
-// carrega o tema dentro de um iframe em giscus.app (cross-origin).
-// `Astro.site` é definido em astro.config.mjs (https://phbruce.github.io).
-// `import.meta.env.BASE_URL` é "/comida-di-buteco-better-ux/".
-const themeUrl = new URL(
-  "giscus-theme.css",
-  new URL(import.meta.env.BASE_URL, Astro.site).toString()
-).toString();
+const APP_ID = (import.meta.env.PUBLIC_CUSDIS_APP_ID as string | undefined) ?? "";
+const HOST = (import.meta.env.PUBLIC_CUSDIS_HOST as string | undefined) ?? "https://cusdis.com";
+const SCRIPT = `${HOST}/js/cusdis.es.js`;
 ---
 
 <section class="comments" aria-labelledby="comments-title">
   <div class="container">
     <h2 id="comments-title" class="comments__title">Comentários</h2>
     <p class="comments__lede">
-      Já visitou? Conta sua experiência. Comentários usam o sistema de
-      <a href="https://github.com/features/discussions" rel="noopener">GitHub Discussions</a> —
-      é necessário ter conta no GitHub para comentar.
+      Comente sua experiência neste buteco. Você pode comentar sem cadastro
+      (apenas nome). Se informar e-mail, recebe aviso quando houver resposta —
+      nunca é exibido publicamente.
     </p>
 
-    <p class="comments__theme-debug" aria-hidden="true">
-      <small>
-        <code>data-theme</code>:
-        <a href={themeUrl} rel="noopener"><code>{themeUrl}</code></a>
-      </small>
-    </p>
-
-    <div class="comments__mount">
-      <noscript>
+    {APP_ID ? (
+      <>
+        <div
+          id="cusdis_thread"
+          data-host={HOST}
+          data-app-id={APP_ID}
+          data-page-id={pageId}
+          data-page-url={pageUrl}
+          data-page-title={pageTitle}
+          data-theme="light"
+        ></div>
+        <script is:inline async defer src={SCRIPT}></script>
+      </>
+    ) : (
+      <div class="comments__fallback">
         <p>
-          Comentários precisam de JavaScript habilitado.
-          Você ainda pode <a href={`https://github.com/${repo}/discussions`} rel="noopener">
-            abrir uma discussão diretamente no GitHub
-          </a>.
+          <strong>Comentários ainda não estão configurados.</strong>
         </p>
-      </noscript>
-
-      {/* Script tag direto no HTML — todos os data-* visíveis em "View Source",
-          incluindo data-theme apontando para o nosso CSS custom. O próprio
-          iframe interno do giscus já carrega lazy via data-loading="lazy". */}
-      <script
-        is:inline
-        src="https://giscus.app/client.js"
-        data-repo={repo}
-        data-repo-id={repoId}
-        data-category={category}
-        data-category-id={categoryId}
-        data-mapping={mapping}
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme={themeUrl}
-        data-lang="pt"
-        data-loading="lazy"
-        crossorigin="anonymous"
-        async
-      ></script>
-    </div>
+        <p>
+          Para ativar: criar projeto grátis em
+          <a href="https://cusdis.com" rel="noopener">cusdis.com</a>,
+          copiar o <code>APP_ID</code> e definir
+          <code>PUBLIC_CUSDIS_APP_ID</code> no workflow de deploy
+          (<code>.github/workflows/deploy.yml</code>).
+        </p>
+      </div>
+    )}
   </div>
 </section>
 
@@ -100,23 +79,71 @@ const themeUrl = new URL(
   .comments__lede {
     color: var(--color-text-muted);
     max-width: 60ch;
-    margin-block-end: var(--space-4);
+    margin-block-end: var(--space-5);
   }
-  .comments__theme-debug {
-    margin-block-end: var(--space-4);
-    color: var(--color-text-muted);
-    font-size: var(--font-size-caption);
-    word-break: break-all;
-  }
-  .comments__theme-debug code {
+  .comments__fallback {
+    padding: var(--space-5);
     background: var(--color-bg-soft);
+    border: var(--border-thin);
+    color: var(--color-text-muted);
+  }
+  .comments__fallback p { margin: 0; }
+  .comments__fallback p + p { margin-block-start: var(--space-2); }
+  .comments__fallback code {
+    background: var(--color-bg-canvas);
     padding: 1px 4px;
-    font-size: 0.95em;
+    border: var(--border-thin);
+    font-size: 0.92em;
   }
-  .comments__mount {
-    min-height: 200px;
+</style>
+
+<style is:global>
+  /* Override do tema Cusdis para casar com o "Buteco Moderno" (sem shadow DOM) */
+  #cusdis_thread {
+    --cusdis-bg: var(--color-bg-canvas);
+    --cusdis-text: var(--color-text-strong);
+    --cusdis-text-muted: var(--color-text-muted);
+    --cusdis-border: var(--color-border);
+    --cusdis-primary: var(--color-brand-primary);
+
+    color: var(--cusdis-text);
+    background: var(--cusdis-bg);
   }
-  .comments__mount :global(.giscus-frame) {
-    color-scheme: light;
+  #cusdis_thread input,
+  #cusdis_thread textarea,
+  #cusdis_thread button {
+    border-radius: 0 !important;
+    font-family: var(--font-family-sans);
+  }
+  #cusdis_thread input,
+  #cusdis_thread textarea {
+    border: 2px solid var(--color-border-strong) !important;
+    background: var(--color-bg-canvas) !important;
+    color: var(--color-text-strong) !important;
+    padding: var(--space-3) var(--space-4) !important;
+  }
+  #cusdis_thread input:focus-visible,
+  #cusdis_thread textarea:focus-visible,
+  #cusdis_thread button:focus-visible {
+    outline: 3px solid var(--color-focus-ring) !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 4px 0 0 var(--color-focus-text) !important;
+  }
+  #cusdis_thread button {
+    background: var(--color-brand-primary) !important;
+    color: var(--color-text-on-brand) !important;
+    border: 2px solid var(--color-brand-primary) !important;
+    padding: var(--space-2) var(--space-5) !important;
+    font-weight: var(--font-weight-semibold) !important;
+    min-height: 44px !important;
+  }
+  #cusdis_thread button:hover {
+    background: var(--color-brand-primary-hover) !important;
+    border-color: var(--color-brand-primary-hover) !important;
+  }
+  #cusdis_thread a {
+    color: var(--color-brand-primary) !important;
+    text-decoration: underline !important;
+    text-underline-offset: 0.2em !important;
   }
 </style>

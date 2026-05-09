@@ -32,7 +32,8 @@ Cada ADR responde:
 | [ADR-0004](./ADR-0004-tokens-de-design.md) | Tokens de design (cor, tipografia, espaço) | ACCEPTED | Dono do produto | 2026-05-09 |
 | [ADR-0005](./ADR-0005-mapa-interativo.md) | Mapa interativo com design customizado | ACCEPTED | Dono do produto | 2026-05-09 |
 | [ADR-0006](./ADR-0006-feedback-da-pagina.md) | Botão de feedback "esta info está correta?" | ACCEPTED | Dono do produto | 2026-05-09 |
-| [ADR-0007](./ADR-0007-comentarios-giscus.md) | Comentários nas páginas via giscus | ACCEPTED | Dono do produto (delegado) | 2026-05-09 |
+| [ADR-0007](./ADR-0007-comentarios-giscus.md) | Comentários nas páginas via giscus | ~~SUPERSEDED~~ | — | 2026-05-09 |
+| [ADR-0008](./ADR-0008-comentarios-cusdis.md) | Comentários nas páginas via Cusdis | ACCEPTED | Dono do produto | 2026-05-09 |
 
 ## Como propor um ADR
 
