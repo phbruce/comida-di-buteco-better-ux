@@ -1,8 +1,8 @@
 # ADR-0016 — Sistema de ilustrações decorativas (personalidade visual)
 
-- **Status:** PROPOSED
+- **Status:** ACCEPTED
 - **Data:** 2026-05-09
-- **Decisor(es):** Dono do produto (aguardando aprovação)
+- **Decisor(es):** Dono do produto (aprovado em 2026-05-09 — Alternativa B: híbrido Storyset/unDraw + acentos próprios)
 - **RFs/RNFs relacionados:** RNF-0001 (a11y), RNF-0002 (performance), RNF-0003 (mobile-first), ADR-0002 (DS GOV.UK), ADR-0004 (tokens "Buteco Moderno")
 
 ## Contexto

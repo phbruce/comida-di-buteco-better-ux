@@ -3,13 +3,9 @@
  * Footer — rodapé do site.
  * Inclui informações sobre o concurso, links institucionais e crédito.
  */
-import OrnamentBand from "~/components/ui/OrnamentBand.astro";
-
 const base = import.meta.env.BASE_URL;
 const year = new Date().getFullYear();
 ---
-
-<OrnamentBand variant="top" tone="soft" height="3.5rem" class="site-footer__ornament" />
 
 <footer class="site-footer" role="contentinfo">
   <div class="site-footer__inner container">

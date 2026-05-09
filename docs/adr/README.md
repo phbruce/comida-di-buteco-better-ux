@@ -41,7 +41,7 @@ Cada ADR responde:
 | [ADR-0013](./ADR-0013-turnstile-anti-bot.md) | Cloudflare Turnstile como anti-bot do feedback | ACCEPTED | Dono do produto (delegado) | 2026-05-09 |
 | [ADR-0014](./ADR-0014-self-host-cusdis.md) | Self-host do Cusdis | ~~REJECTED~~ | Dono do produto | 2026-05-09 |
 | [ADR-0015](./ADR-0015-comentarios-proprios.md) | Sistema de comentários próprio (Worker + D1) | ACCEPTED | Dono do produto (delegado) | 2026-05-09 |
-| [ADR-0016](./ADR-0016-ilustracoes-personalidade-visual.md) | Sistema de ilustrações decorativas (Storyset/unDraw + acentos próprios) | **PROPOSED** | — | 2026-05-09 |
+| [ADR-0016](./ADR-0016-ilustracoes-personalidade-visual.md) | Sistema de ilustrações decorativas (Storyset/unDraw + acentos próprios) | ACCEPTED | Dono do produto | 2026-05-09 |
 
 ## Como propor um ADR
 
