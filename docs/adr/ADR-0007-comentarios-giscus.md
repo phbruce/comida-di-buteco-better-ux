@@ -28,10 +28,11 @@ Concretamente:
 - Apenas em **páginas de detalhe do buteco** (não home, não listagens).
 
 Pré-requisitos operacionais (você no GitHub mobile, 1 minuto):
-1. Settings do repo → habilitar **Discussions**.
-2. Instalar o app **giscus** (https://github.com/apps/giscus) no repo.
+1. **Habilitar Discussions** no repo: `https://github.com/phbruce/comida-di-buteco-better-ux/settings` → role até **Features** → marque **Discussions** ✓.
+2. **Instalar o app giscus**: `https://github.com/apps/giscus` → "Install" → escolher **only this repository**.
+3. (Opcional, melhora performance) Pegar IDs de repo/categoria em **`https://giscus.app/pt`** (preencher repo + categoria, copiar `data-repo-id` e `data-category-id`) e passar para o componente. Sem isso, o giscus funciona mas faz uma busca extra por nome a cada page-load.
 
-Sem esses passos, o componente mostra fallback "comentários temporariamente indisponíveis".
+Sem (1) e (2), o componente mostra placeholder "Carregando comentários…" + link para abrir Discussion direta no GitHub.
 
 ## Alternativas consideradas
 
