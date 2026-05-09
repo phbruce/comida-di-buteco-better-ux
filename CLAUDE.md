@@ -15,6 +15,7 @@ Concurso gastronômico anual em que butecos competem com um prato autoral; usuá
 3. **Inspiração GOV.UK Design System** — minimalismo, alto contraste, foco amarelo `#ffdd00`, tipografia clara.
 4. **Toda decisão arquitetural vira ADR.** ADRs em status `PROPOSED` **NÃO** podem ser implementados sem aprovação humana explícita.
 5. **Documentação em pt-BR**; código e tokens em inglês.
+6. **PROIBIDO emojis** em qualquer parte do site renderizado ao usuário (componentes em `src/`, páginas, conteúdo, body de e-mails/issues gerados, etc.). Use ícones SVG inline com `aria-hidden`, ou apenas texto/badge. Vale para emojis decorativos E semânticos (✓ ✗ ⚠ etc.). Em docs internas (`docs/`) é tolerado, mas evite por consistência.
 
 ## Antes de propor implementação
 

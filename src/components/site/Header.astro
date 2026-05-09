@@ -8,7 +8,7 @@
  *   ┌─────────────────────────────────────────┐
  *   │ [CdB] Comida di Buteco   Cidades · Sobre │
  *   ├─────────────────────────────────────────┤
- *   │ 📍 Belo Horizonte · Trocar              │
+ *   │ Belo Horizonte                Trocar    │
  *   └─────────────────────────────────────────┘
  *
  * Desktop (≥768px) — tudo na mesma linha, com tagline visível.
@@ -42,7 +42,6 @@ const sobreUrl = `${base}sobre/`;
 
     {cidadeAtual && (
       <p class="site-header__city">
-        <span class="site-header__city-pin" aria-hidden="true">📍</span>
         <span class="visually-hidden">Cidade selecionada:</span>
         <strong>{cidadeAtual}</strong>
         <a href={homeUrl} class="site-header__city-change">Trocar</a>
@@ -153,9 +152,6 @@ const sobreUrl = `${base}sobre/`;
     border: var(--border-thin);
     font-size: var(--font-size-small);
     color: var(--color-text-muted);
-  }
-  .site-header__city-pin {
-    flex-shrink: 0;
   }
   .site-header__city strong {
     color: var(--color-text-strong);

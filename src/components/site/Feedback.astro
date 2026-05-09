@@ -35,7 +35,7 @@ function ghIssueUrl(rating: "ok" | "bad", message?: string) {
     body: [
       `**Página:** [${pageTitle}](${pageUrl})`,
       `**ID:** \`${pageId}\``,
-      `**Rating:** ${rating === "ok" ? "✅ ok" : "⚠️ tem algo errado"}`,
+      `**Rating:** ${rating === "ok" ? "OK" : "TEM ALGO ERRADO"}`,
       "",
       "**Mensagem:**",
       message ? message : "_(sem mensagem)_",
@@ -318,7 +318,7 @@ const badHref = ghIssueUrl("bad");
           body: [
             `**Página:** [${pageTitle}](${pageUrl})`,
             `**ID:** \`${pageId}\``,
-            `**Rating:** ${rating === "ok" ? "✅ ok" : "⚠️ tem algo errado"}`,
+            `**Rating:** ${rating === "ok" ? "OK" : "TEM ALGO ERRADO"}`,
             "",
             "**Mensagem:**",
             message || "_(sem mensagem)_",
