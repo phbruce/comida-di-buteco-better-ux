@@ -1,69 +1,91 @@
 ---
 /**
- * IllustrationBand — faixa decorativa horizontal compondo motivos.
+ * IllustrationBand — faixa decorativa fluida com motivos vegetais.
  *
- * Substitui o antigo OrnamentBand (que ficou cru). Aqui as figuras são
- * legíveis (pimenta, folha, milho, cebola) — ver ADR-0016.
+ * Layout não-grid: cada motivo recebe rotação leve e variação de tamanho
+ * para evitar sensação de "fileira mecânica". No-wrap responsivo, garante
+ * encaixe a partir de 320px.
  *
- * Decorativa: aria-hidden no nível do container.
+ * Decisão registrada em ADR-0016. Sempre decorativa (aria-hidden).
  */
 
 import Illustration from "./Illustration.astro";
 
 type Tone = "soft" | "transparent" | "dark";
+type Variant = "default" | "wide";
 
 interface Props {
   tone?: Tone;
+  variant?: Variant;
   class?: string;
 }
 
-const { tone = "soft", class: extra = "" } = Astro.props;
+const { tone = "soft", variant = "default", class: extra = "" } = Astro.props;
 
-// Sequência cuidadosamente alternada pra não repetir cor lado a lado.
-const sequence = [
-  "folha",
-  "pimenta",
-  "milho",
-  "cebola",
-  "folha",
-  "pimenta",
-  "milho",
-  "cebola",
-] as const;
+// Motivos com rotação e leve variação de offset vertical pra "respirar".
+const items = [
+  { kind: "folha",    rotate: -6,  shift:  2,  size: "md" as const },
+  { kind: "pimenta",  rotate:  8,  shift: -3,  size: "md" as const },
+  { kind: "milho",    rotate: -3,  shift:  3,  size: "md" as const },
+  { kind: "cebola",   rotate:  5,  shift: -2,  size: "md" as const },
+  { kind: "tomate",   rotate: -4,  shift:  4,  size: "md" as const },
+  { kind: "garrafa",  rotate:  6,  shift: -1,  size: "md" as const },
+];
+
+const visible = variant === "wide" ? items : items.slice(0, 4);
 ---
 
 <div class:list={["illus-band", `illus-band--${tone}`, extra]} aria-hidden="true">
-  {sequence.map((kind) => <Illustration kind={kind} size="md" />)}
+  <div class="illus-band__inner">
+    {visible.map((it) => (
+      <span
+        class="illus-band__item"
+        style={`--rot: ${it.rotate}deg; --shift: ${it.shift}px;`}
+      >
+        <Illustration kind={it.kind as "folha"} size={it.size} />
+      </span>
+    ))}
+  </div>
 </div>
 
 <style>
   .illus-band {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-5);
-    padding-block: var(--space-4);
-    padding-inline: var(--space-3);
-    flex-wrap: wrap;
+    width: 100%;
+    overflow: hidden;
   }
   .illus-band--soft {
     background: var(--color-bg-soft);
     border-block-start: var(--border-thin);
     border-block-end: var(--border-thin);
   }
-  .illus-band--transparent {
-    background: transparent;
-  }
-  .illus-band--dark {
-    background: var(--color-surface-strong);
+  .illus-band--transparent { background: transparent; }
+  .illus-band--dark { background: var(--color-surface-strong); }
+
+  .illus-band__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: clamp(var(--space-2), 2vw, var(--space-5));
+    padding-block: var(--space-3);
+    padding-inline: var(--space-3);
+    max-width: 720px;
+    margin-inline: auto;
   }
 
-  /* Em mobile, mostra menos motivos pra não passar rapacelo */
-  @media (max-width: 640px) {
-    .illus-band :global(.illus:nth-child(n + 6)) { display: none; }
-    .illus-band { gap: var(--space-4); }
+  .illus-band__item {
+    display: inline-flex;
+    transform: translateY(var(--shift, 0)) rotate(var(--rot, 0));
+    transform-origin: center;
   }
+
+  /* Mobile pequeno (≤380px): esconde os 2 últimos pra não amassar. */
   @media (max-width: 380px) {
-    .illus-band :global(.illus:nth-child(n + 5)) { display: none; }
+    .illus-band__inner :global(.illus-band__item:nth-child(n + 4)) {
+      display: none;
+    }
+  }
+  /* Desktop largo: revela os 6 do "wide" se houverem. */
+  @media (min-width: 768px) {
+    .illus-band__inner { gap: var(--space-5); }
   }
 </style>

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="presentation" aria-hidden="true">
+  <!--
+    Garrafa long-neck em paper-cut sharp.
+    Camadas: corpo dendê (vidro âmbar), sombra mais escura à direita,
+    gargalo, tampa urucum, label retangular cream.
+  -->
+  <g>
+    <!-- Corpo principal — dendê (vidro âmbar) -->
+    <polygon
+      points="24,26 28,22 28,16 36,16 36,22 40,26 41,32 41,42 41,52 39,57 36,58 28,58 25,57 23,52 23,42 23,32"
+      fill="#f4b400"
+    />
+
+    <!-- Sombra à direita — dendê mais escuro -->
+    <polygon
+      points="36,22 40,26 41,32 41,42 41,52 39,57 36,58 36,52 37,42 37,32 36,28"
+      fill="#a8770b"
+    />
+
+    <!-- Highlight vertical à esquerda — branco translúcido chapado -->
+    <polygon
+      points="26,30 28,30 28,50 26,50"
+      fill="#ffe9a3"
+    />
+
+    <!-- Gargalo afunilando — dendê mesmo, com sombra à direita -->
+    <polygon
+      points="29,16 35,16 35,12 33,11 31,11 29,12"
+      fill="#a8770b"
+    />
+
+    <!-- Tampa — urucum -->
+    <polygon
+      points="29,12 35,12 35,8 33,7 31,7 29,8"
+      fill="#9c2a1b"
+    />
+    <polygon
+      points="33,7 35,8 35,12 33,12"
+      fill="#5a160e"
+    />
+
+    <!-- Label retangular cream com pequeno detalhe lima -->
+    <polygon
+      points="24,36 40,36 40,46 24,46"
+      fill="#fbf7f0"
+    />
+    <polygon
+      points="24,36 40,36 40,38 24,38"
+      fill="#1f6f4a"
+    />
+    <polygon
+      points="24,44 40,44 40,46 24,46"
+      fill="#1f6f4a"
+    />
+    <!-- Iniciais sugeridas como traços urucum -->
+    <polygon points="28,40 30,40 30,42 28,42" fill="#9c2a1b" />
+    <polygon points="32,40 34,40 34,42 32,42" fill="#9c2a1b" />
+    <polygon points="36,40 38,40 38,42 36,42" fill="#9c2a1b" />
+  </g>
+</svg>

@@ -1,6 +1,8 @@
 ---
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import Breadcrumb from "~/components/ui/Breadcrumb.astro";
+import Button from "~/components/ui/Button.astro";
+import Illustration from "~/components/ui/Illustration.astro";
 import ButecoListItem from "~/components/site/ButecoListItem.astro";
 import { butecos, cidades } from "~/data/butecos";
 
@@ -144,10 +146,16 @@ const PER_PAGE_DEFAULT = 20;
         {lista.map((b) => <ButecoListItem buteco={b} />)}
       </ul>
 
-      <p class="results__empty" data-results-empty hidden>
-        Nenhum buteco encontrado com esses filtros.
-        <button type="button" class="results__clear" data-filter-reset>Limpar filtros</button>
-      </p>
+      <div class="results__empty" data-results-empty hidden>
+        <span class="results__empty-art" aria-hidden="true">
+          <Illustration kind="cebola" size="lg" />
+        </span>
+        <div class="results__empty-text">
+          <p class="results__empty-title">Nenhum buteco encontrado.</p>
+          <p class="results__empty-hint">Tente outro bairro ou limpe os filtros.</p>
+          <button type="button" class="results__clear" data-filter-reset>Limpar filtros</button>
+        </div>
+      </div>
 
       <nav class="pagination" aria-label="Paginação" data-pagination hidden>
         <button type="button" class="pagination__btn pagination__btn--prev" data-pag-prev disabled>
@@ -239,11 +247,44 @@ const PER_PAGE_DEFAULT = 20;
   }
   .results__list { list-style: none; padding: 0; margin: 0; }
   .results__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
     padding: var(--space-7) var(--space-5);
     text-align: center;
     color: var(--color-text-muted);
     background: var(--color-bg-soft);
     border: var(--border-thin);
+  }
+  .results__empty[hidden] { display: none; }
+  .results__empty-art {
+    display: inline-flex;
+    transform: rotate(-6deg);
+  }
+  .results__empty-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    align-items: center;
+  }
+  .results__empty-title {
+    margin: 0;
+    color: var(--color-text-strong);
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-bold);
+  }
+  .results__empty-hint {
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+  @media (min-width: 640px) {
+    .results__empty {
+      flex-direction: row;
+      text-align: start;
+      gap: var(--space-6);
+    }
+    .results__empty-text { align-items: flex-start; }
   }
   .results__clear {
     margin-inline-start: var(--space-2);

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "~/layouts/BaseLayout.astro";
+import Illustration from "~/components/ui/Illustration.astro";
 import { butecos, cidades, edicao } from "~/data/butecos";
 
 const populares = cidades.filter((c) => c.popular);
@@ -13,15 +14,28 @@ const totalButecos = butecos.length;
   description={`Redesign não oficial: ${totalButecos} butecos da edição ${edicao} em ${cidades.length} cidades. Explore os pratos concorrentes do concurso Comida di Buteco.`}
 >
   <section class="hero">
-    <div class="container">
-      <p class="hero__eyebrow">Edição {edicao} · Concurso</p>
-      <h1 class="hero__title">
-        Onde tem buteco bom <span>perto de você?</span>
-      </h1>
-      <p class="hero__lede">
-        {totalButecos} butecos em {cidades.length} cidades brasileiras competindo
-        com pratos autorais. Escolha sua cidade e descubra.
-      </p>
+    <div class="container hero__inner">
+      <div class="hero__text">
+        <p class="hero__eyebrow">Edição {edicao} · Concurso</p>
+        <h1 class="hero__title">
+          Onde tem buteco bom <span>perto de você?</span>
+        </h1>
+        <p class="hero__lede">
+          {totalButecos} butecos em {cidades.length} cidades brasileiras competindo
+          com pratos autorais. Escolha sua cidade e descubra.
+        </p>
+      </div>
+
+      {/* Acentos decorativos — escondidos do leitor de tela */}
+      <span class="hero__accent hero__accent--pimenta">
+        <Illustration kind="pimenta" size="lg" />
+      </span>
+      <span class="hero__accent hero__accent--folha">
+        <Illustration kind="folha" size="md" />
+      </span>
+      <span class="hero__accent hero__accent--garrafa">
+        <Illustration kind="garrafa" size="md" />
+      </span>
     </div>
   </section>
 
@@ -67,12 +81,22 @@ const totalButecos = butecos.length;
 
 <style>
   .hero {
+    position: relative;
     background:
       radial-gradient(1200px 400px at 90% -50%, rgba(244, 180, 0, 0.18), transparent 60%),
       radial-gradient(900px 300px at 10% 110%, rgba(156, 42, 27, 0.10), transparent 60%),
       var(--color-bg-soft);
     border-block-end: var(--border-thin);
     padding-block: var(--space-8);
+    overflow: hidden;
+  }
+  .hero__inner {
+    position: relative;
+  }
+  .hero__text {
+    position: relative;
+    z-index: 1;
+    max-width: 38ch;
   }
   .hero__eyebrow {
     margin: 0 0 var(--space-3);
@@ -95,6 +119,69 @@ const totalButecos = butecos.length;
     font-size: var(--font-size-body);
     color: var(--color-text-muted);
     max-width: 60ch;
+  }
+
+  /* Acentos decorativos — posicionados em torno do texto, peeking
+     das bordas com leve rotação para parecer "atirado" na cena. */
+  .hero__accent {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+    display: inline-flex;
+    transform-origin: center;
+  }
+  .hero__accent--pimenta {
+    /* mobile: canto inferior-direito, pendurado da borda */
+    inset-block-end: -12px;
+    inset-inline-end: -16px;
+    transform: rotate(18deg);
+  }
+  .hero__accent--folha {
+    inset-block-start: -8px;
+    inset-inline-end: 12%;
+    transform: rotate(-22deg);
+    opacity: 0.92;
+  }
+  .hero__accent--garrafa {
+    /* só mostra em telas mais largas — mobile já tem 2 acentos */
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .hero__inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--space-6);
+      align-items: center;
+      min-height: 240px;
+    }
+    .hero__text { max-width: 52ch; }
+    .hero__accent--pimenta {
+      inset-block-end: auto;
+      inset-block-start: 8%;
+      inset-inline-end: 6%;
+      transform: rotate(14deg);
+    }
+    .hero__accent--folha {
+      inset-block-start: auto;
+      inset-block-end: 4%;
+      inset-inline-end: 22%;
+      transform: rotate(-18deg);
+    }
+    .hero__accent--garrafa {
+      display: inline-flex;
+      inset-block-start: 38%;
+      inset-inline-end: 28%;
+      transform: rotate(-10deg);
+    }
+  }
+  @media (min-width: 1024px) {
+    .hero__accent--pimenta {
+      inset-inline-end: 10%;
+    }
+    .hero__accent--garrafa {
+      inset-inline-end: 32%;
+    }
   }
 
   .section {
