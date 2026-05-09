@@ -160,9 +160,9 @@ const repoUrl = "https://github.com/phbruce/comida-di-buteco-better-ux";
         </p>
         <ul>
           <li>Mapa do Google: aparece só depois de tocar em "Mostrar mapa", com aviso de que pode definir cookies do Google.</li>
-          <li>Cusdis (comentários): widget carrega na rolagem; ele guarda nome e mensagem que você digita para exibir o comentário.</li>
+          <li>Comentários: a lista é carregada do nosso Cloudflare Worker quando a seção entra na tela; ao publicar, são guardados apelido, mensagem e um hash do seu IP (com salt) usado só para rate limit.</li>
           <li>Web3Forms (feedback): submissão envia o que você digitou para a Web3Forms, que repassa por email. O visitante não precisa fornecer nome ou email.</li>
-          <li>Cloudflare Turnstile (anti-bot do feedback): roda invisível, sem cookies de tracking persistente.</li>
+          <li>Cloudflare Turnstile (anti-bot de comentários e feedback): roda invisível ou só sob interação, sem cookies de tracking persistente.</li>
         </ul>
         <p>
           Cada um desses serviços tem sua própria política de privacidade.
