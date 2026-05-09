@@ -19,15 +19,8 @@ const lista = butecos
 const bairros = Array.from(new Set(lista.map((b) => b.bairro).filter(Boolean))) as string[];
 bairros.sort((a, b) => a.localeCompare(b, "pt-BR"));
 
-const sugestoes = Array.from(
-  new Set([
-    ...lista.map((b) => b.nome),
-    ...lista.map((b) => b.prato),
-  ])
-).sort((a, b) => a.localeCompare(b, "pt-BR"));
-
 const base = import.meta.env.BASE_URL;
-const datalistId = `sugestoes-${cidade.slug}`;
+const acListId = `ac-list-${cidade.slug}`;
 const PER_PAGE_DEFAULT = 20;
 ---
 
@@ -59,22 +52,44 @@ const PER_PAGE_DEFAULT = 20;
         <div class="field">
           <label class="field__label" for="busca">Buscar</label>
           <p class="field__hint" id="busca-hint">
-            Nome do buteco, prato ou bairro. Sugestões aparecem enquanto você digita.
+            Digite nome do buteco, prato ou bairro. Sugestões aparecem abaixo —
+            use as setas para navegar e Enter para abrir.
           </p>
-          <input
-            id="busca"
-            name="q"
-            type="search"
-            list={datalistId}
-            placeholder="ex.: feijoada, costela, Santa Tereza"
-            aria-describedby="busca-hint"
-            autocomplete="off"
-            class="field__input"
-            data-filter-q
-          />
-          <datalist id={datalistId}>
-            {sugestoes.map((s) => <option value={s}></option>)}
-          </datalist>
+          <div class="ac" data-ac>
+            <input
+              id="busca"
+              name="q"
+              type="search"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-expanded="false"
+              aria-controls={acListId}
+              aria-describedby="busca-hint"
+              autocomplete="off"
+              autocapitalize="none"
+              autocorrect="off"
+              spellcheck="false"
+              placeholder="ex.: feijoada, costela, Santa Tereza"
+              class="field__input ac__input"
+              data-filter-q
+              data-ac-input
+            />
+            <button
+              type="button"
+              class="ac__clear"
+              aria-label="Limpar busca"
+              data-ac-clear
+              hidden
+            >×</button>
+            <ul
+              id={acListId}
+              role="listbox"
+              aria-label="Sugestões de butecos"
+              class="ac__list"
+              hidden
+              data-ac-list
+            ></ul>
+          </div>
         </div>
 
         {bairros.length > 1 && (
@@ -163,6 +178,110 @@ const PER_PAGE_DEFAULT = 20;
     color: var(--color-text-strong);
     min-height: 44px;
     font: inherit;
+  }
+
+  /* ---------- Combobox autocomplete ---------- */
+  .ac {
+    position: relative;
+  }
+  .ac__input {
+    padding-inline-end: var(--space-8);   /* espaço para botão limpar */
+  }
+  /* esconde a "x" nativa do input search no Chrome/Safari */
+  .ac__input::-webkit-search-cancel-button { display: none; }
+  .ac__input::-webkit-search-decoration { display: none; }
+
+  .ac__clear {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-end: var(--space-2);
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border: 0;
+    background: transparent;
+    color: var(--color-text-muted);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ac__clear:hover {
+    color: var(--color-text-strong);
+    background: var(--color-bg-soft);
+  }
+
+  .ac__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: calc(100% - 2px); /* sobrepõe a borda inferior do input */
+    z-index: var(--z-overlay);
+    background: var(--color-bg-canvas);
+    border: 2px solid var(--color-border-strong);
+    max-height: 60vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-2);
+  }
+  .ac__list[hidden] { display: none; }
+
+  .ac__option {
+    display: block;
+    padding: var(--space-3) var(--space-4);
+    color: var(--color-text-strong);
+    text-decoration: none;
+    border-block-end: var(--border-thin);
+    cursor: pointer;
+  }
+  .ac__option:last-child { border-block-end: 0; }
+  .ac__option:hover,
+  .ac__option[aria-selected="true"] {
+    background: var(--color-text-strong);
+    color: var(--color-text-on-dark);
+  }
+  .ac__option:hover .ac__opt-name,
+  .ac__option[aria-selected="true"] .ac__opt-name {
+    color: var(--color-brand-accent);
+  }
+  .ac__option:hover .ac__opt-sub,
+  .ac__option[aria-selected="true"] .ac__opt-sub {
+    color: rgba(251, 247, 240, 0.85);
+  }
+
+  .ac__opt-name {
+    display: block;
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-body);
+    color: var(--color-brand-primary);
+    line-height: var(--line-height-snug);
+  }
+  .ac__opt-sub {
+    display: block;
+    font-size: var(--font-size-small);
+    color: var(--color-text-muted);
+    margin-block-start: 2px;
+  }
+  .ac__opt-sub strong {
+    color: inherit;
+    font-weight: var(--font-weight-semibold);
+  }
+  .ac__opt mark,
+  .ac__opt-name mark,
+  .ac__opt-sub mark {
+    background: var(--color-brand-accent);
+    color: var(--color-text-strong);
+    padding: 0 2px;
+  }
+
+  .ac__empty {
+    padding: var(--space-4);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+    text-align: center;
   }
 
   .filters__row { display: grid; grid-template-columns: 1fr; gap: var(--space-4); }
@@ -287,6 +406,229 @@ const PER_PAGE_DEFAULT = 20;
       .normalize("NFD")
       .replace(/[̀-ͯ]/g, "")
       .trim();
+  }
+
+  /** Escapa HTML para uso em innerHTML seguro. */
+  function escapeHtml(s: string): string {
+    return s
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  /** Envolve em <mark> as ocorrências (case+acento-insensitivas) dos tokens em `text`. */
+  function highlight(text: string, tokens: string[]): string {
+    if (!tokens.length) return escapeHtml(text);
+    // Trabalha com text e sua versão normalizada do mesmo tamanho aproximado
+    // Estratégia simples: busca cada token no normalizado e marca os
+    // intervalos. Como NFD + remoção de combining pode mudar tamanhos,
+    // usamos NFKD para preservar 1:1 quando possível e fazemos fallback.
+    const norm = normalize(text);
+    const ranges: Array<[number, number]> = [];
+    for (const tk of tokens) {
+      if (!tk) continue;
+      let from = 0;
+      while (from < norm.length) {
+        const idx = norm.indexOf(tk, from);
+        if (idx < 0) break;
+        ranges.push([idx, idx + tk.length]);
+        from = idx + tk.length;
+      }
+    }
+    if (!ranges.length) return escapeHtml(text);
+    // merge overlap
+    ranges.sort((a, b) => a[0] - b[0]);
+    const merged: Array<[number, number]> = [];
+    for (const r of ranges) {
+      const last = merged[merged.length - 1];
+      if (last && r[0] <= last[1]) last[1] = Math.max(last[1], r[1]);
+      else merged.push([r[0], r[1]]);
+    }
+    let out = "";
+    let cur = 0;
+    for (const [a, b] of merged) {
+      out += escapeHtml(text.slice(cur, a));
+      out += `<mark>${escapeHtml(text.slice(a, b))}</mark>`;
+      cur = b;
+    }
+    out += escapeHtml(text.slice(cur));
+    return out;
+  }
+
+  /** Setup do combobox autocomplete. */
+  function setupAutocomplete(items: HTMLElement[]) {
+    const ac = document.querySelector<HTMLElement>("[data-ac]");
+    const input = document.querySelector<HTMLInputElement>("[data-ac-input]");
+    const list = document.querySelector<HTMLUListElement>("[data-ac-list]");
+    const clearBtn = document.querySelector<HTMLButtonElement>("[data-ac-clear]");
+    if (!ac || !input || !list) return;
+
+    type AcOption = { nome: string; prato: string; bairro: string; href: string; haystack: string };
+    const data: AcOption[] = items.map((li) => ({
+      nome: li.dataset.nome ?? "",
+      prato: li.dataset.prato ?? "",
+      bairro: li.dataset.bairro ?? "",
+      href: li.dataset.href ?? "",
+      haystack: li.dataset.search ?? "",
+    }));
+
+    const MAX_RESULTS = 7;
+    let activeIdx = -1;
+    let currentMatches: AcOption[] = [];
+
+    function setExpanded(expanded: boolean) {
+      input!.setAttribute("aria-expanded", expanded ? "true" : "false");
+      list!.hidden = !expanded;
+    }
+
+    function setActive(idx: number) {
+      const options = list!.querySelectorAll<HTMLLIElement>(".ac__option");
+      activeIdx = idx;
+      options.forEach((opt, i) => {
+        const isActive = i === idx;
+        opt.setAttribute("aria-selected", isActive ? "true" : "false");
+        if (isActive) {
+          input!.setAttribute("aria-activedescendant", opt.id);
+          opt.scrollIntoView({ block: "nearest" });
+        }
+      });
+      if (idx < 0) input!.removeAttribute("aria-activedescendant");
+    }
+
+    function render(query: string) {
+      const tokens = normalize(query).split(/\s+/).filter(Boolean);
+      currentMatches = [];
+      if (tokens.length > 0) {
+        for (const o of data) {
+          if (tokens.every((t) => o.haystack.includes(t))) {
+            currentMatches.push(o);
+            if (currentMatches.length >= MAX_RESULTS) break;
+          }
+        }
+      }
+      activeIdx = -1;
+      input!.removeAttribute("aria-activedescendant");
+
+      if (tokens.length === 0) {
+        list!.innerHTML = "";
+        setExpanded(false);
+        return;
+      }
+      if (currentMatches.length === 0) {
+        list!.innerHTML = `<li class="ac__empty" role="option">Nenhum buteco com "${escapeHtml(query)}".</li>`;
+        setExpanded(true);
+        return;
+      }
+
+      list!.innerHTML = currentMatches
+        .map((o, i) => {
+          const sub = [o.bairro && highlight(o.bairro, tokens)].filter(Boolean).join(" · ");
+          return `
+            <li
+              role="option"
+              id="ac-opt-${i}"
+              class="ac__option"
+              aria-selected="false"
+              data-href="${escapeHtml(o.href)}"
+            >
+              <span class="ac__opt-name">${highlight(o.nome, tokens)}</span>
+              <span class="ac__opt-sub">${highlight(o.prato, tokens)}${sub ? " · " + sub : ""}</span>
+            </li>`;
+        })
+        .join("");
+      setExpanded(true);
+    }
+
+    function clearAll() {
+      input!.value = "";
+      list!.innerHTML = "";
+      setExpanded(false);
+      clearBtn!.hidden = true;
+      input!.dispatchEvent(new Event("input", { bubbles: true }));
+      input!.focus();
+    }
+
+    input.addEventListener("input", () => {
+      clearBtn!.hidden = !input.value;
+      render(input.value);
+    });
+
+    input.addEventListener("focus", () => {
+      if (input.value) render(input.value);
+    });
+
+    input.addEventListener("blur", () => {
+      // Delay para permitir clique nas opções antes de fechar
+      setTimeout(() => setExpanded(false), 150);
+    });
+
+    input.addEventListener("keydown", (e) => {
+      const expanded = input.getAttribute("aria-expanded") === "true";
+      switch (e.key) {
+        case "ArrowDown": {
+          e.preventDefault();
+          if (!expanded) { render(input.value); return; }
+          if (currentMatches.length > 0) setActive((activeIdx + 1) % currentMatches.length);
+          break;
+        }
+        case "ArrowUp": {
+          e.preventDefault();
+          if (currentMatches.length > 0) {
+            setActive(activeIdx <= 0 ? currentMatches.length - 1 : activeIdx - 1);
+          }
+          break;
+        }
+        case "Enter": {
+          if (activeIdx >= 0 && currentMatches[activeIdx]) {
+            e.preventDefault();
+            window.location.href = currentMatches[activeIdx].href;
+          }
+          // se nenhum item selecionado, deixa o submit/filtro normal
+          break;
+        }
+        case "Escape": {
+          if (expanded) {
+            e.preventDefault();
+            setExpanded(false);
+            setActive(-1);
+          }
+          break;
+        }
+        case "Home": {
+          if (expanded && currentMatches.length > 0) { e.preventDefault(); setActive(0); }
+          break;
+        }
+        case "End": {
+          if (expanded && currentMatches.length > 0) { e.preventDefault(); setActive(currentMatches.length - 1); }
+          break;
+        }
+      }
+    });
+
+    list.addEventListener("mousedown", (e) => {
+      // mousedown ao invés de click pra disparar antes do blur fechar a lista
+      const opt = (e.target as HTMLElement).closest<HTMLLIElement>(".ac__option");
+      if (!opt) return;
+      const href = opt.dataset.href;
+      if (href) {
+        e.preventDefault();
+        window.location.href = href;
+      }
+    });
+
+    list.addEventListener("mousemove", (e) => {
+      const opt = (e.target as HTMLElement).closest<HTMLLIElement>(".ac__option");
+      if (!opt) return;
+      const idx = Array.from(list.querySelectorAll(".ac__option")).indexOf(opt);
+      if (idx >= 0 && idx !== activeIdx) setActive(idx);
+    });
+
+    clearBtn?.addEventListener("click", clearAll);
+
+    // estado inicial do botão limpar
+    clearBtn!.hidden = !input.value;
   }
 
   function debounce<T extends (...a: any[]) => void>(fn: T, ms: number) {
@@ -451,5 +793,7 @@ const PER_PAGE_DEFAULT = 20;
 
     loadFromUrl();
     apply();
+
+    setupAutocomplete(items);
   }
 </script>
