@@ -17,4 +17,4 @@ ALLOWED_ORIGINS = "https://phbruce.github.io,http://localhost:4321"
 [[d1_databases]]
 binding = "DB"
 database_name = "cdb-comments"
-database_id = "REPLACE-ME-AFTER-CREATE"
+database_id = "7aa618bf-c7c1-40ff-b92d-624980285268"
