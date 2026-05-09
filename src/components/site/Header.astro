@@ -1,10 +1,17 @@
 ---
 /**
  * Header — cabeçalho do site.
- * Contém o logo (texto), navegação principal e seletor de cidade.
  *
- * Mobile-first: layout vertical com botão de menu (a partir da Fase 4 vira drawer).
- * Por enquanto, links visíveis em md+ e empilhados em mobile via flex wrap.
+ * Layout em grid responsivo:
+ *
+ * Mobile (<768px) — 2 linhas quando há cidade:
+ *   ┌─────────────────────────────────────────┐
+ *   │ [CdB] Comida di Buteco   Cidades · Sobre │
+ *   ├─────────────────────────────────────────┤
+ *   │ 📍 Belo Horizonte · Trocar              │
+ *   └─────────────────────────────────────────┘
+ *
+ * Desktop (≥768px) — tudo na mesma linha, com tagline visível.
  */
 
 interface Props {
@@ -24,7 +31,7 @@ const sobreUrl = `${base}sobre/`;
       <span class="site-header__brand-mark" aria-hidden="true">CdB</span>
       <span class="site-header__brand-text">
         <span class="site-header__brand-name">Comida di Buteco</span>
-        <span class="site-header__brand-tagline">Concurso · Edição em curso</span>
+        <span class="site-header__brand-tagline">Redesign não oficial</span>
       </span>
     </a>
 
@@ -35,6 +42,7 @@ const sobreUrl = `${base}sobre/`;
 
     {cidadeAtual && (
       <p class="site-header__city">
+        <span class="site-header__city-pin" aria-hidden="true">📍</span>
         <span class="visually-hidden">Cidade selecionada:</span>
         <strong>{cidadeAtual}</strong>
         <a href={homeUrl} class="site-header__city-change">Trocar</a>
@@ -49,52 +57,59 @@ const sobreUrl = `${base}sobre/`;
     border-block-end: var(--border-strong);
   }
   .site-header__inner {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    /* mobile: 2 colunas (brand cresce, nav fixo) */
+    grid-template-columns: 1fr auto;
+    gap: var(--space-3);
     align-items: center;
-    gap: var(--space-3) var(--space-5);
     padding-block: var(--space-3);
   }
 
+  /* ---------- Brand ---------- */
   .site-header__brand {
     display: inline-flex;
     align-items: center;
     gap: var(--space-3);
     color: var(--color-text-strong);
-    text-decoration: none; /* logo/wordmark — convenção: sem underline */
-    margin-inline-end: auto;
+    text-decoration: none;
+    min-width: 0;
   }
   .site-header__brand:hover .site-header__brand-name {
     text-decoration: underline;
     text-underline-offset: 0.2em;
   }
-  .site-header__brand:hover {
-    color: var(--color-brand-primary);
-  }
+  .site-header__brand:hover { color: var(--color-brand-primary); }
+
   .site-header__brand-mark {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     background-color: var(--color-brand-primary);
     color: var(--color-text-on-brand);
     font-weight: var(--font-weight-bold);
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     letter-spacing: 0.02em;
-    border-radius: var(--radius-md);
     flex-shrink: 0;
   }
+
   .site-header__brand-text {
     display: flex;
     flex-direction: column;
     line-height: 1.1;
+    min-width: 0;
   }
   .site-header__brand-name {
     font-weight: var(--font-weight-bold);
-    font-size: var(--font-size-h3);
+    font-size: var(--font-size-body);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .site-header__brand-tagline {
+    /* Em mobile a tagline some — economia de espaço */
+    display: none;
     font-size: var(--font-size-caption);
     color: var(--color-text-muted);
     font-weight: var(--font-weight-regular);
@@ -102,10 +117,12 @@ const sobreUrl = `${base}sobre/`;
     letter-spacing: 0.06em;
   }
 
+  /* ---------- Nav ---------- */
   .site-header__nav {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-4);
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--font-size-small);
   }
   .site-header__nav a {
     color: var(--color-brand-primary);
@@ -113,40 +130,87 @@ const sobreUrl = `${base}sobre/`;
     text-underline-offset: 0.25em;
     text-decoration-thickness: 1px;
     font-weight: var(--font-weight-semibold);
-    padding: var(--space-2) var(--space-1);
+    padding: var(--space-2) 0;
+    /* tap target mínimo 44px verticalmente via padding-block do container */
   }
   .site-header__nav a:hover {
     color: var(--color-brand-primary-hover);
     text-decoration-thickness: 2px;
   }
 
+  /* ---------- City pill ----------
+     Mobile: ocupa a linha inteira abaixo do brand+nav.
+     Desktop: inline à direita. */
   .site-header__city {
-    display: inline-flex;
+    grid-column: 1 / -1;
+    display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: var(--space-2);
     margin: 0;
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--color-bg-soft);
+    border: var(--border-thin);
     font-size: var(--font-size-small);
     color: var(--color-text-muted);
-    background-color: var(--color-bg-soft);
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-md);
-    border: var(--border-thin);
+  }
+  .site-header__city-pin {
+    flex-shrink: 0;
   }
   .site-header__city strong {
     color: var(--color-text-strong);
+    font-weight: var(--font-weight-semibold);
   }
   .site-header__city-change {
+    margin-inline-start: auto;
     font-size: var(--font-size-caption);
     color: var(--color-brand-primary);
     text-decoration: underline;
     text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+    font-weight: var(--font-weight-semibold);
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    padding-inline: var(--space-2);
   }
+  .site-header__city-change:hover {
+    color: var(--color-brand-primary-hover);
+    text-decoration-thickness: 2px;
+  }
+
+  /* ---------- Breakpoints ---------- */
 
   @media (min-width: 480px) {
     .site-header__brand-mark {
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
       font-size: 1rem;
+    }
+    .site-header__brand-name {
+      font-size: var(--font-size-h3);
+    }
+    .site-header__brand-tagline {
+      display: inline;
+    }
+    .site-header__nav {
+      font-size: var(--font-size-body);
+      gap: var(--space-4);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .site-header__inner {
+      /* desktop: brand | nav | city, tudo numa linha */
+      grid-template-columns: auto 1fr auto;
+    }
+    .site-header__nav {
+      justify-self: end;
+      gap: var(--space-5);
+    }
+    .site-header__city {
+      grid-column: auto;
+      justify-self: end;
     }
   }
 </style>

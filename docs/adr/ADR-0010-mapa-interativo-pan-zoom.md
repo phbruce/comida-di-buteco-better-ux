@@ -1,8 +1,8 @@
-# ADR-0010 — Mapa interativo: como destravar pan/zoom (proposta)
+# ADR-0010 — Mapa interativo: como destravar pan/zoom
 
-- **Status:** PROPOSED ⚠️ aguarda aprovação do dono do produto
+- **Status:** ACCEPTED
 - **Data:** 2026-05-09
-- **Decisor(es):** —
+- **Decisor(es):** Dono do produto (aprovado em 2026-05-09 — opção A: Google Maps Embed API com key)
 - **Relacionado:** ADR-0009 (Google Maps Embed)
 - **RFs/RNFs relacionados:** RF-0003, RNF-0001 (a11y), RNF-0002 (perf), RNF-0005 (privacidade)
 

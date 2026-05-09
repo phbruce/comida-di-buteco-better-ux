@@ -21,7 +21,15 @@ interface Props {
 
 const { lat, lng, label, enderecoTextual, mapsUrl, zoom = 16 } = Astro.props;
 const id = `map-${Math.random().toString(36).slice(2, 9)}`;
-const embedSrc = `https://www.google.com/maps?q=${lat},${lng}&z=${zoom}&output=embed`;
+
+// ADR-0010: com chave PUBLIC_GOOGLE_MAPS_KEY usamos a Maps Embed API
+// (interativa: pan/zoom completo). Sem chave, caímos no `output=embed`
+// que mostra o mapa mas com interatividade limitada.
+const KEY = (import.meta.env.PUBLIC_GOOGLE_MAPS_KEY as string | undefined) ?? "";
+const embedSrc = KEY
+  ? `https://www.google.com/maps/embed/v1/place?key=${KEY}&q=${lat},${lng}&zoom=${zoom}&language=pt-BR`
+  : `https://www.google.com/maps?q=${lat},${lng}&z=${zoom}&output=embed&hl=pt-BR`;
+const isFullInteractive = !!KEY;
 ---
 
 <section
@@ -51,6 +59,12 @@ const embedSrc = `https://www.google.com/maps?q=${lat},${lng}&z=${zoom}&output=e
     </p>
     <p class="map__privacy">
       Ao mostrar o mapa, você carrega conteúdo do Google que pode usar cookies.
+      {!isFullInteractive && (
+        <>
+          {" "}— para arrastar/zoom, use o link <strong>Como chegar</strong> ou
+          configure <code>PUBLIC_GOOGLE_MAPS_KEY</code> (Maps Embed API).
+        </>
+      )}
     </p>
   </div>
 </section>
