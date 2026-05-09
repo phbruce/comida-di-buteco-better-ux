@@ -54,6 +54,10 @@ jobs:
           # Sem essa env, Feedback.astro cai no fallback de abrir issue do
           # GitHub (que exige conta — pior UX para audiência geral).
           PUBLIC_FEEDBACK_W3F_KEY: ${{ secrets.FEEDBACK_W3F_KEY }}
+          # Cloudflare Turnstile site key (ADR-0013). Secret: TURNSTILE_SITE_KEY.
+          # Sem essa env, Feedback usa só defesas client-side (rate limit,
+          # honeypot, time check) — funcional mas vulnerável a atacante.
+          PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.TURNSTILE_SITE_KEY }}
         run: npm run build
 
       - name: Add .nojekyll

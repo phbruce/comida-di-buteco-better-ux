@@ -22,6 +22,7 @@ const { pageId, pageTitle, pageUrl } = Astro.props;
 
 const w3fKey = import.meta.env.PUBLIC_FEEDBACK_W3F_KEY as string | undefined;
 const workerEndpoint = import.meta.env.PUBLIC_FEEDBACK_ENDPOINT as string | undefined;
+const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undefined;
 
 type Mode = "w3f" | "worker" | "github";
 const mode: Mode = w3fKey ? "w3f" : workerEndpoint ? "worker" : "github";
@@ -141,6 +142,17 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
           {mode === "github" && "Você será levado ao GitHub para confirmar o envio. O issue fica público no repositório."}
           {" "}Não inclua dados pessoais.
         </p>
+        {turnstileKey && (
+          <div class="feedback__turnstile">
+            <div
+              class="cf-turnstile"
+              data-sitekey={turnstileKey}
+              data-theme="light"
+              data-appearance="interaction-only"
+              data-language="pt-br"
+            ></div>
+          </div>
+        )}
         <div class="feedback__actions">
           <button type="submit" name="rating" value="bad" class="feedback__btn feedback__btn--ok">
             {mode === "github" ? "Abrir issue no GitHub" : "Enviar"}
@@ -164,6 +176,15 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
     )}
   </div>
 </section>
+
+{turnstileKey && (
+  <script
+    is:inline
+    src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+    async
+    defer
+  ></script>
+)}
 
 <style>
   .feedback {
@@ -279,6 +300,11 @@ const subjectFmt = `[CdB Redesign] feedback: ${pageTitle}`;
 
   .feedback__fallback {
     margin: 0;
+  }
+
+  .feedback__turnstile {
+    margin-block-start: var(--space-2);
+    min-height: 65px;   /* reserva espaço pro widget pra evitar CLS */
   }
 </style>
 
