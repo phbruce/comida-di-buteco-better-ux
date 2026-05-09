@@ -41,11 +41,9 @@ jobs:
 
       - name: Build (BASE_PATH para GitHub Pages)
         env:
-          # ATENÇÃO: GitHub Pages é case-sensitive no path do repo.
-          # O repositório está como "Comida-di-Buteco-Better-UX" (PascalCase),
-          # então o BASE precisa bater EXATAMENTE com isso.
-          # Para padronizar em lowercase, renomear o repo no GitHub e trocar aqui.
-          BASE_PATH: /Comida-di-Buteco-Better-UX
+          # Repo está em lowercase no GitHub (renomeado em 2026-05-09).
+          # Para builds com custom domain, exporte BASE_PATH="" antes do build.
+          BASE_PATH: /comida-di-buteco-better-ux
           SITE_URL: https://phbruce.github.io
         run: npm run build
 

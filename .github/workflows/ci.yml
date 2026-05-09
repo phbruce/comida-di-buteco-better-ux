@@ -27,6 +27,5 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          # Bate com o case do repo no GitHub (Pages é case-sensitive).
-          BASE_PATH: /Comida-di-Buteco-Better-UX
+          BASE_PATH: /comida-di-buteco-better-ux
           SITE_URL: https://phbruce.github.io
