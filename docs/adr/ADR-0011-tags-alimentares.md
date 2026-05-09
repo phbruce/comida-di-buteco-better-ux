@@ -1,8 +1,9 @@
-# ADR-0011 — Tags vegetariano/vegano e filtros alimentares (proposta)
+# ADR-0011 — Tags vegetariano/vegano e filtros alimentares
 
-- **Status:** PROPOSED — aguarda aprovação do dono do produto
+- **Status:** REJECTED (adiado) em 2026-05-09
 - **Data:** 2026-05-09
-- **Decisor(es):** —
+- **Decisor(es):** Dono do produto (decidido em 2026-05-09 — adiar)
+- **Motivo da rejeição:** decisão de adiar para fase posterior. Por enquanto o filtro por ingrediente continua sendo feito via campo de busca atual + autocomplete (datalist com nomes de buteco e prato). Quando voltar a ser prioridade, este ADR pode ser reaberto ou substituído por novo.
 - **RFs/RNFs relacionados:** RF-0001, RF-0002, RNF-0001 (a11y)
 
 ## Contexto
