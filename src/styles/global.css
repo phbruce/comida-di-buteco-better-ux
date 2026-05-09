@@ -1,0 +1,7 @@
+/*
+ * Entry point dos estilos globais.
+ * Importa, na ordem: tokens → fonte → base.
+ */
+@import "@fontsource-variable/inter/index.css";
+@import "./tokens.css";
+@import "./base.css";

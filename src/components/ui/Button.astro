@@ -1,0 +1,162 @@
+---
+/**
+ * Button — primário, secundário, terciário, "warning"
+ * Pode renderizar como <button> ou como <a> (com `href`).
+ *
+ * Acessibilidade:
+ * - Tamanho mínimo 44×44 (RNF-0003).
+ * - Foco visível com sombra dupla (token --shadow-focus).
+ * - Estados hover/active distinguíveis sem depender de cor.
+ */
+
+type Variant = "primary" | "secondary" | "tertiary" | "warning";
+type Size = "md" | "lg";
+
+interface Props {
+  variant?: Variant;
+  size?: Size;
+  href?: string;
+  type?: "button" | "submit" | "reset";
+  block?: boolean;
+  disabled?: boolean;
+  ariaLabel?: string;
+  rel?: string;
+  target?: string;
+  class?: string;
+}
+
+const {
+  variant = "primary",
+  size = "md",
+  href,
+  type = "button",
+  block = false,
+  disabled = false,
+  ariaLabel,
+  rel,
+  target,
+  class: extra,
+} = Astro.props;
+
+const Tag = href ? "a" : "button";
+const classes = [
+  "btn",
+  `btn--${variant}`,
+  `btn--${size}`,
+  block ? "btn--block" : "",
+  extra,
+].filter(Boolean).join(" ");
+---
+
+<Tag
+  class={classes}
+  href={href}
+  type={!href ? type : undefined}
+  aria-label={ariaLabel}
+  aria-disabled={disabled ? "true" : undefined}
+  rel={rel}
+  target={target}
+>
+  <slot />
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    padding: var(--space-3) var(--space-5);
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    font-family: var(--font-family-sans);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color var(--motion-fast) var(--easing-standard),
+                color var(--motion-fast) var(--easing-standard),
+                border-color var(--motion-fast) var(--easing-standard);
+    text-align: center;
+  }
+
+  .btn--lg {
+    min-height: 52px;
+    padding: var(--space-4) var(--space-6);
+    font-size: 1.125rem;
+  }
+
+  .btn--block {
+    display: flex;
+    width: 100%;
+  }
+
+  /* PRIMARY */
+  .btn--primary {
+    background-color: var(--color-brand-primary);
+    color: var(--color-text-on-brand);
+    border-color: var(--color-brand-primary);
+  }
+  .btn--primary:hover {
+    background-color: var(--color-brand-primary-hover);
+    border-color: var(--color-brand-primary-hover);
+    color: var(--color-text-on-brand);
+  }
+  .btn--primary:active {
+    background-color: var(--color-brand-primary-active);
+    border-color: var(--color-brand-primary-active);
+  }
+
+  /* SECONDARY (outline) */
+  .btn--secondary {
+    background-color: transparent;
+    color: var(--color-text-strong);
+    border-color: var(--color-border-strong);
+  }
+  .btn--secondary:hover {
+    background-color: var(--color-text-strong);
+    color: var(--color-text-on-dark);
+  }
+
+  /* TERTIARY (link com área clicável) */
+  .btn--tertiary {
+    background-color: transparent;
+    color: var(--color-brand-primary);
+    border-color: transparent;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    padding-inline: var(--space-2);
+  }
+  .btn--tertiary:hover {
+    color: var(--color-brand-primary-hover);
+    background-color: var(--color-bg-soft);
+  }
+
+  /* WARNING */
+  .btn--warning {
+    background-color: var(--color-state-error);
+    color: var(--color-text-on-brand);
+    border-color: var(--color-state-error);
+  }
+  .btn--warning:hover {
+    background-color: #8a1d17;
+    border-color: #8a1d17;
+  }
+
+  /* Foco — overrides do :focus-visible global para casar com botão */
+  .btn:focus-visible {
+    outline: var(--focus-outline-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-offset);
+    box-shadow: 0 4px 0 0 var(--color-focus-text);
+  }
+
+  /* Disabled */
+  .btn[aria-disabled="true"],
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+</style>

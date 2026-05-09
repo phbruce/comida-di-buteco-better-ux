@@ -1,0 +1,215 @@
+---
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { cidades } from "~/data/butecos-bh";
+
+const populares = cidades.filter((c) => c.populares);
+const todas = cidades;
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout
+  title="Encontre seu buteco — Comida di Buteco"
+  description="Escolha a cidade e descubra os butecos participantes do concurso Comida di Buteco. Veja pratos, endereços e onde votar."
+>
+  <section class="hero">
+    <div class="container">
+      <p class="hero__eyebrow">Concurso · Edição em curso</p>
+      <h1 class="hero__title">
+        Onde tem buteco bom <span>perto de você?</span>
+      </h1>
+      <p class="hero__lede">
+        O Comida di Buteco é o concurso que celebra os bares de bairro do Brasil.
+        Escolha sua cidade e veja os pratos concorrentes desta edição.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" id="cidades" aria-labelledby="cidades-heading">
+    <div class="container">
+      <div class="section__header">
+        <h2 id="cidades-heading">Escolha sua cidade</h2>
+        <p>{todas.length} cidades participam desta edição.</p>
+      </div>
+
+      <h3 class="section__subheading">Cidades populares</h3>
+      <ul class="city-grid" role="list">
+        {populares.map((c) => (
+          <li>
+            <a class="city-card" href={`${base}butecos/${c.slug}/`}>
+              <span class="city-card__name">{c.nome}</span>
+              <span class="city-card__uf">{c.uf}</span>
+              <span class="city-card__count">
+                {c.total > 0 ? `${c.total} butecos` : "em breve"}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <h3 class="section__subheading">Todas as cidades</h3>
+      <ul class="city-list" role="list">
+        {todas.map((c) => (
+          <li>
+            <a class="city-list__link" href={`${base}butecos/${c.slug}/`}>
+              {c.nome} <span aria-hidden="true">·</span> <span class="city-list__uf">{c.uf}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    background:
+      radial-gradient(1200px 400px at 90% -50%, rgba(244, 180, 0, 0.18), transparent 60%),
+      radial-gradient(900px 300px at 10% 110%, rgba(156, 42, 27, 0.10), transparent 60%),
+      var(--color-bg-soft);
+    border-block-end: var(--border-thin);
+    padding-block: var(--space-8);
+  }
+  .hero__eyebrow {
+    margin: 0 0 var(--space-3);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-brand-primary);
+  }
+  .hero__title {
+    font-size: var(--font-size-display);
+    line-height: var(--line-height-tight);
+    margin-block-end: var(--space-4);
+    max-width: 18ch;
+  }
+  .hero__title span {
+    color: var(--color-brand-primary);
+  }
+  .hero__lede {
+    font-size: var(--font-size-body);
+    color: var(--color-text-muted);
+    max-width: 60ch;
+  }
+
+  .section {
+    padding-block: var(--space-8);
+  }
+  .section__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-block-end: var(--space-6);
+  }
+  .section__header p {
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+  .section__subheading {
+    font-size: var(--font-size-body);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-semibold);
+    margin-block: var(--space-7) var(--space-3);
+    padding-block-end: var(--space-2);
+    border-block-end: var(--border-thin);
+  }
+
+  .city-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  .city-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-2) var(--space-3);
+    padding: var(--space-5);
+    background: var(--color-surface);
+    border: var(--border-thin);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color var(--motion-fast), box-shadow var(--motion-base);
+  }
+  .city-card:hover {
+    border-color: var(--color-text-strong);
+    box-shadow: var(--shadow-2);
+  }
+  .city-card__name {
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-bold);
+  }
+  .city-card__uf {
+    font-size: var(--font-size-caption);
+    background: var(--color-text-strong);
+    color: var(--color-text-on-dark);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+    align-self: start;
+    letter-spacing: 0.06em;
+  }
+  .city-card__count {
+    grid-column: 1 / -1;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+  }
+
+  .city-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    border-block-start: var(--border-thin);
+  }
+  .city-list li {
+    border-block-end: var(--border-thin);
+  }
+  .city-list__link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-2);
+    color: var(--color-text-strong);
+    text-decoration: none;
+    font-weight: var(--font-weight-semibold);
+  }
+  .city-list__link:hover {
+    background: var(--color-bg-soft);
+    color: var(--color-brand-primary);
+  }
+  .city-list__uf {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-regular);
+  }
+
+  @media (min-width: 480px) {
+    .city-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 640px) {
+    .hero {
+      padding-block: var(--space-9);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .city-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .city-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .city-list li:nth-last-child(2):nth-child(odd) {
+      border-block-end: var(--border-thin);
+    }
+  }
+</style>

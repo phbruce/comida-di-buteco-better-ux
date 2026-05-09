@@ -1,0 +1,36 @@
+---
+/**
+ * SkipLink — link "pular para o conteúdo" obrigatório (RNF-0001).
+ * Fica visualmente oculto até receber foco.
+ */
+interface Props {
+  href?: string;
+  label?: string;
+}
+
+const { href = "#main", label = "Pular para o conteúdo principal" } = Astro.props;
+---
+
+<a class="skip-link" href={href}>{label}</a>
+
+<style>
+  .skip-link {
+    position: absolute;
+    inset-inline-start: var(--space-2);
+    inset-block-start: var(--space-2);
+    z-index: var(--z-skip);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-focus-ring);
+    color: var(--color-focus-text);
+    font-weight: var(--font-weight-bold);
+    text-decoration: none;
+    border: 2px solid var(--color-focus-text);
+    border-radius: var(--radius-sm);
+    transform: translateY(-200%);
+    transition: transform var(--motion-fast) var(--easing-standard);
+  }
+  .skip-link:focus {
+    transform: translateY(0);
+    outline: none;
+  }
+</style>

@@ -7,7 +7,7 @@ Thumbs.db
 .idea/
 *.swp
 
-# Node (caso adotado)
+# Node
 node_modules/
 dist/
 build/
@@ -16,6 +16,9 @@ coverage/
 .npm/
 .yarn/
 *.log
+
+# Astro
+.astro/
 
 # Variáveis locais
 .env

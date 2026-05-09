@@ -1,0 +1,113 @@
+---
+/**
+ * Footer — rodapé do site.
+ * Inclui informações sobre o concurso, links institucionais e crédito.
+ */
+const base = import.meta.env.BASE_URL;
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer" role="contentinfo">
+  <div class="site-footer__inner container">
+    <section class="site-footer__col" aria-labelledby="ft-sobre">
+      <h2 id="ft-sobre">Comida di Buteco</h2>
+      <p>
+        Concurso gastronômico tradicional brasileiro que celebra os butecos
+        e seus pratos autorais.
+      </p>
+    </section>
+
+    <nav class="site-footer__col" aria-labelledby="ft-nav">
+      <h2 id="ft-nav">Navegação</h2>
+      <ul>
+        <li><a href={base}>Início</a></li>
+        <li><a href={`${base}sobre/`}>Sobre o concurso</a></li>
+        <li><a href={`${base}regulamento/`}>Regulamento</a></li>
+      </ul>
+    </nav>
+
+    <section class="site-footer__col" aria-labelledby="ft-acessib">
+      <h2 id="ft-acessib">Acessibilidade</h2>
+      <p>
+        Este site segue WCAG 2.2 AA. Encontrou alguma barreira?
+        <a href={`${base}acessibilidade/`}>Conte para nós</a>.
+      </p>
+    </section>
+  </div>
+
+  <div class="site-footer__bottom">
+    <div class="container site-footer__bottom-inner">
+      <p>&copy; {year} Comida di Buteco — todos os direitos reservados.</p>
+      <p class="site-footer__credit">
+        Redesign aberto:
+        <a href="https://github.com/phbruce/comida-di-buteco-better-ux" rel="noopener">
+          repositório no GitHub
+        </a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-block-start: var(--space-9);
+    background-color: var(--color-surface-strong);
+    color: var(--color-text-on-dark);
+  }
+  .site-footer a {
+    color: var(--color-text-on-dark);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+  .site-footer a:hover {
+    color: var(--color-brand-accent);
+  }
+
+  .site-footer__inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    padding-block: var(--space-7);
+  }
+
+  .site-footer__col h2 {
+    color: var(--color-text-on-dark);
+    font-size: var(--font-size-h3);
+    margin-block-end: var(--space-3);
+  }
+  .site-footer__col p {
+    color: var(--color-text-on-dark);
+    opacity: 0.85;
+  }
+  .site-footer__col ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .site-footer__bottom {
+    border-block-start: 1px solid rgba(251, 247, 240, 0.15);
+    padding-block: var(--space-4);
+    font-size: var(--font-size-small);
+  }
+  .site-footer__bottom-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    color: var(--color-text-on-dark);
+    opacity: 0.8;
+  }
+
+  @media (min-width: 640px) {
+    .site-footer__inner {
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: var(--space-7);
+    }
+    .site-footer__bottom-inner {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+</style>

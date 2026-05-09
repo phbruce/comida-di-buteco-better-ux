@@ -1,0 +1,61 @@
+---
+/**
+ * Tag — etiqueta curta (premiação, categoria, status).
+ * Variantes: neutral, success, warning, info, accent.
+ */
+
+type TagVariant = "neutral" | "success" | "warning" | "info" | "accent" | "error";
+
+interface Props {
+  variant?: TagVariant;
+  class?: string;
+}
+
+const { variant = "neutral", class: extra } = Astro.props;
+---
+
+<span class={`tag tag--${variant} ${extra ?? ""}`}>
+  <slot />
+</span>
+
+<style>
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 2px var(--space-2);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.4;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .tag--neutral {
+    background-color: var(--color-bg-soft);
+    color: var(--color-text-strong);
+    border-color: var(--color-border);
+  }
+  .tag--success {
+    background-color: var(--color-state-success-bg);
+    color: var(--color-state-success);
+  }
+  .tag--warning {
+    background-color: var(--color-state-warning-bg);
+    color: var(--color-state-warning);
+  }
+  .tag--error {
+    background-color: var(--color-state-error-bg);
+    color: var(--color-state-error);
+  }
+  .tag--info {
+    background-color: var(--color-state-info-bg);
+    color: var(--color-state-info);
+  }
+  .tag--accent {
+    background-color: var(--color-brand-accent);
+    color: var(--color-text-strong);
+  }
+</style>

@@ -2,7 +2,7 @@
 
 > Última atualização: 2026-05-09
 
-Status: 🟡 Fase 0 em andamento.
+Status: 🟢 Fase 0 concluída · 🟡 Fase 2 e 3 iniciadas (com ADRs 0002-0004 ACCEPTED em 2026-05-09).
 
 ---
 
@@ -15,9 +15,9 @@ Status: 🟡 Fase 0 em andamento.
 - [x] RFs iniciais (RF-0001 a RF-0005)
 - [x] RNFs iniciais (RNF-0001 a RNF-0005)
 - [x] ADR-0001 — Estrutura de documentação (ACCEPTED)
-- [ ] ADR-0002 — Design system base GOV.UK (PROPOSED → aguarda aprovação)
-- [ ] ADR-0003 — Stack tecnológico (PROPOSED → aguarda aprovação)
-- [ ] ADR-0004 — Tokens de design: cores e tipografia (PROPOSED → aguarda aprovação)
+- [x] ADR-0002 — Design system base GOV.UK (ACCEPTED em 2026-05-09)
+- [x] ADR-0003 — Stack tecnológico Astro + GitHub Pages (ACCEPTED em 2026-05-09)
+- [x] ADR-0004 — Tokens de design "Buteco Moderno" (ACCEPTED em 2026-05-09)
 - [x] SessionStart hook + skills de auto-conhecimento
 
 **Saída:** repositório navegável, decisões de fundação aprovadas.

@@ -1,0 +1,221 @@
+---
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import ButecoCard from "~/components/site/ButecoCard.astro";
+import Input from "~/components/ui/Input.astro";
+import Button from "~/components/ui/Button.astro";
+import Tag from "~/components/ui/Tag.astro";
+import { butecosBH } from "~/data/butecos-bh";
+
+const total = butecosBH.length;
+const bairros = Array.from(new Set(butecosBH.map((b) => b.bairro))).sort();
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout
+  title="Butecos de Belo Horizonte"
+  description={`${total} butecos participantes do Comida di Buteco em Belo Horizonte. Explore os pratos concorrentes desta edição.`}
+  cidadeAtual="Belo Horizonte"
+>
+  <nav class="breadcrumbs container" aria-label="Você está em">
+    <ol>
+      <li><a href={base}>Início</a></li>
+      <li aria-current="page">Belo Horizonte</li>
+    </ol>
+  </nav>
+
+  <section class="page-header">
+    <div class="container">
+      <h1>Butecos de Belo Horizonte</h1>
+      <p class="page-header__lede">
+        {total} butecos participantes desta edição. Filtre por bairro ou busque
+        pelo nome do prato.
+      </p>
+    </div>
+  </section>
+
+  <section class="filters" aria-labelledby="filters-heading">
+    <div class="container">
+      <h2 id="filters-heading" class="visually-hidden">Filtros e busca</h2>
+
+      <form class="filters__form" role="search" method="get" action="" novalidate>
+        <Input
+          id="busca"
+          name="q"
+          label="Buscar"
+          type="search"
+          hint="Digite parte do nome do buteco ou do prato"
+          placeholder="ex.: feijoada, costela, Santa Tereza"
+        />
+
+        <div class="filters__row">
+          <label class="filters__select" for="bairro">
+            <span>Bairro</span>
+            <select id="bairro" name="bairro">
+              <option value="">Todos os bairros</option>
+              {bairros.map((b) => <option value={b}>{b}</option>)}
+            </select>
+          </label>
+
+          <label class="filters__select" for="ordem">
+            <span>Ordenar</span>
+            <select id="ordem" name="ordem">
+              <option value="nome">Nome do buteco (A→Z)</option>
+              <option value="bairro">Bairro</option>
+              <option value="premiado">Premiados primeiro</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="filters__chips">
+          <Tag variant="accent">Vencedores anteriores</Tag>
+          <Tag variant="info">Estreantes</Tag>
+        </div>
+
+        <div class="filters__actions">
+          <Button type="submit" variant="primary">Aplicar filtros</Button>
+          <Button type="reset" variant="tertiary">Limpar</Button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="results" aria-labelledby="results-heading">
+    <div class="container">
+      <div class="results__header">
+        <h2 id="results-heading">
+          <span class="results__count">{total}</span> butecos encontrados
+        </h2>
+        <p class="results__hint" aria-live="polite">
+          Mostrando todos os butecos. Use os filtros acima para refinar.
+        </p>
+      </div>
+
+      <ul class="results__grid" role="list">
+        {butecosBH.map((b) => (
+          <li>
+            <ButecoCard buteco={b} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .breadcrumbs {
+    padding-block: var(--space-3);
+    font-size: var(--font-size-small);
+  }
+  .breadcrumbs ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    color: var(--color-text-muted);
+  }
+  .breadcrumbs li:not(:last-child)::after {
+    content: "›";
+    margin-inline-start: var(--space-2);
+    color: var(--color-text-muted);
+  }
+  .breadcrumbs a {
+    color: var(--color-brand-primary);
+  }
+  .breadcrumbs [aria-current="page"] {
+    color: var(--color-text-strong);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .page-header {
+    padding-block: var(--space-6) var(--space-7);
+  }
+  .page-header h1 {
+    font-size: var(--font-size-h1);
+    margin-block-end: var(--space-3);
+  }
+  .page-header__lede {
+    color: var(--color-text-muted);
+    max-width: 60ch;
+  }
+
+  .filters {
+    background: var(--color-bg-soft);
+    border-block: var(--border-thin);
+    padding-block: var(--space-5);
+  }
+  .filters__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .filters__row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  .filters__select {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-weight: var(--font-weight-semibold);
+  }
+  .filters__select select {
+    appearance: none;
+    background:
+      linear-gradient(45deg, transparent 50%, var(--color-text-strong) 50%) calc(100% - 18px) 50% / 6px 6px no-repeat,
+      linear-gradient(135deg, var(--color-text-strong) 50%, transparent 50%) calc(100% - 12px) 50% / 6px 6px no-repeat,
+      var(--color-bg-canvas);
+    padding-inline-end: var(--space-7);
+  }
+  .filters__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .filters__actions {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .results {
+    padding-block: var(--space-7);
+  }
+  .results__header {
+    margin-block-end: var(--space-6);
+  }
+  .results__count {
+    color: var(--color-brand-primary);
+  }
+  .results__hint {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+    margin-block-start: var(--space-2);
+  }
+  .results__grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  @media (min-width: 640px) {
+    .filters__row {
+      grid-template-columns: 1fr 1fr;
+    }
+    .results__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .results__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+    }
+  }
+</style>

@@ -1,8 +1,8 @@
-# ADR-0004 — Tokens de design: cores, tipografia, espaço (proposta)
+# ADR-0004 — Tokens de design: cores, tipografia, espaço
 
-- **Status:** PROPOSED ⚠️ aguarda aprovação do dono do produto
+- **Status:** ACCEPTED
 - **Data:** 2026-05-09
-- **Decisor(es):** —
+- **Decisor(es):** Dono do produto (aprovado em 2026-05-09)
 - **RFs/RNFs relacionados:** RF-0001, RF-0003, RNF-0001 (a11y), RNF-0003 (mobile-first)
 
 ## Contexto

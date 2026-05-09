@@ -1,9 +1,12 @@
-# ADR-0003 — Stack tecnológico do redesign (proposta)
+# ADR-0003 — Stack tecnológico do redesign
 
-- **Status:** PROPOSED ⚠️ aguarda aprovação do dono do produto
+- **Status:** ACCEPTED
 - **Data:** 2026-05-09
-- **Decisor(es):** —
+- **Decisor(es):** Dono do produto (aprovado em 2026-05-09 com **restrição: deve funcionar em GitHub Pages**)
 - **RFs/RNFs relacionados:** RF-0001, RNF-0002 (performance), RNF-0003 (mobile-first), RNF-0004 (SEO), RNF-0001 (a11y)
+
+> **Restrição imposta na aprovação:** _"Pode mas só se funcionar no gh pages"_.
+> Esta restrição transforma a stack em **SSG puro** (Static Site Generation) — sem SSR em runtime. WordPress, se usado, é consumido **em tempo de build** ou via JSON estático. Hospedagem é **GitHub Pages** com GitHub Actions; Cloudflare em frente é **opcional** (já há CDN do GH).
 
 ## Contexto
 
@@ -24,15 +27,21 @@ O site atual é WordPress + Cloudflare. Há três caminhos macro:
 Stack proposto:
 
 - **Linguagem:** TypeScript.
-- **Framework:** **Astro** (com "islands" pontuais quando precisar de interatividade).
-- **Estilo:** **CSS nativo + Custom Properties** (variáveis CSS) para tokens; sem Tailwind nem Sass nesta v1 (decisão a refinar em ADR de tokens).
-- **Componentes interativos pontuais:** Web Components (Lit) ou ilhas Astro com pequenos scripts vanilla — sem React/Vue como base.
-- **Build/CI:** GitHub Actions, Lighthouse CI obrigatório no PR.
-- **Hospedagem:** estático em CDN (Cloudflare Pages, Netlify ou similar) — **mantendo Cloudflare na frente** (RNF-0005, anti-bot).
-- **Fonte de dados (provisório):** API REST do WordPress (`wp-json`) ou JSON gerado em build.
-- **Imagens:** otimização em build (Astro `<Image>`) + AVIF/WebP + dimensões fixas (CLS).
-- **Tipografia:** fonte livre auto-hospedada (decisão final em ADR-0004).
-- **Telemetria:** `web-vitals` para CWV em campo; analytics privacy-first (Plausible/Umami, a confirmar em ADR próprio).
+- **Framework:** **Astro** em **modo `output: 'static'`** (SSG puro — compatível com GitHub Pages).
+- **Estilo:** **CSS nativo + Custom Properties** (variáveis CSS) para tokens; sem Tailwind nem Sass nesta v1.
+- **Componentes interativos pontuais:** ilhas Astro com pequenos scripts vanilla — sem React/Vue como base.
+- **Hospedagem:** **GitHub Pages** (branch `gh-pages` ou ação oficial `actions/deploy-pages`).
+- **Domínio/base path:** o site provavelmente publicará em `https://<owner>.github.io/<repo>/` num primeiro momento — Astro usa `base` no `astro.config.mjs` para gerar URLs relativas corretas. Quando houver custom domain, basta remover o `base`.
+- **Build/CI:** GitHub Actions:
+  - PR: `npm ci`, `astro check` (typecheck), `astro build`, Lighthouse CI, `axe` HTML.
+  - `main`: build + deploy via `actions/deploy-pages`.
+- **Fonte de dados:**
+  - Conteúdo do redesign: **arquivos Markdown/JSON em `src/content/`** (Content Collections do Astro).
+  - Integração com WordPress (se necessária): **fetch em build time** do `wp-json` ou export estático para JSON commitado. **Sem chamadas runtime ao WP a partir do browser** (privacidade + estabilidade + cache).
+- **Imagens:** otimização em build (`@astrojs/image` ou `astro:assets`) + AVIF/WebP + dimensões fixas (CLS).
+- **Tipografia:** Inter auto-hospedada (RNF-0005, sem Google Fonts) — ver ADR-0004.
+- **Telemetria:** `web-vitals` enviando para endpoint privacy-first (Plausible/Umami) — ADR próprio futuro.
+- **Cloudflare:** **opcional**. Se mantido, fica como WAF/anti-bot no DNS apontando para o GH Pages. Não é dependência da stack.
 
 ## Alternativas consideradas
 
@@ -75,12 +84,21 @@ Stack proposto:
 ### Neutras
 - Migração futura para outro CMS (Sanity, Strapi, custom) fica viável depois.
 
-## Plano de implementação (após ACCEPTED)
+## Plano de implementação
 
-- [ ] `package.json`, `astro.config.mjs` mínimos.
-- [ ] CI: typecheck + Lighthouse + axe.
-- [ ] Stub de página de listagem com dados mockados.
-- [ ] ADR de fonte de dados (WP REST vs. build estático).
+- [x] `package.json`, `astro.config.mjs` mínimos com `output: 'static'` e `base` correto para GH Pages.
+- [x] Workflow `.github/workflows/deploy.yml` usando `actions/deploy-pages`.
+- [ ] CI de PR: typecheck + Lighthouse + axe.
+- [x] Stub de página de listagem com dados mockados.
+- [ ] ADR de fonte de dados definitiva (WP REST em build vs. JSON commitado).
+
+## Restrições do GitHub Pages (importantes para a equipe)
+
+1. **Sem SSR em runtime.** Toda página é HTML pré-gerado. Decisões dinâmicas dependem de JS no browser ou de regenerar o site.
+2. **Sem variáveis de ambiente em runtime.** Tudo que vai para o HTML precisa estar disponível em build.
+3. **Pastas `_*` (com underscore).** GH Pages serve via Jekyll por padrão e ignora `_*`. Adicionamos `.nojekyll` na raiz do build para desativar isso (Astro coloca seu CSS em `_astro/`).
+4. **Custom domain.** Quando houver, configurar `cname` no workflow e remover `base` do `astro.config.mjs`.
+5. **Cache.** GH Pages tem cache curto (~10min). Para CWV em produção, considerar Cloudflare na frente.
 
 ## Como reverter
 

@@ -26,10 +26,10 @@ Cada ADR responde:
 
 | ID | Título | Status | Decisão por | Data |
 |----|--------|--------|-------------|------|
-| [ADR-0001](./ADR-0001-estrutura-de-documentacao.md) | Estrutura de documentação | ACCEPTED | Dono do produto (pedido inicial) | 2026-05-09 |
-| [ADR-0002](./ADR-0002-design-system-base-govuk.md) | Design System inspirado em GOV.UK | **PROPOSED** | — | 2026-05-09 |
-| [ADR-0003](./ADR-0003-stack-tecnologico.md) | Stack tecnológico do redesign | **PROPOSED** | — | 2026-05-09 |
-| [ADR-0004](./ADR-0004-tokens-de-design.md) | Tokens de design (cor, tipografia, espaço) | **PROPOSED** | — | 2026-05-09 |
+| [ADR-0001](./ADR-0001-estrutura-de-documentacao.md) | Estrutura de documentação | ACCEPTED | Dono do produto | 2026-05-09 |
+| [ADR-0002](./ADR-0002-design-system-base-govuk.md) | Design System inspirado em GOV.UK | ACCEPTED | Dono do produto | 2026-05-09 |
+| [ADR-0003](./ADR-0003-stack-tecnologico.md) | Stack tecnológico (Astro + GitHub Pages) | ACCEPTED | Dono do produto (com restrição GH Pages) | 2026-05-09 |
+| [ADR-0004](./ADR-0004-tokens-de-design.md) | Tokens de design (cor, tipografia, espaço) | ACCEPTED | Dono do produto | 2026-05-09 |
 
 ## Como propor um ADR
 

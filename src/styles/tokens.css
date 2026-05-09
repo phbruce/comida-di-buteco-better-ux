@@ -1,0 +1,147 @@
+/*
+ * Design Tokens — Comida di Buteco "Buteco Moderno"
+ * Fonte da verdade: docs/adr/ADR-0004-tokens-de-design.md
+ *
+ * Convenções:
+ * - Custom Properties em kebab-case com prefixo semântico.
+ * - Tudo testado em WCAG AA mínimo (RNF-0001).
+ * - Mobile-first; tokens espaçamento/tipografia mudam em ≥ 640px (RNF-0003).
+ */
+
+:root {
+  /* ---------- Cores funcionais (texto, fundo, borda) ---------- */
+  --color-text-strong: #1a1815;
+  --color-text-muted: #5b554c;
+  --color-text-on-dark: #fbf7f0;
+  --color-text-on-brand: #fbf7f0;
+
+  --color-bg-canvas: #ffffff;
+  --color-bg-soft: #faf6ee;
+  --color-surface: #fbf7f0;
+  --color-surface-strong: #1a1815;
+
+  --color-border: #cfc6b5;
+  --color-border-strong: #1a1815;
+  --color-border-input: #1a1815;
+
+  /* ---------- Marca ---------- */
+  --color-brand-primary: #9c2a1b;        /* urucum */
+  --color-brand-primary-hover: #741f14;
+  --color-brand-primary-active: #5a160e;
+  --color-brand-secondary: #1f6f4a;      /* lima da terra */
+  --color-brand-secondary-hover: #155234;
+  --color-brand-accent: #f4b400;         /* dendê / goiabada */
+  --color-brand-accent-hover: #c89200;
+
+  /* ---------- Estado ---------- */
+  --color-state-error: #b3261e;
+  --color-state-error-bg: #fcebea;
+  --color-state-success: #0d6e44;
+  --color-state-success-bg: #e7f5ee;
+  --color-state-warning: #a3650a;
+  --color-state-warning-bg: #fdf2dd;
+  --color-state-info: #1a5fa6;
+  --color-state-info-bg: #e6effa;
+
+  /* ---------- Foco — assinatura visual ---------- */
+  --color-focus-ring: #ffcc00;
+  --color-focus-text: #1a1815;
+  --focus-outline-width: 3px;
+  --focus-offset: 2px;
+
+  /* ---------- Tipografia ---------- */
+  --font-family-sans: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Escala fluida — clamp(min, fluido, max) */
+  /* fluido baseado em 320px..1280px → 5vw + base */
+  --font-size-display: clamp(2rem, 1.5rem + 2.5vw, 3rem);     /* 32→48 */
+  --font-size-h1: clamp(1.75rem, 1.45rem + 1.5vw, 2.25rem);   /* 28→36 */
+  --font-size-h2: clamp(1.375rem, 1.2rem + 0.85vw, 1.75rem);  /* 22→28 */
+  --font-size-h3: clamp(1.125rem, 1.05rem + 0.4vw, 1.375rem); /* 18→22 */
+  --font-size-body: clamp(1rem, 0.97rem + 0.15vw, 1.125rem);  /* 16→18 */
+  --font-size-small: clamp(0.875rem, 0.84rem + 0.18vw, 1rem); /* 14→16 */
+  --font-size-caption: clamp(0.75rem, 0.73rem + 0.1vw, 0.8125rem); /* 12→13 */
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.1;
+  --line-height-snug: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.6;
+
+  --letter-spacing-tight: -0.01em;
+  --letter-spacing-normal: 0;
+
+  /* ---------- Espaçamento — mobile (default) ---------- */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 56px;
+
+  /* ---------- Raios ---------- */
+  --radius-none: 0;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* ---------- Bordas ---------- */
+  --border-thin: 1px solid var(--color-border);
+  --border-strong: 2px solid var(--color-border-strong);
+
+  /* ---------- Sombras ---------- */
+  --shadow-1: 0 1px 0 0 var(--color-border);
+  --shadow-2: 0 4px 12px -4px rgba(26, 24, 21, 0.12);
+  --shadow-focus: 0 0 0 var(--focus-offset) var(--color-bg-canvas), 0 0 0 calc(var(--focus-offset) + var(--focus-outline-width)) var(--color-focus-ring);
+
+  /* ---------- Movimento ---------- */
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-slow: 320ms;
+  --easing-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* ---------- Layout ---------- */
+  --container-narrow: 640px;
+  --container-default: 1024px;
+  --container-wide: 1280px;
+  --container-padding: var(--space-4);
+
+  /* ---------- Z-index ---------- */
+  --z-skip: 100;
+  --z-header: 50;
+  --z-overlay: 200;
+  --z-modal: 300;
+}
+
+/* ---------- Espaçamento — desktop (≥ 640px, breakpoint md) ---------- */
+@media (min-width: 640px) {
+  :root {
+    --space-4: 20px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 40px;
+    --space-8: 56px;
+    --space-9: 72px;
+
+    --container-padding: var(--space-6);
+  }
+}
+
+/* ---------- Reduce Motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-base: 0ms;
+    --motion-slow: 0ms;
+  }
+}

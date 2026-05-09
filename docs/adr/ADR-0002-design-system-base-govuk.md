@@ -1,8 +1,8 @@
-# ADR-0002 — Design System inspirado em GOV.UK (proposta)
+# ADR-0002 — Design System inspirado em GOV.UK
 
-- **Status:** PROPOSED ⚠️ aguarda aprovação do dono do produto
+- **Status:** ACCEPTED
 - **Data:** 2026-05-09
-- **Decisor(es):** —
+- **Decisor(es):** Dono do produto (aprovado em 2026-05-09)
 - **RFs/RNFs relacionados:** RF-0001, RF-0002, RF-0003, RF-0004, RF-0005, RNF-0001, RNF-0002, RNF-0003
 
 ## Contexto

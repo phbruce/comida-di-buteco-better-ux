@@ -1,0 +1,58 @@
+---
+/**
+ * PhaseBanner — bandeira de fase (alpha, beta, prévia).
+ * Inspiração direta do GOV.UK Phase banner.
+ */
+interface Props {
+  phase?: string;
+  message?: string;
+}
+
+const {
+  phase = "Beta",
+  message = "Esta é uma versão em construção do novo Comida di Buteco.",
+} = Astro.props;
+---
+
+<div class="phase-banner" role="region" aria-label="Aviso de versão">
+  <p class="phase-banner__inner container">
+    <strong class="phase-banner__tag">{phase}</strong>
+    <span class="phase-banner__message">
+      <slot>{message}</slot>
+    </span>
+  </p>
+</div>
+
+<style>
+  .phase-banner {
+    background-color: var(--color-bg-soft);
+    border-block-end: var(--border-thin);
+  }
+  .phase-banner__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    padding-block: var(--space-3);
+    margin: 0 auto;
+    font-size: var(--font-size-small);
+    color: var(--color-text-strong);
+  }
+  .phase-banner__tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px var(--space-2);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--color-brand-primary);
+    color: var(--color-text-on-brand);
+    border-radius: var(--radius-sm);
+    line-height: 1.4;
+    flex-shrink: 0;
+  }
+  .phase-banner__message {
+    color: var(--color-text-muted);
+  }
+</style>

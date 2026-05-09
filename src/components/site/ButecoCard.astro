@@ -1,0 +1,221 @@
+---
+/**
+ * ButecoCard — card de listagem de buteco.
+ *
+ * Atende RF-0001:
+ * - Nome do buteco, prato, bairro, foto, indicador de premiação.
+ * - Card é totalmente clicável via "stretched link" no nome (técnica acessível
+ *   sem aninhar <a> dentro de <article>).
+ *
+ * Mobile-first: layout vertical com imagem 16:9 no topo.
+ * Desktop: layout horizontal (foto à esquerda).
+ */
+
+import Tag from "~/components/ui/Tag.astro";
+
+interface Buteco {
+  slug: string;
+  nome: string;
+  prato: string;
+  pratoDescricao?: string;
+  bairro: string;
+  cidade: string;
+  cidadeSlug: string;
+  foto: string;
+  fotoAlt: string;
+  premios?: string[];
+  premiadoEmEdicao?: boolean;
+  novato?: boolean;
+}
+
+interface Props {
+  buteco: Buteco;
+}
+
+const { buteco } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const detalheUrl = `${base}butecos/${buteco.cidadeSlug}/${buteco.slug}/`;
+---
+
+<article class="card">
+  <div class="card__media">
+    <img
+      src={buteco.foto}
+      alt={buteco.fotoAlt}
+      width="800"
+      height="500"
+      loading="lazy"
+      decoding="async"
+    />
+    {buteco.premiadoEmEdicao && (
+      <div class="card__media-tag">
+        <Tag variant="accent">Vencedor anterior</Tag>
+      </div>
+    )}
+  </div>
+
+  <div class="card__body">
+    <header class="card__header">
+      <h3 class="card__title">
+        <a class="card__link" href={detalheUrl}>{buteco.nome}</a>
+      </h3>
+      <p class="card__bairro">
+        <span class="visually-hidden">Bairro: </span>{buteco.bairro}
+      </p>
+    </header>
+
+    <div class="card__prato">
+      <p class="card__prato-label">Prato concorrente</p>
+      <p class="card__prato-nome">{buteco.prato}</p>
+      {buteco.pratoDescricao && (
+        <p class="card__prato-desc">{buteco.pratoDescricao}</p>
+      )}
+    </div>
+
+    <footer class="card__footer">
+      <div class="card__tags">
+        {buteco.novato && <Tag variant="info">Estreante</Tag>}
+        {buteco.premios?.map((p) => <Tag variant="neutral">{p}</Tag>)}
+      </div>
+    </footer>
+  </div>
+</article>
+
+<style>
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-surface);
+    border: var(--border-thin);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: border-color var(--motion-fast) var(--easing-standard),
+                transform var(--motion-fast) var(--easing-standard),
+                box-shadow var(--motion-base) var(--easing-standard);
+  }
+
+  .card:hover {
+    border-color: var(--color-text-strong);
+    box-shadow: var(--shadow-2);
+  }
+
+  /* "Stretched link" — torna o card todo clicável de forma acessível */
+  .card__link::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+  .card__link {
+    color: inherit;
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0 2px;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    transition: background-size var(--motion-fast) var(--easing-standard);
+  }
+  .card:hover .card__link,
+  .card__link:focus-visible {
+    background-size: 100% 2px;
+  }
+  .card__link:focus-visible {
+    outline: none;
+  }
+  .card:has(.card__link:focus-visible) {
+    outline: var(--focus-outline-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-offset);
+    box-shadow: 0 4px 0 0 var(--color-focus-text);
+  }
+
+  .card__media {
+    position: relative;
+    background-color: var(--color-bg-soft);
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+  .card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .card__media-tag {
+    position: absolute;
+    inset-block-start: var(--space-3);
+    inset-inline-start: var(--space-3);
+    z-index: 2;
+  }
+
+  .card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    flex: 1;
+  }
+
+  .card__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .card__title {
+    margin: 0;
+    font-size: var(--font-size-h3);
+    line-height: var(--line-height-snug);
+  }
+  .card__bairro {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+  }
+
+  .card__prato-label {
+    margin: 0;
+    font-size: var(--font-size-caption);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-semibold);
+  }
+  .card__prato-nome {
+    margin: 0;
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-body);
+  }
+  .card__prato-desc {
+    margin: var(--space-1) 0 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-normal);
+    /* Limita 2 linhas para manter densidade homogênea */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card__footer {
+    margin-block-start: auto;
+  }
+  .card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  /* Desktop: layout horizontal opcional via classe pai .grid--horizontal */
+  @media (min-width: 1024px) {
+    :global(.grid--horizontal) .card {
+      flex-direction: row;
+    }
+    :global(.grid--horizontal) .card__media {
+      flex: 0 0 38%;
+      aspect-ratio: 4 / 3;
+    }
+    :global(.grid--horizontal) .card__body {
+      flex: 1;
+    }
+  }
+</style>
