@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/session-context.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/guard-adr.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git branch:*)",
+      "Bash(ls:*)",
+      "Bash(find docs:*)",
+      "Bash(find .claude:*)",
+      "Bash(grep:*)",
+      "Bash(wc:*)",
+      "Bash(cat docs/*)",
+      "Bash(cat ROADMAP.md)",
+      "Bash(cat README.md)",
+      "Bash(cat CONTRIBUTING.md)",
+      "Bash(cat CLAUDE.md)",
+      "Bash(bash .claude/hooks/*)",
+      "Bash(bash scripts/*)"
+    ]
+  }
+}

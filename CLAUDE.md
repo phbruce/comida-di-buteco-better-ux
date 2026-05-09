@@ -1,0 +1,48 @@
+# CLAUDE.md — Briefing para sessões de IA
+
+> Este arquivo é lido automaticamente por Claude Code no início de toda sessão. **Mantenha-o curto, denso e atualizado.**
+
+## O que é o projeto
+
+Redesign completo de UI/UX do site **Comida di Buteco** (https://comidadibuteco.com.br/butecos/belo-horizonte/).
+
+Concurso gastronômico anual em que butecos competem com um prato autoral; usuários visitam, comem e votam. O site atual lista butecos por cidade.
+
+## Diretrizes não-negociáveis
+
+1. **Mobile first** — tudo é desenhado e implementado começando em 320px.
+2. **Acessibilidade WCAG 2.2 AA** mínimo (ver `docs/requisitos/nao-funcionais/RNF-0001`).
+3. **Inspiração GOV.UK Design System** — minimalismo, alto contraste, foco amarelo `#ffdd00`, tipografia clara.
+4. **Toda decisão arquitetural vira ADR.** ADRs em status `PROPOSED` **NÃO** podem ser implementados sem aprovação humana explícita.
+5. **Documentação em pt-BR**; código e tokens em inglês.
+
+## Antes de propor implementação
+
+1. Existe um ADR `ACCEPTED` cobrindo essa decisão?
+2. Os RFs/RNFs estão atualizados?
+3. A mudança aparece no `ROADMAP.md`?
+
+Se a resposta a qualquer uma é "não" — pare e proponha primeiro. **Nunca implemente código de produção a partir de um ADR `PROPOSED`.**
+
+## Mapa rápido
+
+| Pergunta                                | Onde responder                            |
+|-----------------------------------------|-------------------------------------------|
+| Qual o problema do produto?             | `docs/CONTEXTO.md`                        |
+| Que termo é esse?                       | `docs/GLOSSARIO.md`                       |
+| O sistema precisa fazer X?              | `docs/requisitos/funcionais/`             |
+| Qualidade/atributo Y?                   | `docs/requisitos/nao-funcionais/`         |
+| Por que essa decisão técnica?           | `docs/adr/`                               |
+| Qual o token visual de Z?               | `docs/design-system/`                     |
+| O que falta no projeto?                 | `ROADMAP.md`                              |
+
+## Skills disponíveis
+
+- `/cdb-onboarding` — tour completo do projeto (use quando começar uma sessão nova)
+- `/cdb-indexer` — reindexa e responde "onde está X"
+- `/cdb-design-system` — consulta rápida a tokens e componentes
+- `/cdb-decision-log` — guia de criação de novos ADRs
+
+## Estado atual
+
+Veja `ROADMAP.md` (fonte da verdade) — Fase 0 em andamento.

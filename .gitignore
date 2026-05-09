@@ -1,0 +1,32 @@
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Node (caso adotado)
+node_modules/
+dist/
+build/
+.cache/
+coverage/
+.npm/
+.yarn/
+*.log
+
+# Variáveis locais
+.env
+.env.local
+.env.*.local
+
+# Claude Code — sobrescritas pessoais
+.claude/settings.local.json
+.claude/.cache/
+.claude/index/
+
+# Saída de auditorias
+reports/
+lighthouse-report.*
