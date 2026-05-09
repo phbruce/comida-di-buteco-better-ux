@@ -1,0 +1,307 @@
+---
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import Breadcrumb from "~/components/ui/Breadcrumb.astro";
+import Button from "~/components/ui/Button.astro";
+import Tag from "~/components/ui/Tag.astro";
+import Map from "~/components/site/Map.astro";
+import { butecos, formatTelefone, fotoAltSintetico, creditoFoto } from "~/data/butecos";
+
+export async function getStaticPaths() {
+  return butecos.map((b) => ({
+    params: { cidade: b.cidade_slug, slug: b.slug },
+    props: { buteco: b },
+  }));
+}
+
+interface Props {
+  buteco: typeof butecos[number];
+}
+
+const { buteco } = Astro.props;
+const base = import.meta.env.BASE_URL;
+
+const enderecoTextual = buteco.endereco?.raw ?? `${buteco.bairro ?? ""}${buteco.cidade ? `, ${buteco.cidade}` : ""}`.trim();
+const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${buteco.nome} ${buteco.bairro ?? ""} ${buteco.cidade}`)}`;
+const telefoneFmt = formatTelefone(buteco.telefone);
+const telefoneTel = buteco.telefone ? `tel:+55${buteco.telefone}` : null;
+const whatsappUrl = buteco.telefone ? `https://wa.me/55${buteco.telefone}` : null;
+
+const oficialUrl = buteco.url;
+
+const crumbs = [
+  { label: "Início", href: base },
+  { label: buteco.cidade, href: `${base}butecos/${buteco.cidade_slug}/` },
+  { label: buteco.nome },
+];
+
+const altFoto = fotoAltSintetico(buteco);
+const credito = creditoFoto(buteco);
+---
+
+<BaseLayout
+  title={`${buteco.nome} — ${buteco.prato}`}
+  description={`${buteco.nome} apresenta "${buteco.prato}" no concurso Comida di Buteco em ${buteco.bairro ? `${buteco.bairro}, ` : ""}${buteco.cidade}. ${buteco.prato_descricao ?? ""}`}
+  cidadeAtual={buteco.cidade}
+  ogImage={buteco.foto ?? undefined}
+>
+  <Breadcrumb items={crumbs} />
+
+  <article class="buteco">
+    <header class="buteco__hero">
+      {buteco.foto ? (
+        <figure class="buteco__media">
+          <img
+            src={buteco.foto}
+            srcset={buteco.foto_srcset ?? undefined}
+            sizes="(min-width: 1024px) 1024px, 100vw"
+            alt={altFoto}
+            width="1080"
+            height="675"
+            fetchpriority="high"
+            decoding="async"
+            referrerpolicy="no-referrer-when-downgrade"
+          />
+          <figcaption class="buteco__credito">
+            {credito} —
+            <a href={oficialUrl} rel="noopener">ver no site oficial</a>
+          </figcaption>
+        </figure>
+      ) : (
+        <div class="buteco__media buteco__media--sem-foto" aria-hidden="true">
+          <span>{buteco.prato.charAt(0)}</span>
+        </div>
+      )}
+
+      <div class="buteco__intro container">
+        <div class="buteco__tags">
+          {buteco.edicao_ano && <Tag variant="accent">Edição {buteco.edicao_ano}</Tag>}
+          {buteco.bairro && <Tag variant="neutral">{buteco.bairro}</Tag>}
+          <Tag variant="info">{buteco.cidade}{buteco.uf ? ` — ${buteco.uf}` : ""}</Tag>
+        </div>
+        <h1 class="buteco__title">{buteco.nome}</h1>
+        <p class="buteco__lede">
+          Prato concorrente: <strong>{buteco.prato}</strong>
+        </p>
+      </div>
+    </header>
+
+    <div class="container buteco__layout">
+      <section class="buteco__main" aria-labelledby="prato">
+        <h2 id="prato">O prato</h2>
+        <p class="buteco__prato-desc">
+          {buteco.prato_descricao ?? "Descrição do prato disponível no site oficial."}
+        </p>
+
+        {buteco.horario_lista && buteco.horario_lista.length > 0 && (
+          <>
+            <h2 id="horario">Horário de funcionamento</h2>
+            <ul class="buteco__horario">
+              {buteco.horario_lista.map((linha) => <li>{linha}</li>)}
+            </ul>
+          </>
+        )}
+
+        <div class="buteco__share" aria-labelledby="share">
+          <h2 id="share">Compartilhar</h2>
+          <p>
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(`${buteco.nome} no Comida di Buteco ${buteco.cidade}: ${buteco.prato}. Site oficial: ${oficialUrl}`)}`}
+              rel="noopener"
+            >
+              Compartilhar no WhatsApp
+            </a>
+          </p>
+        </div>
+      </section>
+
+      <aside class="buteco__aside" aria-labelledby="info">
+        <h2 id="info" class="visually-hidden">Informações práticas</h2>
+
+        {buteco.coords ? (
+          <Map
+            lat={buteco.coords.lat}
+            lng={buteco.coords.lng}
+            label={buteco.nome}
+            enderecoTextual={enderecoTextual}
+            mapsUrl={mapsUrl}
+          />
+        ) : (
+          <div class="buteco__card">
+            <h3>Onde fica</h3>
+            <address>{enderecoTextual}</address>
+            <p>
+              <a href={mapsUrl} rel="noopener">Como chegar (Google Maps)</a>
+            </p>
+          </div>
+        )}
+
+        {(telefoneFmt || whatsappUrl) && (
+          <div class="buteco__card">
+            <h3>Contato</h3>
+            {telefoneFmt && telefoneTel && (
+              <p><a href={telefoneTel}>{telefoneFmt}</a></p>
+            )}
+            {whatsappUrl && (
+              <p><a href={whatsappUrl} rel="noopener">WhatsApp</a></p>
+            )}
+          </div>
+        )}
+
+        <div class="buteco__card buteco__card--cta">
+          <h3>Quer votar?</h3>
+          <p>A votação acontece no site oficial do concurso.</p>
+          <Button href={oficialUrl} variant="primary" block>
+            Ver no site oficial
+          </Button>
+          <p class="buteco__hint">
+            Sai deste redesign e abre <code>{oficialUrl.replace("https://", "")}</code>.
+          </p>
+        </div>
+      </aside>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .buteco { padding-block-end: var(--space-9); }
+
+  .buteco__hero { margin-block-end: var(--space-6); }
+  .buteco__media {
+    margin: 0;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--color-bg-soft);
+    border-block-end: var(--border-thin);
+    position: relative;
+  }
+  .buteco__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .buteco__media--sem-foto {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    font-size: 8rem;
+    font-weight: var(--font-weight-bold);
+  }
+  .buteco__credito {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    padding: var(--space-2) var(--space-4);
+    background: linear-gradient(transparent, rgba(26, 24, 21, 0.65));
+    color: var(--color-text-on-dark);
+    font-size: var(--font-size-caption);
+  }
+  .buteco__credito a {
+    color: var(--color-text-on-dark);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .buteco__credito a:hover {
+    color: var(--color-brand-accent);
+  }
+
+  .buteco__intro { padding-block: var(--space-5) 0; }
+  .buteco__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-block-end: var(--space-3);
+  }
+  .buteco__title {
+    font-size: var(--font-size-display);
+    margin-block-end: var(--space-3);
+    text-wrap: balance;
+  }
+  .buteco__lede {
+    font-size: var(--font-size-h3);
+    color: var(--color-text-muted);
+    max-width: 50ch;
+  }
+  .buteco__lede strong { color: var(--color-text-strong); }
+
+  .buteco__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
+    margin-block-start: var(--space-6);
+  }
+  .buteco__main h2 { margin-block: var(--space-6) var(--space-3); }
+  .buteco__main h2:first-child { margin-block-start: 0; }
+  .buteco__prato-desc {
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-relaxed);
+    max-width: 65ch;
+  }
+  .buteco__horario {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+  }
+  .buteco__horario li {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+    padding: var(--space-2) 0;
+    border-block-end: var(--border-thin);
+  }
+  .buteco__horario li:last-child { border: 0; }
+
+  .buteco__aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .buteco__card {
+    border: var(--border-thin);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    padding: var(--space-5);
+  }
+  .buteco__card h3 {
+    margin-block-end: var(--space-2);
+    font-size: var(--font-size-body);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+  }
+  .buteco__card p { margin: 0; }
+  .buteco__card p + p { margin-block-start: var(--space-2); }
+  .buteco__card code {
+    font-size: 0.85em;
+    color: inherit;
+  }
+  .buteco__card--cta {
+    background: var(--color-text-strong);
+    color: var(--color-text-on-dark);
+    border-color: var(--color-text-strong);
+  }
+  .buteco__card--cta h3 { color: var(--color-brand-accent); }
+  .buteco__card--cta p { color: var(--color-text-on-dark); }
+  .buteco__card--cta a { color: var(--color-brand-accent); }
+  .buteco__hint {
+    font-size: var(--font-size-small);
+    color: var(--color-text-muted);
+  }
+  .buteco__card--cta .buteco__hint { color: rgba(251, 247, 240, 0.75); }
+
+  .buteco__share {
+    margin-block-start: var(--space-7);
+    padding-block-start: var(--space-5);
+    border-block-start: var(--border-thin);
+  }
+
+  @media (min-width: 1024px) {
+    .buteco__layout {
+      grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+      gap: var(--space-8);
+    }
+    .buteco__media { aspect-ratio: 21 / 9; }
+  }
+</style>

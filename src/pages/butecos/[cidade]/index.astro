@@ -4,30 +4,42 @@ import Breadcrumb from "~/components/ui/Breadcrumb.astro";
 import ButecoCard from "~/components/site/ButecoCard.astro";
 import Input from "~/components/ui/Input.astro";
 import Button from "~/components/ui/Button.astro";
-import Tag from "~/components/ui/Tag.astro";
-import { butecosBH } from "~/data/butecos-bh";
+import { butecos, cidades } from "~/data/butecos";
 
-const total = butecosBH.length;
-const bairros = Array.from(new Set(butecosBH.map((b) => b.bairro))).sort();
+export async function getStaticPaths() {
+  return cidades.map((c) => ({
+    params: { cidade: c.slug },
+    props: { cidade: c },
+  }));
+}
+
+const { cidade } = Astro.props;
+const lista = butecos
+  .filter((b) => b.cidade_slug === cidade.slug)
+  .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+
+const bairros = Array.from(new Set(lista.map((b) => b.bairro).filter(Boolean))) as string[];
+bairros.sort((a, b) => a.localeCompare(b, "pt-BR"));
+
 const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout
-  title="Butecos de Belo Horizonte"
-  description={`${total} butecos em Belo Horizonte — redesign não oficial do concurso Comida di Buteco. Explore os pratos concorrentes.`}
-  cidadeAtual="Belo Horizonte"
+  title={`Butecos de ${cidade.nome}`}
+  description={`${lista.length} butecos em ${cidade.nome} no concurso Comida di Buteco. Redesign não oficial. Explore os pratos concorrentes.`}
+  cidadeAtual={cidade.nome}
 >
   <Breadcrumb items={[
     { label: "Início", href: base },
-    { label: "Belo Horizonte" },
+    { label: cidade.nome },
   ]} />
 
   <section class="page-header">
     <div class="container">
-      <h1>Butecos de Belo Horizonte</h1>
+      <h1>Butecos de {cidade.nome}{cidade.uf ? ` — ${cidade.uf}` : ""}</h1>
       <p class="page-header__lede">
-        {total} butecos participantes desta edição. Filtre por bairro ou busque
-        pelo nome do prato.
+        {lista.length} butecos participantes desta edição.
+        {bairros.length > 0 && <> Em {bairros.length} bairros.</>}
       </p>
     </div>
   </section>
@@ -43,32 +55,28 @@ const base = import.meta.env.BASE_URL;
           label="Buscar"
           type="search"
           hint="Digite parte do nome do buteco ou do prato"
-          placeholder="ex.: feijoada, costela, Santa Tereza"
+          placeholder="ex.: feijoada, costela, picanha…"
         />
 
-        <div class="filters__row">
-          <label class="filters__select" for="bairro">
-            <span>Bairro</span>
-            <select id="bairro" name="bairro">
-              <option value="">Todos os bairros</option>
-              {bairros.map((b) => <option value={b}>{b}</option>)}
-            </select>
-          </label>
+        {bairros.length > 1 && (
+          <div class="filters__row">
+            <label class="filters__select" for="bairro">
+              <span>Bairro</span>
+              <select id="bairro" name="bairro">
+                <option value="">Todos os bairros ({bairros.length})</option>
+                {bairros.map((b) => <option value={b}>{b}</option>)}
+              </select>
+            </label>
 
-          <label class="filters__select" for="ordem">
-            <span>Ordenar</span>
-            <select id="ordem" name="ordem">
-              <option value="nome">Nome do buteco (A→Z)</option>
-              <option value="bairro">Bairro</option>
-              <option value="premiado">Premiados primeiro</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="filters__chips">
-          <Tag variant="accent">Vencedores anteriores</Tag>
-          <Tag variant="info">Estreantes</Tag>
-        </div>
+            <label class="filters__select" for="ordem">
+              <span>Ordenar</span>
+              <select id="ordem" name="ordem">
+                <option value="nome">Nome do buteco (A→Z)</option>
+                <option value="bairro">Bairro</option>
+              </select>
+            </label>
+          </div>
+        )}
 
         <div class="filters__actions">
           <Button type="submit" variant="primary">Aplicar filtros</Button>
@@ -82,7 +90,7 @@ const base = import.meta.env.BASE_URL;
     <div class="container">
       <div class="results__header">
         <h2 id="results-heading">
-          <span class="results__count">{total}</span> butecos encontrados
+          <span class="results__count">{lista.length}</span> butecos encontrados
         </h2>
         <p class="results__hint" aria-live="polite">
           Mostrando todos os butecos. Use os filtros acima para refinar.
@@ -90,7 +98,7 @@ const base = import.meta.env.BASE_URL;
       </div>
 
       <ul class="results__grid" role="list">
-        {butecosBH.map((b) => (
+        {lista.map((b) => (
           <li>
             <ButecoCard buteco={b} />
           </li>
@@ -141,11 +149,6 @@ const base = import.meta.env.BASE_URL;
       linear-gradient(135deg, var(--color-text-strong) 50%, transparent 50%) calc(100% - 12px) 50% / 6px 6px no-repeat,
       var(--color-bg-canvas);
     padding-inline-end: var(--space-7);
-  }
-  .filters__chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
   }
   .filters__actions {
     display: flex;

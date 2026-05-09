@@ -1,25 +1,26 @@
 ---
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import { cidades } from "~/data/butecos-bh";
+import { butecos, cidades, edicao } from "~/data/butecos";
 
-const populares = cidades.filter((c) => c.populares);
-const todas = cidades;
+const populares = cidades.filter((c) => c.popular);
+const outras = cidades.filter((c) => !c.popular);
 const base = import.meta.env.BASE_URL;
+const totalButecos = butecos.length;
 ---
 
 <BaseLayout
   title="Encontre seu buteco — Comida di Buteco"
-  description="Escolha a cidade e descubra os butecos participantes do concurso Comida di Buteco. Veja pratos, endereços e onde votar."
+  description={`Redesign não oficial: ${totalButecos} butecos da edição ${edicao} em ${cidades.length} cidades. Explore os pratos concorrentes do concurso Comida di Buteco.`}
 >
   <section class="hero">
     <div class="container">
-      <p class="hero__eyebrow">Concurso · Edição em curso</p>
+      <p class="hero__eyebrow">Edição {edicao} · Concurso</p>
       <h1 class="hero__title">
         Onde tem buteco bom <span>perto de você?</span>
       </h1>
       <p class="hero__lede">
-        O Comida di Buteco é o concurso que celebra os bares de bairro do Brasil.
-        Escolha sua cidade e veja os pratos concorrentes desta edição.
+        {totalButecos} butecos em {cidades.length} cidades brasileiras competindo
+        com pratos autorais. Escolha sua cidade e descubra.
       </p>
     </div>
   </section>
@@ -28,34 +29,38 @@ const base = import.meta.env.BASE_URL;
     <div class="container">
       <div class="section__header">
         <h2 id="cidades-heading">Escolha sua cidade</h2>
-        <p>{todas.length} cidades participam desta edição.</p>
+        <p>{cidades.length} cidades participam desta edição.</p>
       </div>
 
-      <h3 class="section__subheading">Cidades populares</h3>
+      <h3 class="section__subheading">Cidades com mais butecos</h3>
       <ul class="city-grid" role="list">
         {populares.map((c) => (
           <li>
             <a class="city-card" href={`${base}butecos/${c.slug}/`}>
               <span class="city-card__name">{c.nome}</span>
-              <span class="city-card__uf">{c.uf}</span>
-              <span class="city-card__count">
-                {c.total > 0 ? `${c.total} butecos` : "em breve"}
-              </span>
+              {c.uf && <span class="city-card__uf">{c.uf}</span>}
+              <span class="city-card__count">{c.total} butecos</span>
             </a>
           </li>
         ))}
       </ul>
 
-      <h3 class="section__subheading">Todas as cidades</h3>
-      <ul class="city-list" role="list">
-        {todas.map((c) => (
-          <li>
-            <a class="city-list__link" href={`${base}butecos/${c.slug}/`}>
-              {c.nome} <span aria-hidden="true">·</span> <span class="city-list__uf">{c.uf}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
+      {outras.length > 0 && (
+        <>
+          <h3 class="section__subheading">Outras cidades</h3>
+          <ul class="city-list" role="list">
+            {outras.map((c) => (
+              <li>
+                <a class="city-list__link" href={`${base}butecos/${c.slug}/`}>
+                  <span class="city-list__name">{c.nome}</span>
+                  {c.uf && <span class="city-list__uf">{c.uf}</span>}
+                  <span class="city-list__count">{c.total}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </div>
   </section>
 </BaseLayout>
@@ -152,6 +157,7 @@ const base = import.meta.env.BASE_URL;
     border-radius: var(--radius-sm);
     align-self: start;
     letter-spacing: 0.06em;
+    height: fit-content;
   }
   .city-card__count {
     grid-column: 1 / -1;
@@ -172,10 +178,11 @@ const base = import.meta.env.BASE_URL;
     border-block-end: var(--border-thin);
   }
   .city-list__link {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: var(--space-3);
     align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-4) var(--space-2);
+    padding: var(--space-3) var(--space-2);
     color: var(--color-text-strong);
     text-decoration: none;
     font-weight: var(--font-weight-semibold);
@@ -187,6 +194,13 @@ const base = import.meta.env.BASE_URL;
   .city-list__uf {
     color: var(--color-text-muted);
     font-weight: var(--font-weight-regular);
+    font-size: var(--font-size-small);
+  }
+  .city-list__count {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-regular);
+    font-size: var(--font-size-small);
+    font-variant-numeric: tabular-nums;
   }
 
   @media (min-width: 480px) {
@@ -199,6 +213,9 @@ const base = import.meta.env.BASE_URL;
     .hero {
       padding-block: var(--space-9);
     }
+    .city-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
   @media (min-width: 1024px) {
@@ -206,10 +223,7 @@ const base = import.meta.env.BASE_URL;
       grid-template-columns: repeat(3, 1fr);
     }
     .city-list {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    .city-list li:nth-last-child(2):nth-child(odd) {
-      border-block-end: var(--border-thin);
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 </style>

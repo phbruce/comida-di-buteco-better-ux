@@ -1,55 +1,45 @@
 ---
 /**
- * ButecoCard — card de listagem de buteco.
+ * ButecoCard — card de listagem.
  *
  * Atende RF-0001:
- * - Nome do buteco, prato, bairro, foto, indicador de premiação.
- * - Card é totalmente clicável via "stretched link" no nome (técnica acessível
- *   sem aninhar <a> dentro de <article>).
+ * - Nome, prato, bairro, foto, indicadores (premiado/estreante/edição).
+ * - Card é totalmente clicável via "stretched link" no nome.
  *
- * Mobile-first: layout vertical com imagem 16:9 no topo.
- * Desktop: layout horizontal (foto à esquerda).
+ * Foto é HOTLINK (não redistribuída). Ver docs/CONTEXTO.md (natureza não oficial).
  */
 
 import Tag from "~/components/ui/Tag.astro";
-
-interface Buteco {
-  slug: string;
-  nome: string;
-  prato: string;
-  pratoDescricao?: string;
-  bairro: string;
-  cidade: string;
-  cidadeSlug: string;
-  foto: string;
-  fotoAlt: string;
-  premios?: string[];
-  premiadoEmEdicao?: boolean;
-  novato?: boolean;
-}
+import { fotoAltSintetico, type Buteco } from "~/data/butecos";
 
 interface Props {
   buteco: Buteco;
+  destacarCidade?: boolean;
 }
 
-const { buteco } = Astro.props;
+const { buteco, destacarCidade = false } = Astro.props;
 const base = import.meta.env.BASE_URL;
-const detalheUrl = `${base}butecos/${buteco.cidadeSlug}/${buteco.slug}/`;
+const detalheUrl = `${base}butecos/${buteco.cidade_slug}/${buteco.slug}/`;
+const alt = fotoAltSintetico(buteco);
 ---
 
 <article class="card">
   <div class="card__media">
-    <img
-      src={buteco.foto}
-      alt={buteco.fotoAlt}
-      width="800"
-      height="500"
-      loading="lazy"
-      decoding="async"
-    />
-    {buteco.premiadoEmEdicao && (
-      <div class="card__media-tag">
-        <Tag variant="accent">Vencedor anterior</Tag>
+    {buteco.foto ? (
+      <img
+        src={buteco.foto}
+        srcset={buteco.foto_srcset ?? undefined}
+        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+        alt={alt}
+        width="800"
+        height="500"
+        loading="lazy"
+        decoding="async"
+        referrerpolicy="no-referrer-when-downgrade"
+      />
+    ) : (
+      <div class="card__media-placeholder" aria-hidden="true">
+        <span>{buteco.prato.charAt(0)}</span>
       </div>
     )}
   </div>
@@ -59,25 +49,36 @@ const detalheUrl = `${base}butecos/${buteco.cidadeSlug}/${buteco.slug}/`;
       <h3 class="card__title">
         <a class="card__link" href={detalheUrl}>{buteco.nome}</a>
       </h3>
-      <p class="card__bairro">
-        <span class="visually-hidden">Bairro: </span>{buteco.bairro}
+      <p class="card__sub">
+        {destacarCidade && (
+          <>
+            <span class="visually-hidden">Cidade: </span>
+            <span class="card__cidade">{buteco.cidade}{buteco.uf ? ` — ${buteco.uf}` : ""}</span>
+            <span aria-hidden="true"> · </span>
+          </>
+        )}
+        {buteco.bairro && (
+          <>
+            <span class="visually-hidden">Bairro: </span>
+            <span>{buteco.bairro}</span>
+          </>
+        )}
       </p>
     </header>
 
     <div class="card__prato">
       <p class="card__prato-label">Prato concorrente</p>
       <p class="card__prato-nome">{buteco.prato}</p>
-      {buteco.pratoDescricao && (
-        <p class="card__prato-desc">{buteco.pratoDescricao}</p>
+      {buteco.prato_descricao && (
+        <p class="card__prato-desc">{buteco.prato_descricao}</p>
       )}
     </div>
 
-    <footer class="card__footer">
-      <div class="card__tags">
-        {buteco.novato && <Tag variant="info">Estreante</Tag>}
-        {buteco.premios?.map((p) => <Tag variant="neutral">{p}</Tag>)}
-      </div>
-    </footer>
+    {buteco.edicao_ano && buteco.edicao_ano >= 2026 && (
+      <footer class="card__footer">
+        <Tag variant="neutral">Edição {buteco.edicao_ano}</Tag>
+      </footer>
+    )}
   </div>
 </article>
 
@@ -100,7 +101,6 @@ const detalheUrl = `${base}butecos/${buteco.cidadeSlug}/${buteco.slug}/`;
     box-shadow: var(--shadow-2);
   }
 
-  /* "Stretched link" — torna o card todo clicável de forma acessível */
   .card__link::before {
     content: "";
     position: absolute;
@@ -140,11 +140,17 @@ const detalheUrl = `${base}butecos/${buteco.cidadeSlug}/${buteco.slug}/`;
     height: 100%;
     object-fit: cover;
   }
-  .card__media-tag {
-    position: absolute;
-    inset-block-start: var(--space-3);
-    inset-inline-start: var(--space-3);
-    z-index: 2;
+  .card__media-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--color-bg-soft), var(--color-surface));
+    color: var(--color-text-muted);
+    font-size: 4rem;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.04em;
   }
 
   .card__body {
@@ -165,10 +171,14 @@ const detalheUrl = `${base}butecos/${buteco.cidadeSlug}/${buteco.slug}/`;
     font-size: var(--font-size-h3);
     line-height: var(--line-height-snug);
   }
-  .card__bairro {
+  .card__sub {
     margin: 0;
     color: var(--color-text-muted);
     font-size: var(--font-size-small);
+  }
+  .card__cidade {
+    color: var(--color-text-strong);
+    font-weight: var(--font-weight-semibold);
   }
 
   .card__prato-label {
@@ -189,7 +199,6 @@ const detalheUrl = `${base}butecos/${buteco.cidadeSlug}/${buteco.slug}/`;
     color: var(--color-text-muted);
     font-size: var(--font-size-small);
     line-height: var(--line-height-normal);
-    /* Limita 2 linhas para manter densidade homogênea */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -198,24 +207,5 @@ const detalheUrl = `${base}butecos/${buteco.cidadeSlug}/${buteco.slug}/`;
 
   .card__footer {
     margin-block-start: auto;
-  }
-  .card__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-
-  /* Desktop: layout horizontal opcional via classe pai .grid--horizontal */
-  @media (min-width: 1024px) {
-    :global(.grid--horizontal) .card {
-      flex-direction: row;
-    }
-    :global(.grid--horizontal) .card__media {
-      flex: 0 0 38%;
-      aspect-ratio: 4 / 3;
-    }
-    :global(.grid--horizontal) .card__body {
-      flex: 1;
-    }
   }
 </style>
