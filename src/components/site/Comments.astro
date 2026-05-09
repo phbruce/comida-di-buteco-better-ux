@@ -25,11 +25,10 @@ interface Props {
 const {
   mapping = "pathname",
   category = "General",
-  // Fallback IDs — para quem instalou o app com config padrão. Quando você
-  // rodar https://giscus.app/configure no seu repo, substitua aqui pelos
-  // IDs reais (ou via env). Vazio = giscus tenta resolver pelo nome.
-  categoryId = "",
-  repoId = "",
+  // IDs gerados em https://giscus.app/pt para o repo. Estritamente válidos
+  // após Discussions habilitadas + app giscus instalado no repositório.
+  categoryId = "DIC_kwDOSYTFec4C8odd",
+  repoId = "R_kgDOSYTFeQ",
 } = Astro.props;
 
 const repo = "phbruce/comida-di-buteco-better-ux";
