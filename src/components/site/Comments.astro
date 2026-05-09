@@ -136,6 +136,8 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
     font-weight: var(--font-weight-semibold);
     cursor: pointer;
   }
+  /* `display: block` acima sobrescreve o atributo [hidden] — reforça */
+  .cmt__more[hidden] { display: none; }
   .cmt__more:hover {
     background: var(--color-text-strong);
     color: var(--color-text-on-dark);
