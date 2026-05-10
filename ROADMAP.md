@@ -2,9 +2,9 @@
 
 > Última atualização: 2026-05-10
 
-**Status atual:** Fase 0 concluída · Fase 4 concluída no essencial (4 telas-chave no ar) · Fase 5 (validação) pendente.
+**Status atual:** Fases 0 a 4 **concluídas**. Fase 5 (validação) com a parte automatizável **concluída** (Lighthouse CI, Pa11y CI, Web Vitals beacon); pendência humana — testes com 5 usuários e leitor de tela manual — em aberto.
 
-Vários itens originalmente listados nas Fases 2-3 foram implementados direto em código (`src/styles/tokens.css`, `src/components/`) sem documento intermediário em `docs/design-system/`. A documentação textual desses itens segue como dívida.
+5 telas no ar (`/`, `/butecos/<cidade>/`, `/butecos/<cidade>/<slug>/`, `/sobre/`, `/concurso/`), 17 ADRs registrados, 14 motivos paper-cut, Feedback ativo via Web3Forms + Turnstile.
 
 ---
 

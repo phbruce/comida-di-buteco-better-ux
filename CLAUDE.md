@@ -46,4 +46,4 @@ Se a resposta a qualquer uma é "não" — pare e proponha primeiro. **Nunca imp
 
 ## Estado atual
 
-Veja `ROADMAP.md` (fonte da verdade). Em resumo: Fase 0 + Fase 4 (essencial) concluídas, 17 ADRs registrados, 5 telas no ar (`/`, `/butecos/<cidade>/`, `/butecos/<cidade>/<slug>/`, `/sobre/`, `/concurso/`), sistema de ilustrações paper-cut com 14 motivos, Feedback ativo. Comentários (ADR-0015/0017) DEPRECATED em 2026-05-10. Documentação textual de tokens e componentes ainda em dívida (existem em código).
+Veja `ROADMAP.md` (fonte da verdade). Em resumo: **Fases 0 a 4 concluídas** + Fase 5 com a parte automatizável feita (Lighthouse CI, Pa11y CI, Web Vitals beacon). 17 ADRs registrados, 5 telas no ar (`/`, `/butecos/<cidade>/`, `/butecos/<cidade>/<slug>/`, `/sobre/`, `/concurso/`), 14 motivos paper-cut, Feedback ativo. Comentários (ADR-0015/0017) DEPRECATED em 2026-05-10. Pendência humana da Fase 5: testes com 5 usuários e leitor de tela manual.

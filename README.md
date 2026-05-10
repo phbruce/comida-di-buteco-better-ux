@@ -115,11 +115,16 @@ GitHub Pages dispara via `.github/workflows/deploy.yml` em push pra `main` ou `c
 
 ## Status
 
-**Fase 0 — Fundação documental + design system base:** concluída.
+**Fases 0 a 4 concluídas:**
+- Fase 0 — Fundação documental + design system base.
+- Fase 1 — Diagnóstico do site oficial (estático: heurísticas, a11y estática, perf hipoteses, fluxos, inventário).
+- Fase 2 — Tokens em CSS + documentação textual.
+- Fase 3 — Componentes essenciais (UI primitivos + site-specific) + 9 docs textuais.
+- Fase 4 — 5 telas-chave no ar (home, listagem por cidade, detalhe do buteco, `/sobre/`, `/concurso/`).
 
-Implementado além da fase 0: listagem com busca + filtros, detalhe com mapa + feedback, página `/concurso/`, sistema de ilustrações paper-cut, branding atualizado pra garrafa long-neck.
+**Fase 5 — Validação** com a parte automatizável feita: Lighthouse CI, Pa11y CI, Web Vitals beacon client-side. Pendente: testes com 5 usuários reais e teste manual com leitor de tela (NVDA + VoiceOver).
 
-Próximos passos em `ROADMAP.md`.
+Detalhamento por fase em `ROADMAP.md`.
 
 ---
 
