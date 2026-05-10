@@ -9,9 +9,9 @@ const base = import.meta.env.BASE_URL;
 const year = new Date().getFullYear();
 ---
 
-<IllustrationBand tone="soft" />
-
 <footer class="site-footer" role="contentinfo">
+  <IllustrationBand tone="dark" class="site-footer__band" />
+
   <div class="site-footer__inner container">
     <section class="site-footer__col" aria-labelledby="ft-sobre">
       <h2 id="ft-sobre">Sobre este redesign</h2>
@@ -134,6 +134,17 @@ const year = new Date().getFullYear();
   }
   .site-footer a:hover {
     color: var(--color-brand-accent);
+  }
+
+  /* Band de ilustrações dentro do footer dark — substitui a antiga
+     "ilha cream" que destoava entre conteúdo e rodapé. Aqui os motifs
+     respiram contra o preto, com separação sutil pra coluna abaixo. */
+  .site-footer__band {
+    border-block-end: 1px solid rgba(251, 247, 240, 0.1);
+  }
+  /* Suaviza luminosidade dos motifs no fundo escuro */
+  .site-footer__band :global(svg) {
+    filter: brightness(0.96) saturate(0.92);
   }
 
   .site-footer__inner {
