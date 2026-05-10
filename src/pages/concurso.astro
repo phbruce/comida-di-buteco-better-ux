@@ -1,0 +1,426 @@
+---
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import Breadcrumb from "~/components/ui/Breadcrumb.astro";
+import Illustration from "~/components/ui/Illustration.astro";
+import { butecos, cidades, edicao } from "~/data/butecos";
+
+const base = import.meta.env.BASE_URL;
+const totalButecos = butecos.length;
+const totalCidades = cidades.length;
+const oficialUrl = "https://comidadibuteco.com.br/mecanica-e-calendario/";
+
+const criterios = [
+  {
+    titulo: "Petisco",
+    desc: "Sabor, criatividade e apresentação do prato do concurso.",
+    motif: "coxinha" as const,
+  },
+  {
+    titulo: "Atendimento",
+    desc: "Cortesia, agilidade e simpatia da equipe do buteco.",
+    motif: "garrafa" as const,
+  },
+  {
+    titulo: "Higiene",
+    desc: "Limpeza do ambiente, dos utensílios e do banheiro.",
+    motif: "alho" as const,
+  },
+  {
+    titulo: "Temperatura da bebida",
+    desc: "Cerveja gelada importa — é critério oficial.",
+    motif: "limao" as const,
+  },
+];
+
+const calendario = [
+  { mes: "Abril", evento: "Mês dos butecos — visite, prove e vote." },
+  { mes: "10/04 a 10/05", evento: "Período de votação em BH, GO, RJ, SP e SSA." },
+  { mes: "10/04 a 03/05", evento: "Período de votação nas demais cidades." },
+  { mes: "Maio", evento: "Anunciados os ganhadores dos 27 circuitos." },
+  { mes: "Junho", evento: "Três jurados visitam cada campeão (1 da cidade + 2 de fora, evita bairrismo)." },
+  { mes: "Julho", evento: "Premiação em São Paulo — anunciados os 3 Melhores Butecos do Brasil." },
+];
+---
+
+<BaseLayout
+  title="Como funciona o concurso — Comida di Buteco"
+  description={`Mecânica, critérios e calendário do Comida di Buteco edição ${edicao}: ${totalButecos} butecos em ${totalCidades} cidades competindo com pratos autorais.`}
+>
+  <Breadcrumb items={[
+    { label: "Início", href: base },
+    { label: "Concurso" },
+  ]} />
+
+  <article class="concurso">
+    <div class="container container--narrow">
+
+      <header class="concurso__header">
+        <span class="concurso__header-art concurso__header-art--pimenta" aria-hidden="true">
+          <Illustration kind="pimenta" size="md" />
+        </span>
+        <span class="concurso__header-art concurso__header-art--milho" aria-hidden="true">
+          <Illustration kind="milho" size="sm" />
+        </span>
+        <div class="concurso__header-text">
+          <p class="concurso__eyebrow">Edição {edicao}</p>
+          <h1>Como funciona o concurso</h1>
+          <p class="concurso__lede">
+            <strong>Não é festival, é concurso.</strong> {totalButecos} butecos em
+            {totalCidades} cidades competindo com um <strong>petisco autoral</strong>.
+            O público visita, come, dá nota — junto com um júri, escolhem os
+            melhores butecos do Brasil.
+          </p>
+        </div>
+      </header>
+
+      <section aria-labelledby="navega">
+        <h2 id="navega" class="visually-hidden">Atalhos</h2>
+        <ul class="concurso__toc">
+          <li><a href="#tema">Tema do ano</a></li>
+          <li><a href="#como-votar">Como votar</a></li>
+          <li><a href="#criterios">Critérios</a></li>
+          <li><a href="#calendario">Calendário</a></li>
+          <li><a href="#regras">Regras</a></li>
+          <li><a href="#fonte">Fonte</a></li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="tema" class="concurso__tema">
+        <h2 id="tema">Tem tema este ano?</h2>
+        <p>
+          Em {edicao} <strong>não há ingrediente obrigatório</strong>. O
+          concurso celebra "criatividade e acolhimento" — cada buteco escolhe
+          livremente o petisco que vai apresentar.
+        </p>
+        <p>
+          Em outras edições já houve temas obrigatórios — linguiça e mandioca
+          (2013), frutas, cereais, ervas e especiarias. Saber se um buteco
+          colocou ingrediente "do tema" não é mais obrigatório, então fique
+          tranquilo: <em>a regra agora é o petisco autoral</em>.
+        </p>
+      </section>
+
+      <section aria-labelledby="como-votar">
+        <h2 id="como-votar">Como votar</h2>
+        <ol class="concurso__steps">
+          <li>
+            <strong>Visite o buteco</strong> dentro do período de votação
+            (veja o calendário abaixo).
+          </li>
+          <li>
+            <strong>Peça o petisco do concurso</strong> ao garçom — cada buteco
+            tem um prato específico, autoral, que só vai à mesa nesse mês.
+          </li>
+          <li>
+            <strong>Receba a cédula de votação</strong> e dê nota de 1 a 10
+            em quatro quesitos.
+          </li>
+          <li>
+            <strong>Entregue a cédula</strong> ao garçom. Os votos físicos são
+            recolhidos e apurados por um instituto de pesquisas independente.
+          </li>
+        </ol>
+        <p class="concurso__nota">
+          O peso do júri técnico e do público é de <strong>50% cada um</strong>.
+          Não tem cadastro, não tem app obrigatório — vai ao buteco, come, vota.
+        </p>
+      </section>
+
+      <section aria-labelledby="criterios">
+        <h2 id="criterios">Os 4 critérios de avaliação</h2>
+        <p>
+          Cada quesito é nota de <strong>1 a 10</strong>. A média compõe a nota
+          do buteco no circuito.
+        </p>
+        <ul class="concurso__criterios" role="list">
+          {criterios.map((c) => (
+            <li class="concurso__criterio">
+              <span class="concurso__criterio-art" aria-hidden="true">
+                <Illustration kind={c.motif} size="md" />
+              </span>
+              <div class="concurso__criterio-text">
+                <h3>{c.titulo}</h3>
+                <p>{c.desc}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section aria-labelledby="calendario">
+        <h2 id="calendario">Calendário {edicao}</h2>
+        <ol class="concurso__cal" role="list">
+          {calendario.map((c) => (
+            <li class="concurso__cal-item">
+              <span class="concurso__cal-mes">{c.mes}</span>
+              <span class="concurso__cal-evento">{c.evento}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section aria-labelledby="regras">
+        <h2 id="regras">Regras gerais</h2>
+        <ul>
+          <li>
+            <strong>Seleção dos butecos:</strong> a equipe do concurso escolhe
+            os participantes <strong>com um ano de antecedência</strong>. Não é
+            qualquer buteco — passa por curadoria.
+          </li>
+          <li>
+            <strong>Descenso:</strong> os <strong>20% últimos colocados</strong>
+            de cada cidade perdem o direito de participar no ano seguinte —
+            funciona como rebaixamento de futebol ou escola de samba.
+          </li>
+          <li>
+            <strong>27 circuitos</strong> espalhados pelo país, totalizando mais
+            de 1.100 butecos na edição nacional.
+          </li>
+          <li>
+            <strong>Final nacional:</strong> em junho, três jurados visitam cada
+            um dos 27 campeões — um da cidade do buteco e dois de outras
+            localidades, pra evitar "bairrismo". Em julho, premiação em São
+            Paulo anuncia os <strong>3 Melhores Butecos do Brasil</strong>.
+          </li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="fonte">
+        <h2 id="fonte">Fonte das informações</h2>
+        <p>
+          Esta página resume o que está em
+          <a href={oficialUrl} rel="noopener" target="_blank">
+            comidadibuteco.com.br/mecanica-e-calendario
+          </a>
+          — site oficial do concurso. Datas e regras podem mudar; em caso de
+          divergência, a página oficial vale.
+        </p>
+        <p>
+          Identificou alguma coisa errada nesta página? Use o botão
+          <strong>Tem algo errado</strong> em qualquer detalhe de buteco — o
+          retorno chega anônimo pra quem mantém este redesign.
+        </p>
+      </section>
+
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .concurso {
+    padding-block: var(--space-7) var(--space-9);
+  }
+
+  /* ---------- Header ---------- */
+  .concurso__header {
+    position: relative;
+    margin-block-end: var(--space-7);
+    padding-block-end: var(--space-5);
+    border-block-end: var(--border-thin);
+  }
+  .concurso__header-text {
+    position: relative;
+    z-index: 1;
+  }
+  .concurso__header-art {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .concurso__header-art--pimenta {
+    inset-block-start: -10px;
+    inset-inline-end: -8px;
+    transform: rotate(18deg);
+  }
+  .concurso__header-art--milho {
+    /* desktop only */
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .concurso__header-art--pimenta {
+      inset-block-start: 4px;
+      inset-inline-end: 6%;
+    }
+    .concurso__header-art--milho {
+      display: inline-flex;
+      inset-block-end: 16px;
+      inset-inline-end: 18%;
+      transform: rotate(-12deg);
+    }
+  }
+  .concurso__eyebrow {
+    margin: 0 0 var(--space-3);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-brand-primary);
+  }
+  .concurso h1 {
+    font-size: var(--font-size-display);
+    line-height: var(--line-height-tight);
+    margin-block-end: var(--space-4);
+    max-width: 18ch;
+  }
+  .concurso__lede {
+    font-size: var(--font-size-h3);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-relaxed);
+    font-weight: var(--font-weight-regular);
+    max-width: 50ch;
+  }
+
+  /* ---------- TOC ---------- */
+  .concurso__toc {
+    list-style: none;
+    padding: var(--space-4) var(--space-5);
+    background: var(--color-bg-soft);
+    border: var(--border-thin);
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-2) var(--space-5);
+  }
+  .concurso__toc li { margin: 0; }
+  @media (min-width: 640px) {
+    .concurso__toc { grid-template-columns: 1fr 1fr 1fr; }
+  }
+
+  /* ---------- Sections ---------- */
+  .concurso section {
+    margin-block-start: var(--space-7);
+  }
+  .concurso h2 {
+    font-size: var(--font-size-h2);
+    margin-block-end: var(--space-3);
+    scroll-margin-block-start: var(--space-5);
+  }
+  .concurso p {
+    line-height: var(--line-height-relaxed);
+    margin-block-end: var(--space-3);
+    max-width: 65ch;
+  }
+  .concurso ul, .concurso ol {
+    margin-block-end: var(--space-3);
+    padding-inline-start: 1.25em;
+    line-height: var(--line-height-relaxed);
+    max-width: 65ch;
+  }
+  .concurso li {
+    margin-block-end: var(--space-2);
+  }
+
+  /* ---------- Tema ---------- */
+  .concurso__tema {
+    background: var(--color-bg-soft);
+    padding: var(--space-5);
+    border-inline-start: 4px solid var(--color-brand-primary);
+  }
+  .concurso__tema h2 {
+    margin-block-start: 0;
+    color: var(--color-brand-primary);
+  }
+  .concurso__tema p:last-child { margin-block-end: 0; }
+
+  /* ---------- Steps de votação ---------- */
+  .concurso__steps {
+    list-style: none;
+    counter-reset: step;
+    padding: 0;
+    margin-block-end: var(--space-4);
+  }
+  .concurso__steps li {
+    counter-increment: step;
+    position: relative;
+    padding-inline-start: calc(2.25em + var(--space-2));
+    line-height: var(--line-height-relaxed);
+  }
+  .concurso__steps li::before {
+    content: counter(step);
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0.1em;
+    width: 2em;
+    height: 2em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-strong);
+    background: var(--color-brand-accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .concurso__nota {
+    background: var(--color-bg-soft);
+    padding: var(--space-3) var(--space-4);
+    border-inline-start: 4px solid var(--color-brand-secondary);
+    color: var(--color-text-strong);
+  }
+
+  /* ---------- Critérios ---------- */
+  .concurso__criterios {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  .concurso__criterio {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: var(--border-thin);
+    align-items: start;
+  }
+  .concurso__criterio-art {
+    display: inline-flex;
+    transform: rotate(-6deg);
+  }
+  .concurso__criterio-text h3 {
+    margin: 0 0 var(--space-1);
+    font-size: var(--font-size-h3);
+  }
+  .concurso__criterio-text p {
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+  @media (min-width: 640px) {
+    .concurso__criterios { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ---------- Calendário ---------- */
+  .concurso__cal {
+    list-style: none;
+    padding: 0;
+    margin-block-end: var(--space-3);
+  }
+  .concurso__cal-item {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+    padding: var(--space-3) 0;
+    border-block-end: var(--border-thin);
+  }
+  .concurso__cal-item:first-child {
+    border-block-start: var(--border-thin);
+  }
+  .concurso__cal-mes {
+    font-weight: var(--font-weight-bold);
+    color: var(--color-brand-primary);
+    font-size: var(--font-size-small);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .concurso__cal-evento {
+    color: var(--color-text-strong);
+  }
+  @media (min-width: 640px) {
+    .concurso__cal-item {
+      grid-template-columns: 200px 1fr;
+      gap: var(--space-4);
+      align-items: baseline;
+    }
+  }
+</style>
