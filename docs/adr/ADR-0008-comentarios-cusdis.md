@@ -1,9 +1,10 @@
 # ADR-0008 — Comentários via Cusdis (substitui giscus)
 
-- **Status:** ACCEPTED
+- **Status:** SUPERSEDED por [ADR-0015](./ADR-0015-comentarios-proprios.md) em 2026-05-09 (que por sua vez foi DEPRECATED em 2026-05-10 quando a feature de comentários foi removida do produto)
 - **Data:** 2026-05-09
 - **Decisor(es):** Dono do produto (aprovado em 2026-05-09 — opção A: Cusdis)
 - **Supersede:** ADR-0007 (giscus)
+- **Superseded por:** ADR-0015 (sistema próprio Worker + D1)
 - **RFs/RNFs relacionados:** RNF-0001 (a11y), RNF-0002 (performance), RNF-0005 (privacidade)
 
 ## Contexto
