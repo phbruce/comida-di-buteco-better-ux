@@ -36,13 +36,14 @@ Cada ADR responde:
 | [ADR-0008](./ADR-0008-comentarios-cusdis.md) | Comentários nas páginas via Cusdis | ~~SUPERSEDED~~ por ADR-0015 | Dono do produto | 2026-05-09 |
 | [ADR-0009](./ADR-0009-mapa-google.md) | Trocar mapa para Google Maps (Embed) | ACCEPTED | Dono do produto | 2026-05-09 |
 | [ADR-0010](./ADR-0010-mapa-interativo-pan-zoom.md) | Destravar pan/zoom do mapa (Google API key) | ACCEPTED | Dono do produto | 2026-05-09 |
-| [ADR-0011](./ADR-0011-tags-alimentares.md) | Tags vegetariano/vegano e filtros alimentares | ~~REJECTED~~ (adiado) | Dono do produto | 2026-05-09 |
+| [ADR-0011](./ADR-0011-tags-alimentares.md) | Tags vegetariano/vegano e filtros alimentares | ~~REJECTED~~ (adiado) — reaberto por ADR-0018 | Dono do produto | 2026-05-09 |
 | [ADR-0012](./ADR-0012-feedback-publico.md) | Feedback acessível a qualquer visitante (Web3Forms) | ACCEPTED | Dono do produto | 2026-05-09 |
 | [ADR-0013](./ADR-0013-turnstile-anti-bot.md) | Cloudflare Turnstile como anti-bot do feedback | ACCEPTED | Dono do produto (delegado) | 2026-05-09 |
 | [ADR-0014](./ADR-0014-self-host-cusdis.md) | Self-host do Cusdis | ~~REJECTED~~ | Dono do produto | 2026-05-09 |
 | [ADR-0015](./ADR-0015-comentarios-proprios.md) | Sistema de comentários próprio (Worker + D1) | ~~DEPRECATED~~ em 2026-05-10 | Dono do produto | 2026-05-09 |
 | [ADR-0016](./ADR-0016-ilustracoes-personalidade-visual.md) | Sistema de ilustrações decorativas (Storyset/unDraw + acentos próprios) | ACCEPTED | Dono do produto | 2026-05-09 |
 | [ADR-0017](./ADR-0017-rating-com-pergunta-de-visita.md) | Pergunta de visita + rating por estrelas no comentário | ~~DEPRECATED~~ em 2026-05-10 | Dono do produto | 2026-05-10 |
+| [ADR-0018](./ADR-0018-filtros-restricao-alimentar.md) | Filtros de restrição alimentar (vegetariano, vegano, sem glúten) | **PROPOSED** | — | 2026-05-10 |
 
 ## Como propor um ADR
 

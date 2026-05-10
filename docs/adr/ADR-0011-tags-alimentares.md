@@ -1,9 +1,10 @@
 # ADR-0011 — Tags vegetariano/vegano e filtros alimentares
 
-- **Status:** REJECTED (adiado) em 2026-05-09
+- **Status:** REJECTED (adiado) em 2026-05-09. **Tema reaberto por [ADR-0018](./ADR-0018-filtros-restricao-alimentar.md) em 2026-05-10.**
 - **Data:** 2026-05-09
 - **Decisor(es):** Dono do produto (decidido em 2026-05-09 — adiar)
-- **Motivo da rejeição:** decisão de adiar para fase posterior. Por enquanto o filtro por ingrediente continua sendo feito via campo de busca atual + autocomplete (datalist com nomes de buteco e prato). Quando voltar a ser prioridade, este ADR pode ser reaberto ou substituído por novo.
+- **Motivo da rejeição:** decisão de adiar para fase posterior. Por enquanto o filtro por ingrediente continua sendo feito via campo de busca atual + autocomplete (datalist com nomes de buteco e prato). Quando voltar a ser prioridade, este ADR pode ser reaberto ou substituído por novo. **Reativado em 2026-05-10 pela ADR-0018, que estende o escopo com sem-glúten e trata explicitamente o risco de alergias.**
+- **Reaberto por:** ADR-0018 (filtros-restricao-alimentar) em 2026-05-10
 - **RFs/RNFs relacionados:** RF-0001, RF-0002, RNF-0001 (a11y)
 
 ## Contexto
