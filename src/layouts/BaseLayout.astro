@@ -4,6 +4,7 @@ import SkipLink from "~/components/ui/SkipLink.astro";
 import PhaseBanner from "~/components/ui/PhaseBanner.astro";
 import Header from "~/components/site/Header.astro";
 import Footer from "~/components/site/Footer.astro";
+import WebVitalsBeacon from "~/components/site/WebVitalsBeacon.astro";
 
 interface Props {
   title: string;
@@ -69,6 +70,8 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
     </main>
 
     <Footer />
+
+    <WebVitalsBeacon />
   </body>
 </html>
 

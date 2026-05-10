@@ -1,0 +1,102 @@
+---
+/**
+ * WebVitalsBeacon — coletor client-side de Core Web Vitals.
+ *
+ * Captura LCP, CLS, FCP, TTFB e INP (este último via Event Timing API)
+ * usando PerformanceObserver nativo, sem dependência npm extra.
+ *
+ * Por padrão emite os valores via `console.log` com prefixo `[vitals]`
+ * — telemetria zero-custo, observável em DevTools. Pra agregar dados
+ * de usuário real:
+ *
+ *   1. Definir `PUBLIC_VITALS_ENDPOINT` em GitHub Secrets (ex: um
+ *      Cloudflare Worker que aceita POST de JSON e empilha em D1).
+ *   2. O script abaixo já chama `navigator.sendBeacon(endpoint, body)`
+ *      automaticamente quando a env está presente.
+ *
+ * Sem PII coletado. Só métricas de performance + path da página.
+ *
+ * Fase 5 do ROADMAP — RNF-0002.
+ */
+
+const endpoint = import.meta.env.PUBLIC_VITALS_ENDPOINT as string | undefined;
+---
+
+<script is:inline define:vars={{ endpoint: endpoint ?? "" }}>
+  (function () {
+    if (typeof PerformanceObserver === "undefined") return;
+
+    const path = location.pathname;
+    const send = (name, value, extra) => {
+      const payload = {
+        name,
+        value: Math.round(value * 1000) / 1000,
+        path,
+        ts: Date.now(),
+        ua: navigator.userAgent.slice(0, 200),
+        ...extra,
+      };
+      // Sempre loga em dev tools — observável sem backend.
+      console.log("[vitals]", name, payload.value, "ms", payload);
+      // Se houver endpoint, manda via sendBeacon (não bloqueia unload).
+      if (endpoint && navigator.sendBeacon) {
+        try {
+          navigator.sendBeacon(endpoint, JSON.stringify(payload));
+        } catch (_) { /* silencioso */ }
+      }
+    };
+
+    const obs = (type, cb, opts) => {
+      try {
+        new PerformanceObserver((list) => list.getEntries().forEach(cb)).observe({
+          type,
+          buffered: true,
+          ...(opts || {}),
+        });
+      } catch (_) { /* navegador antigo, ignora */ }
+    };
+
+    // LCP — pega o último evento (LCP final)
+    let lastLcp = 0;
+    obs("largest-contentful-paint", (e) => { lastLcp = e.startTime; });
+
+    // FCP
+    obs("paint", (e) => {
+      if (e.name === "first-contentful-paint") send("FCP", e.startTime);
+    });
+
+    // CLS — soma de session windows (simplificado)
+    let clsValue = 0;
+    let clsEntries = [];
+    obs("layout-shift", (e) => {
+      if (!e.hadRecentInput) {
+        clsValue += e.value;
+        clsEntries.push(e);
+      }
+    });
+
+    // INP — usa event timing pra eventos longos (>40ms)
+    let worstInp = 0;
+    obs("event", (e) => {
+      const dur = e.duration;
+      if (dur > worstInp) worstInp = dur;
+    }, { durationThreshold: 40 });
+
+    // TTFB — Navigation Timing
+    try {
+      const nav = performance.getEntriesByType("navigation")[0];
+      if (nav) send("TTFB", nav.responseStart);
+    } catch (_) { /* idem */ }
+
+    // No unload, dispara LCP/CLS/INP finais (snapshot do que tinha)
+    const flush = () => {
+      if (lastLcp > 0) send("LCP", lastLcp);
+      send("CLS", clsValue, { count: clsEntries.length });
+      if (worstInp > 0) send("INP", worstInp);
+    };
+    addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") flush();
+    }, { once: true });
+    addEventListener("pagehide", flush, { once: true });
+  })();
+</script>

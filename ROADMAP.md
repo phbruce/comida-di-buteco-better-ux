@@ -104,13 +104,19 @@ Implementação no ar; documentação em `docs/design-system/` ainda dívida.
 
 ## Fase 5 — Validação
 
-- [ ] Testes de usabilidade moderados (5 usuários por cidade-alvo)
-- [ ] Testes de acessibilidade automatizados (CI com axe-core ou pa11y)
-- [x] Lighthouse CI configurado (`.github/workflows/lighthouse.yml`) rodando contra 4 URLs deployadas: home, `/concurso/`, `/sobre/`, `/butecos/belo-horizonte/`. Trigger: schedule diário 9 UTC + manual + após cada deploy bem-sucedido. Relatório no artifact `lighthouse-results`.
-- [ ] Métricas de performance no campo (Core Web Vitals via beacon ou GA4 web vitals)
-- [ ] Teste de leitor de tela (NVDA + VoiceOver) nos fluxos críticos
+### Automáveis (concluídas)
 
-**Status:** Lighthouse CI ativado. Demais itens pendentes — exigem ferramenta runtime extra (axe-core CI, RUM beacon, pesquisa moderada com pessoas reais).
+- [x] **Lighthouse CI** — `.github/workflows/lighthouse.yml` contra 4 URLs deployadas (home, `/concurso/`, `/sobre/`, `/butecos/belo-horizonte/`). Trigger: schedule diário 9 UTC + manual + pós-deploy. Relatório no artifact `lighthouse-results`.
+- [x] **Pa11y CI** — `.github/workflows/a11y.yml` rodando WCAG2AA contra as mesmas 4 URLs. Trigger: schedule semanal segunda 9 UTC + manual + pós-deploy. Relatório JSON por URL no artifact `pa11y-results`. Não bloqueia merge por padrão (sinal, não gate).
+- [x] **Web Vitals beacon client-side** — `src/components/site/WebVitalsBeacon.astro` injetado em todas as páginas via BaseLayout. Captura LCP, CLS, FCP, TTFB e INP via PerformanceObserver nativo (zero dependências). Por padrão emite em `console.log` com prefixo `[vitals]`. Configurar `PUBLIC_VITALS_ENDPOINT` no GH Secrets pra agregação real-user via `navigator.sendBeacon`.
+
+### Pendência humana (não automatizável)
+
+- [ ] **Testes de usabilidade moderados** — 5 usuários por cidade-alvo, executando 3 tarefas (encontrar buteco, entender votação, achar endereço). Exige pesquisa com pessoas reais.
+- [ ] **Teste de leitor de tela** (NVDA + VoiceOver) nos fluxos críticos. Exige tester com leitor instalado (e ouvido humano).
+- [ ] **Análise dos relatórios LH/Pa11y** — workflows estão coletando, mas alguém precisa ler os artifacts e criar issues pros achados que merecem fix.
+
+**Status:** infraestrutura de validação automatizada **completa**. Loop com pessoas reais ainda em aberto.
 
 ---
 
