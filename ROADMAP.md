@@ -49,14 +49,14 @@ Vários itens originalmente listados nas Fases 2-3 foram implementados direto em
 Tokens já vivem em `src/styles/tokens.css` (CSS variables) e funcionam em produção. Documentação textual em `docs/design-system/tokens/` ainda como dívida.
 
 - [x] Tokens em CSS variables (`src/styles/tokens.css`)
-- [ ] `docs/design-system/tokens/colors.md` — explicação das escolhas (urucum, lima, dendê)
-- [ ] `docs/design-system/tokens/typography.md` — escala tipográfica e Inter Variable
-- [ ] `docs/design-system/tokens/spacing.md` — escala (space-1 a space-9)
-- [ ] `docs/design-system/tokens/radius.md` — todos zero (sharp)
-- [ ] `docs/design-system/grid.md` — grid mobile-first
-- [ ] `docs/design-system/breakpoints.md` — 380, 480, 640, 768, 1024
+- [x] `docs/design-system/tokens/colors.md`
+- [x] `docs/design-system/tokens/typography.md`
+- [x] `docs/design-system/tokens/spacing.md`
+- [x] `docs/design-system/tokens/radius.md`
+- [x] `docs/design-system/grid.md`
+- [x] `docs/design-system/breakpoints.md`
 
-**Saída:** tokens documentados (já estão prontos como CSS).
+**Saída:** tokens documentados, em CSS e em texto. **Concluída.**
 
 ---
 
