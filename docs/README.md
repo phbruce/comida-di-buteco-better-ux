@@ -20,7 +20,7 @@
 
 ## Design
 
-- [`design-system/`](./design-system/) — tokens, componentes e padrões. Preenchido após ADRs aprovados.
+- [`design-system/`](./design-system/) — tokens, componentes e padrões. Tokens vivem em `src/styles/tokens.css` (CSS vars); componentes em `src/components/`. Documentação textual aqui é dívida em curso.
 
 ## Pesquisa
 

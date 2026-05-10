@@ -28,7 +28,11 @@
 | **Hook**             | Script que dispara em eventos do Claude Code (SessionStart, etc.). |
 | **PROPOSED**         | Status de ADR em discussão; não pode ser implementado. |
 | **ACCEPTED**         | Status de ADR aprovado; libera implementação. |
-| **SUPERSEDED**       | Status de ADR substituído por outro. |
+| **DEPRECATED**       | Status de ADR cuja decisão foi revertida; código pode ainda existir mas não é mais consumido. |
+| **SUPERSEDED**       | Status de ADR substituído por outro (cita o ADR sucessor). |
+| **REJECTED**         | Status de ADR recusado na avaliação; mantido como histórico de "o que não fizemos e por quê". |
+| **Motif**            | Ilustração SVG curta de um vegetal/elemento de buteco (pimenta, folha, garrafa, etc.) — sistema do ADR-0016. |
+| **Paper-cut sharp**  | Estilo das ilustrações: silhuetas em polígonos de retas (sem curvas), camadas chapadas, sem gradientes. |
 
 ## Acessibilidade
 

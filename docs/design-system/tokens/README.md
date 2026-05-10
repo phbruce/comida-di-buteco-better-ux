@@ -36,9 +36,9 @@ Os tokens são `--custom-properties` em `:root`. Mudanças aqui afetam todo o si
 
 ## Como NÃO usar
 
-- ❌ Hex literais em componentes.
-- ❌ `px` mágicos para espaçamento — sempre `--space-*`.
-- ❌ `font-size` literal — sempre `--font-size-*`.
+- **Não** use hex literais em componentes — sempre `--color-*`.
+- **Não** use `px` mágicos para espaçamento — sempre `--space-*`.
+- **Não** use `font-size` literal — sempre `--font-size-*`.
 
 ## Como auditar
 
