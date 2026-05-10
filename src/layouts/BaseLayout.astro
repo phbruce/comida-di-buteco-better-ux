@@ -31,6 +31,14 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
     <meta name="color-scheme" content="light" />
     <meta name="theme-color" content="#9c2a1b" />
 
+    {/* Preconnect: handshake antecipado pra serviços de terceiros que aparecem
+        em alguma página (Turnstile do feedback/comments, Google Maps no detalhe
+        do buteco, hotlink de fotos). Reduz delay de "metade-em-branco" no mobile. */}
+    <link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin />
+    <link rel="preconnect" href="https://www.google.com" crossorigin />
+    <link rel="preconnect" href="https://maps.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdb-static-files.s3.amazonaws.com" />
+
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl.toString()} />

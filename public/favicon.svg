@@ -1,14 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Comida di Buteco">
   <rect width="32" height="32" fill="#9c2a1b"/>
-  <g fill="#fbf7f0" transform="translate(4 4) scale(1)">
-    <!-- Garfo: 3 dentes + cabo -->
-    <rect x="5"   y="3"   width="1.5" height="6"/>
-    <rect x="7.5" y="3"   width="1.5" height="6"/>
-    <rect x="10"  y="3"   width="1.5" height="6"/>
-    <rect x="5"   y="8.5" width="6.5" height="1.5"/>
-    <rect x="7.5" y="9"   width="1.5" height="12"/>
-    <!-- Faca: lâmina (trapézio) + cabo -->
-    <polygon points="13.5,3 17,3 17,12 14,12"/>
-    <rect x="14.5" y="12" width="1.5" height="9"/>
+  <!-- Garrafa long-neck silhueta paper-cut, alinhada com brand mark do header
+       (mesmo polígono escalado e centralizado em 32×32 com offset 4 cada lado). -->
+  <g fill="#fbf7f0" transform="translate(4 4)">
+    <polygon points="10,2 14,2 14,4 13,4 13,8 16,11 16,21 8,21 8,11 11,8 11,4 10,4"/>
   </g>
 </svg>
