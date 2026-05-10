@@ -514,7 +514,7 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
             <span class="cmt__counter" data-cmt-counter>0 / 1000</span>
           </div>
 
-          ${TURNSTILE_KEY ? `<div class="cmt__turnstile"><div class="cf-turnstile" data-sitekey="${escapeHtml(TURNSTILE_KEY)}" data-theme="light" data-appearance="interaction-only" data-language="pt-br"></div></div>` : ""}
+          ${TURNSTILE_KEY ? `<div class="cmt__turnstile"><div class="cf-turnstile" data-sitekey="${escapeHtml(TURNSTILE_KEY)}" data-theme="light" data-language="pt-br"></div></div>` : ""}
 
           <p class="cmt__hint">
             Seu apelido aparece publicamente junto com a mensagem. Não pedimos
@@ -720,10 +720,10 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
         submit.disabled = true;
         submit.textContent = "Enviando…";
 
-        // Timeout duro de 15s — sem AbortController, fetch numa rede ruim
+        // Timeout duro de 30s — sem AbortController, fetch numa rede ruim
         // pode pendurar pra sempre e o botão "Enviando…" trava.
         const controller = new AbortController();
-        const timeoutId = window.setTimeout(() => controller.abort(), 15000);
+        const timeoutId = window.setTimeout(() => controller.abort(), 30000);
 
         try {
           const res = await fetch(endpoint + "/api/comments", {
@@ -797,15 +797,10 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
 </script>
 
 {turnstileKey && (
-  <>
-    <script is:inline define:vars={{ turnstileKey }}>
-      window.__CDB_TURNSTILE_KEY__ = turnstileKey;
-    </script>
-    <script
-      is:inline
-      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-      async
-      defer
-    ></script>
-  </>
+  <script is:inline define:vars={{ turnstileKey }}>
+    window.__CDB_TURNSTILE_KEY__ = turnstileKey;
+  </script>
 )}
+{/* Script da api.js do Turnstile NÃO é injetado aqui — Feedback.astro
+    (renderizado antes de Comments na mesma página) já o carrega.
+    Evita parsing duplicado de 80 KB e simplifica DOM. */}
