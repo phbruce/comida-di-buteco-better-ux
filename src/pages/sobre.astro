@@ -115,7 +115,6 @@ const repoUrl = "https://github.com/phbruce/comida-di-buteco-better-ux";
           <li><strong>CSS nativo</strong> com Custom Properties (sem framework de utility nem CSS-in-JS).</li>
           <li><strong>Inter Variable</strong> auto-hospedada, sem Google Fonts.</li>
           <li><strong>Mapa</strong> via Google Maps Embed API, lazy-loaded — só carrega quando o visitante clica em "Mostrar mapa".</li>
-          <li><strong>Comentários</strong> sistema próprio: Cloudflare Worker + D1 (SQLite no edge), UI 100% no nosso design system, anônimos (apelido livre, sem cadastro nem email). Anti-bot via Turnstile + rate limit no Worker.</li>
           <li><strong>Feedback</strong> via Web3Forms — visitante envia sem cadastro, recebimento por email do mantenedor. Defesas em camadas: honeypot, time-check, rate limit local, e Cloudflare Turnstile invisível como anti-bot server-side.</li>
           <li><strong>~1.000 páginas</strong> pré-renderizadas em build (cerca de 30 MB no total, incluindo a fonte). Zero JS no caminho crítico do conteúdo.</li>
         </ul>
@@ -125,7 +124,7 @@ const repoUrl = "https://github.com/phbruce/comida-di-buteco-better-ux";
         <h2 id="processo">Processo e ADRs</h2>
         <p>
           Toda decisão estrutural — escolha de framework, paleta, provedor
-          de mapa, formato dos cards, sistema de comentários — é registrada
+          de mapa, formato dos cards — é registrada
           como <strong>ADR (Architecture Decision Record)</strong>. Cada ADR
           lista o contexto, a decisão tomada, alternativas que foram
           consideradas, consequências e como reverter caso seja necessário.
@@ -170,9 +169,8 @@ const repoUrl = "https://github.com/phbruce/comida-di-buteco-better-ux";
         </p>
         <ul>
           <li>Mapa do Google: aparece só depois de tocar em "Mostrar mapa", com aviso de que pode definir cookies do Google.</li>
-          <li>Comentários: a lista é carregada do nosso Cloudflare Worker quando a seção entra na tela; ao publicar, são guardados apelido, mensagem e um hash do seu IP (com salt) usado só para rate limit.</li>
           <li>Web3Forms (feedback): submissão envia o que você digitou para a Web3Forms, que repassa por email. O visitante não precisa fornecer nome ou email.</li>
-          <li>Cloudflare Turnstile (anti-bot de comentários e feedback): roda invisível ou só sob interação, sem cookies de tracking persistente.</li>
+          <li>Cloudflare Turnstile (anti-bot do feedback): roda invisível, sem cookies de tracking persistente.</li>
         </ul>
         <p>
           Cada um desses serviços tem sua própria política de privacidade.

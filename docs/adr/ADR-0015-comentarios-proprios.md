@@ -1,9 +1,9 @@
 # ADR-0015 — Sistema de comentários próprio (Cloudflare Worker + D1)
 
-- **Status:** ACCEPTED
+- **Status:** DEPRECATED em 2026-05-10 — feature de comentários removida do produto. Worker e D1 permanecem deployados mas não são mais consumidos pela UI; podem ser deletados via dashboard. Pode ser revivida reinstalando `<Comments />` no detalhe do buteco e os arquivos em `worker/`.
 - **Data:** 2026-05-09
 - **Decisor(es):** Dono do produto (delegado em 2026-05-09 — opção A:
-  construir o nosso)
+  construir o nosso); deprecação em 2026-05-10 a pedido do dono.
 - **Supersede:** ADR-0008 (Cusdis hospedado), ADR-0014 (rejeitado)
 - **RFs/RNFs relacionados:** RNF-0001 (a11y), RNF-0002 (performance),
   RNF-0005 (privacidade)

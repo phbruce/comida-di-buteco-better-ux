@@ -59,11 +59,9 @@ jobs:
           # Sem essa env, Feedback usa só defesas client-side (rate limit,
           # honeypot, time check) — funcional mas vulnerável a atacante.
           PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.TURNSTILE_SITE_KEY }}
-          # Endpoint do Worker de comentários próprio (ADR-0015).
-          # Secret: COMMENTS_ENDPOINT — URL do worker tipo
-          # https://cdb-comments.<sub>.workers.dev. Sem essa env, o
-          # componente Comments mostra estado "indisponível".
-          PUBLIC_COMMENTS_ENDPOINT: ${{ secrets.COMMENTS_ENDPOINT }}
+          # ADR-0015 (comentários próprios) marcado DEPRECATED em 2026-05-10.
+          # PUBLIC_COMMENTS_ENDPOINT removido daqui — secret COMMENTS_ENDPOINT
+          # no GH pode ser deletado pelo dono.
         run: npm run build
 
       - name: Add .nojekyll
