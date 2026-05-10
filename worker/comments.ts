@@ -41,7 +41,17 @@ interface CommentRow {
   page_id: string;
   nickname: string;
   message: string;
+  rating: number | null;
   created_at: number;
+}
+
+/** Parser de rating (ADR-0017). Aceita inteiro 1..5; resto vira null. */
+function parseRating(raw: unknown): number | null {
+  if (raw === null || raw === undefined || raw === "") return null;
+  const n = Number(raw);
+  if (!Number.isInteger(n)) return null;
+  if (n < 1 || n > 5) return null;
+  return n;
 }
 
 function corsHeaders(origin: string, allowed: string[]): HeadersInit {
@@ -94,7 +104,7 @@ async function listComments(env: Env, pageId: string, before: number | null, lim
   if (before !== null) {
     stmt = env.DB
       .prepare(
-        "SELECT id, page_id, nickname, message, created_at FROM comments " +
+        "SELECT id, page_id, nickname, message, rating, created_at FROM comments " +
         "WHERE page_id = ? AND status = 'approved' AND id < ? " +
         "ORDER BY created_at DESC LIMIT ?",
       )
@@ -102,7 +112,7 @@ async function listComments(env: Env, pageId: string, before: number | null, lim
   } else {
     stmt = env.DB
       .prepare(
-        "SELECT id, page_id, nickname, message, created_at FROM comments " +
+        "SELECT id, page_id, nickname, message, rating, created_at FROM comments " +
         "WHERE page_id = ? AND status = 'approved' " +
         "ORDER BY created_at DESC LIMIT ?",
       )
@@ -151,6 +161,7 @@ async function handlePost(request: Request, env: Env, cors: HeadersInit): Promis
   const pageTitle = sanitize(String(form.get("pageTitle") ?? ""), 200);
   const nickname = sanitize(String(form.get("nickname") ?? ""), MAX_NICK);
   const message = sanitize(String(form.get("message") ?? ""), MAX_MSG);
+  const rating = parseRating(form.get("rating")); // ADR-0017
   const turnstileToken = String(form.get("cf-turnstile-response") ?? "");
 
   if (!pageId || !nickname || !message || message.length < MIN_MSG) {
@@ -176,10 +187,10 @@ async function handlePost(request: Request, env: Env, cors: HeadersInit): Promis
   const now = Date.now();
   const result = await env.DB
     .prepare(
-      "INSERT INTO comments (page_id, page_url, page_title, nickname, message, created_at, ip_hash, status) " +
-      "VALUES (?, ?, ?, ?, ?, ?, ?, 'approved') RETURNING id, page_id, nickname, message, created_at",
+      "INSERT INTO comments (page_id, page_url, page_title, nickname, message, rating, created_at, ip_hash, status) " +
+      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'approved') RETURNING id, page_id, nickname, message, rating, created_at",
     )
-    .bind(pageId, pageUrl || null, pageTitle || null, nickname, message, now, ipHash)
+    .bind(pageId, pageUrl || null, pageTitle || null, nickname, message, rating, now, ipHash)
     .first<CommentRow>();
 
   if (!result) {

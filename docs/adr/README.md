@@ -42,7 +42,7 @@ Cada ADR responde:
 | [ADR-0014](./ADR-0014-self-host-cusdis.md) | Self-host do Cusdis | ~~REJECTED~~ | Dono do produto | 2026-05-09 |
 | [ADR-0015](./ADR-0015-comentarios-proprios.md) | Sistema de comentários próprio (Worker + D1) | ACCEPTED | Dono do produto (delegado) | 2026-05-09 |
 | [ADR-0016](./ADR-0016-ilustracoes-personalidade-visual.md) | Sistema de ilustrações decorativas (Storyset/unDraw + acentos próprios) | ACCEPTED | Dono do produto | 2026-05-09 |
-| [ADR-0017](./ADR-0017-rating-com-pergunta-de-visita.md) | Pergunta de visita + rating por estrelas no comentário | **PROPOSED** | — | 2026-05-10 |
+| [ADR-0017](./ADR-0017-rating-com-pergunta-de-visita.md) | Pergunta de visita + rating por estrelas no comentário | ACCEPTED | Dono do produto | 2026-05-10 |
 
 ## Como propor um ADR
 

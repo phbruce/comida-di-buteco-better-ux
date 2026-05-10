@@ -268,6 +268,104 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
     margin: 0;
   }
   .cmt__turnstile { min-height: 65px; }
+
+  /* ---------- Pergunta de visita + estrelas (ADR-0017) ---------- */
+  .cmt__visit {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--color-bg-canvas);
+    border: 2px dashed var(--color-border-strong);
+  }
+  .cmt__visit-label {
+    margin: 0;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-strong);
+  }
+  .cmt__visit-options {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+  .cmt__visit-btn {
+    flex: 1 1 auto;
+    min-height: 44px;
+    padding: var(--space-2) var(--space-4);
+    border: 2px solid var(--color-border-strong);
+    background: transparent;
+    color: var(--color-text-strong);
+    font: inherit;
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+  }
+  .cmt__visit-btn:hover {
+    background: var(--color-bg-soft);
+  }
+  .cmt__visit-btn[aria-pressed="true"] {
+    background: var(--color-text-strong);
+    color: var(--color-text-on-dark);
+    border-color: var(--color-text-strong);
+  }
+
+  .cmt__rating {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .cmt__rating[hidden] { display: none; }
+  .cmt__rating-label {
+    margin: 0;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-strong);
+    font-size: var(--font-size-small);
+  }
+  .cmt__rating-stars {
+    display: inline-flex;
+    gap: var(--space-1);
+  }
+  .cmt__rating-star {
+    appearance: none;
+    width: 44px;
+    height: 44px;
+    padding: 6px;
+    border: 0;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cmt__rating-star svg { width: 100%; height: 100%; display: block; }
+  .cmt__rating-star:hover,
+  .cmt__rating-star:focus-visible {
+    color: var(--color-brand-accent-hover);
+  }
+  .cmt__rating-star.is-on,
+  .cmt__rating-star[aria-checked="true"] {
+    color: var(--color-brand-accent);
+  }
+  /* Hover preview: preencher estrelas anteriores ao hover */
+  .cmt__rating-stars:hover .cmt__rating-star { color: var(--color-text-muted); }
+  .cmt__rating-stars:hover .cmt__rating-star:hover,
+  .cmt__rating-stars:hover .cmt__rating-star:hover ~ .cmt__rating-star {
+    color: var(--color-text-muted);
+  }
+  /* a regra acima desliga; agora preenche os irmãos ANTERIORES via :has */
+  .cmt__rating-stars:has(.cmt__rating-star:hover) .cmt__rating-star.is-pre-hover {
+    color: var(--color-brand-accent);
+  }
+
+  /* Mini estrelas no head do comentário publicado */
+  .cmt__stars {
+    display: inline-flex;
+    gap: 2px;
+    color: var(--color-brand-accent);
+    line-height: 0;
+  }
+  .cmt__stars svg { width: 14px; height: 14px; display: block; }
+  .cmt__stars-empty { color: var(--color-text-muted); opacity: 0.4; }
 </style>
 
 <script>
@@ -279,6 +377,7 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
     page_id: string;
     nickname: string;
     message: string;
+    rating?: number | null; // ADR-0017
     created_at: number;
   };
 
@@ -286,6 +385,28 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
     return s
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+
+  // Estrela poligonal sharp (5 pontas, sem curvas) — usada tanto no
+  // selector grande quanto nas mini-estrelas do display.
+  const STAR_PATH =
+    "M12 2 L14.6 9 L22 9 L16 13.5 L18.2 21 L12 16.5 L5.8 21 L8 13.5 L2 9 L9.4 9 Z";
+
+  function starSvg(filled: boolean): string {
+    const fill = filled ? "currentColor" : "none";
+    const stroke = filled ? "none" : "currentColor";
+    return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${STAR_PATH}" fill="${fill}" stroke="${stroke}" stroke-width="2" stroke-linejoin="miter"/></svg>`;
+  }
+
+  function ratingHtml(rating: number): string {
+    if (!rating || rating < 1 || rating > 5) return "";
+    let out = `<span class="cmt__stars" role="img" aria-label="${rating} de 5 estrelas">`;
+    for (let i = 1; i <= 5; i++) {
+      const on = i <= rating;
+      out += `<span class="${on ? "" : "cmt__stars-empty"}">${starSvg(on)}</span>`;
+    }
+    out += "</span>";
+    return out;
   }
 
   function formatTime(ms: number): string {
@@ -303,10 +424,12 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
   }
 
   function renderItem(c: Comment): string {
+    const stars = c.rating != null ? ratingHtml(c.rating) : "";
     return `
       <li class="cmt__item">
         <div class="cmt__head">
           <span class="cmt__nick">${escapeHtml(c.nickname)}</span>
+          ${stars}
           <span class="cmt__time" title="${new Date(c.created_at).toISOString()}">${formatTime(c.created_at)}</span>
         </div>
         <p class="cmt__msg">${escapeHtml(c.message)}</p>
@@ -341,6 +464,27 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
         <form class="cmt__form" data-cmt-form novalidate>
           <h3 class="cmt__form-title">Deixe seu comentário</h3>
           <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="cmt__honeypot">
+
+          <fieldset class="cmt__visit" data-cmt-visit>
+            <legend class="cmt__visit-label">Você foi nesse buteco?</legend>
+            <div class="cmt__visit-options" role="radiogroup" aria-label="Você visitou esse buteco?">
+              <button type="button" class="cmt__visit-btn" data-cmt-visit-btn="yes" aria-pressed="false">Sim, fui</button>
+              <button type="button" class="cmt__visit-btn" data-cmt-visit-btn="no"  aria-pressed="false">Ainda não fui</button>
+            </div>
+          </fieldset>
+
+          <div class="cmt__rating" data-cmt-rating hidden>
+            <p class="cmt__rating-label" id="cmt-rating-label-${pageId.replace(/[^a-z0-9]/gi, "")}">Que nota dá pra experiência? <span style="font-weight: var(--font-weight-regular); color: var(--color-text-muted);">(opcional)</span></p>
+            <div
+              class="cmt__rating-stars"
+              role="radiogroup"
+              aria-labelledby="cmt-rating-label-${pageId.replace(/[^a-z0-9]/gi, "")}"
+              data-cmt-rating-group
+            >
+              ${[1,2,3,4,5].map((n) => `<button type="button" class="cmt__rating-star" role="radio" aria-checked="false" data-cmt-star="${n}" aria-label="${n} ${n === 1 ? "estrela" : "estrelas"}">${starSvg(false)}</button>`).join("")}
+            </div>
+            <input type="hidden" name="rating" value="" data-cmt-rating-input>
+          </div>
 
           <div class="cmt__field">
             <label class="cmt__label" for="cmt-nick-${pageId.replace(/[^a-z0-9]/gi, "")}">Apelido</label>
@@ -452,6 +596,104 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
       textarea.addEventListener("input", updateCounter);
       updateCounter();
 
+      // ---------- Visit + rating (ADR-0017) ----------
+      const visitBtns = Array.from(form.querySelectorAll<HTMLButtonElement>("[data-cmt-visit-btn]"));
+      const ratingBlock = form.querySelector<HTMLElement>("[data-cmt-rating]")!;
+      const ratingInput = form.querySelector<HTMLInputElement>("[data-cmt-rating-input]")!;
+      const starGroup = form.querySelector<HTMLElement>("[data-cmt-rating-group]")!;
+      const stars = Array.from(form.querySelectorAll<HTMLButtonElement>("[data-cmt-star]"));
+
+      function setVisit(value: "yes" | "no" | null): void {
+        for (const b of visitBtns) {
+          b.setAttribute("aria-pressed", b.dataset.cmtVisitBtn === value ? "true" : "false");
+        }
+        if (value === "yes") {
+          ratingBlock.hidden = false;
+        } else {
+          ratingBlock.hidden = true;
+          // Limpa rating quando muda pra "não fui"
+          setRating(null);
+        }
+      }
+
+      function setRating(n: number | null): void {
+        ratingInput.value = n != null ? String(n) : "";
+        for (const s of stars) {
+          const v = Number(s.dataset.cmtStar);
+          const on = n != null && v <= n;
+          s.setAttribute("aria-checked", n != null && v === n ? "true" : "false");
+          s.classList.toggle("is-on", on);
+          // mantém o hover preview funcional via :has
+          s.classList.toggle("is-pre-hover", on);
+          s.querySelector("svg")?.replaceWith(
+            (() => { const tpl = document.createElement("template"); tpl.innerHTML = starSvg(on); return tpl.content.firstChild as Node; })(),
+          );
+        }
+      }
+
+      for (const b of visitBtns) {
+        b.addEventListener("click", () => setVisit(b.dataset.cmtVisitBtn as "yes" | "no"));
+      }
+
+      for (const s of stars) {
+        s.addEventListener("click", () => {
+          const v = Number(s.dataset.cmtStar);
+          // toggle: clicar na mesma estrela limpa
+          const cur = ratingInput.value ? Number(ratingInput.value) : null;
+          setRating(cur === v ? null : v);
+        });
+        // Hover preview (preenche estrelas anteriores) — sem CSS-only complete
+        s.addEventListener("mouseenter", () => {
+          const v = Number(s.dataset.cmtStar);
+          for (const ss of stars) {
+            const sv = Number(ss.dataset.cmtStar);
+            ss.classList.toggle("is-pre-hover", sv <= v);
+          }
+        });
+      }
+      starGroup.addEventListener("mouseleave", () => {
+        const cur = ratingInput.value ? Number(ratingInput.value) : null;
+        for (const ss of stars) {
+          const sv = Number(ss.dataset.cmtStar);
+          ss.classList.toggle("is-pre-hover", cur != null && sv <= cur);
+        }
+      });
+
+      // Teclado: setas navegam, Home/End nos extremos, Space/Enter seleciona
+      starGroup.addEventListener("keydown", (e) => {
+        const target = e.target as HTMLElement;
+        if (!target.matches("[data-cmt-star]")) return;
+        const idx = stars.indexOf(target as HTMLButtonElement);
+        let next = idx;
+        switch (e.key) {
+          case "ArrowRight":
+          case "ArrowDown":
+            next = (idx + 1) % stars.length;
+            break;
+          case "ArrowLeft":
+          case "ArrowUp":
+            next = (idx - 1 + stars.length) % stars.length;
+            break;
+          case "Home":
+            next = 0;
+            break;
+          case "End":
+            next = stars.length - 1;
+            break;
+          case " ":
+          case "Enter":
+            e.preventDefault();
+            (target as HTMLButtonElement).click();
+            return;
+          default:
+            return;
+        }
+        e.preventDefault();
+        stars[next].focus();
+        // Seleciona automaticamente o item focado (padrão de radiogroup)
+        setRating(Number(stars[next].dataset.cmtStar));
+      });
+
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         feedback.innerHTML = "";
@@ -508,6 +750,10 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
           feedback.innerHTML = `<p class="cmt__success">Comentário publicado.</p>`;
           form.reset();
           updateCounter();
+          // Reseta a state machine de visit/rating — form.reset não cobre
+          // os botões com aria-pressed/aria-checked.
+          setVisit(null);
+          setRating(null);
           // Reseta Turnstile pra próximo envio
           if ((window as any).turnstile?.reset) (window as any).turnstile.reset();
         } catch (err: unknown) {

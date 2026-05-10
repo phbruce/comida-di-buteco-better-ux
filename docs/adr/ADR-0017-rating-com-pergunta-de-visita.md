@@ -1,8 +1,8 @@
 # ADR-0017 — Pergunta de visita + rating por estrelas no comentário
 
-- **Status:** PROPOSED
+- **Status:** ACCEPTED
 - **Data:** 2026-05-10
-- **Decisor(es):** Dono do produto (aguardando aprovação)
+- **Decisor(es):** Dono do produto (aprovado em 2026-05-10 — Alternativa B com range 1-5)
 - **RFs/RNFs relacionados:** RF-0005 (votação — fica no oficial), RNF-0001 (a11y), RNF-0005 (privacidade)
 - **ADRs relacionados:** ADR-0015 (sistema de comentários próprio — define schema atual)
 
