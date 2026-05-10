@@ -46,10 +46,11 @@ jobs:
           BASE_PATH: /comida-di-buteco-better-ux
           SITE_URL: https://phbruce.github.io
           # Chave do Google Maps Embed API (ADR-0010). Vem de Repo Secrets
-          # (Settings → Secrets and variables → Actions → New repository secret
-          # com nome GOOGLE_MAPS_KEY). Se não estiver definida, o build segue
-          # com fallback ?output=embed (não interativo no mobile).
-          PUBLIC_GOOGLE_MAPS_KEY: ${{ secrets.GOOGLE_MAPS_KEY }}
+          # (Settings → Secrets and variables → Actions → New repository secret).
+          # Nome do secret no GH: FOOGLE_MAPS_SECRET (typo histórico — não dá
+          # pra renomear secret no GH sem recriar). Se não estiver definido,
+          # o build segue com fallback ?output=embed (não interativo no mobile).
+          PUBLIC_GOOGLE_MAPS_KEY: ${{ secrets.FOOGLE_MAPS_SECRET }}
           # Web3Forms access key (ADR-0012). Secret name: FEEDBACK_W3F_KEY.
           # Sem essa env, Feedback.astro cai no fallback de abrir issue do
           # GitHub (que exige conta — pior UX para audiência geral).
