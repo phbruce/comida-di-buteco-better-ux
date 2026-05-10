@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="presentation" aria-hidden="true">
+  <!--
+    Abacaxi em paper-cut sharp.
+    Coroa de folhas lima no topo, corpo dourado ovalado com padrão de
+    losango simulando escamas. Sombra à direita.
+  -->
+  <g>
+    <!-- Coroa — várias folhas lima -->
+    <polygon points="22,18 24,8 27,16 29,4 31,15 33,3 35,15 38,5 40,16 43,9 42,18" fill="#1f6f4a" />
+    <polygon points="26,12 28,6 30,14" fill="#155234" />
+    <polygon points="34,12 36,6 38,14" fill="#155234" />
+
+    <!-- Corpo ovalado — dourado dendê -->
+    <polygon
+      points="24,18 40,18 45,22 48,28 49,35 49,42 47,48 43,53 32,56 21,53 17,48 15,42 15,35 16,28 19,22"
+      fill="#f4b400"
+    />
+
+    <!-- Sombra direita — dendê escuro -->
+    <polygon
+      points="40,18 45,22 48,28 49,35 49,42 47,48 43,53 32,56 36,49 40,42 41,34 39,26"
+      fill="#a8770b"
+    />
+
+    <!-- Padrão de losango (escamas) — dendê escuro fino -->
+    <polygon points="22,24 25,21 28,24 25,27" fill="#a8770b" />
+    <polygon points="29,24 32,21 35,24 32,27" fill="#a8770b" />
+    <polygon points="36,24 39,21 42,24 39,27" fill="#a8770b" />
+    <polygon points="20,32 23,29 26,32 23,35" fill="#a8770b" />
+    <polygon points="27,32 30,29 33,32 30,35" fill="#a8770b" />
+    <polygon points="34,32 37,29 40,32 37,35" fill="#a8770b" />
+    <polygon points="41,32 44,29 47,32 44,35" fill="#a8770b" />
+    <polygon points="22,40 25,37 28,40 25,43" fill="#a8770b" />
+    <polygon points="29,40 32,37 35,40 32,43" fill="#a8770b" />
+    <polygon points="36,40 39,37 42,40 39,43" fill="#a8770b" />
+    <polygon points="25,48 28,45 31,48 28,51" fill="#a8770b" />
+    <polygon points="32,48 35,45 38,48 35,51" fill="#a8770b" />
+  </g>
+</svg>

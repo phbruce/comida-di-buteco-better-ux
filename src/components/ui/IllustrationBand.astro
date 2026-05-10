@@ -23,13 +23,18 @@ interface Props {
 const { tone = "soft", variant = "default", class: extra = "" } = Astro.props;
 
 // Motivos com rotação e leve variação de offset vertical pra "respirar".
+// Sequência cuidadosamente alternada por cor pra não repetir tom lado a lado.
 const items = [
-  { kind: "folha",    rotate: -6,  shift:  2,  size: "md" as const },
-  { kind: "pimenta",  rotate:  8,  shift: -3,  size: "md" as const },
-  { kind: "milho",    rotate: -3,  shift:  3,  size: "md" as const },
-  { kind: "cebola",   rotate:  5,  shift: -2,  size: "md" as const },
-  { kind: "tomate",   rotate: -4,  shift:  4,  size: "md" as const },
-  { kind: "garrafa",  rotate:  6,  shift: -1,  size: "md" as const },
+  { kind: "folha",         rotate: -6,  shift:  2,  size: "md" as const },
+  { kind: "pimenta",       rotate:  8,  shift: -3,  size: "md" as const },
+  { kind: "milho",         rotate: -3,  shift:  3,  size: "md" as const },
+  { kind: "cebola",        rotate:  5,  shift: -2,  size: "md" as const },
+  { kind: "limao",         rotate: -7,  shift:  1,  size: "md" as const },
+  { kind: "tomate",        rotate:  4,  shift: -3,  size: "md" as const },
+  { kind: "pao-de-queijo", rotate: -5,  shift:  2,  size: "md" as const },
+  { kind: "abacaxi",       rotate:  3,  shift: -2,  size: "md" as const },
+  { kind: "alho",          rotate: -4,  shift:  3,  size: "md" as const },
+  { kind: "garrafa",       rotate:  6,  shift: -1,  size: "md" as const },
 ];
 
 const visible = variant === "wide" ? items : items.slice(0, 4);

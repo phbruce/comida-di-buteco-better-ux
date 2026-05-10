@@ -18,8 +18,31 @@ import milho from "~/assets/illustrations/milho.svg?raw";
 import cebola from "~/assets/illustrations/cebola.svg?raw";
 import tomate from "~/assets/illustrations/tomate.svg?raw";
 import garrafa from "~/assets/illustrations/garrafa.svg?raw";
+import limao from "~/assets/illustrations/limao.svg?raw";
+import paoDeQueijo from "~/assets/illustrations/pao-de-queijo.svg?raw";
+import alho from "~/assets/illustrations/alho.svg?raw";
+import abacaxi from "~/assets/illustrations/abacaxi.svg?raw";
+import mandioca from "~/assets/illustrations/mandioca.svg?raw";
+import coxinha from "~/assets/illustrations/coxinha.svg?raw";
+import caipirinha from "~/assets/illustrations/caipirinha.svg?raw";
+import espetinho from "~/assets/illustrations/espetinho.svg?raw";
 
-type Kind = "pimenta" | "folha" | "milho" | "cebola" | "tomate" | "garrafa";
+type Kind =
+  | "pimenta"
+  | "folha"
+  | "milho"
+  | "cebola"
+  | "tomate"
+  | "garrafa"
+  | "limao"
+  | "pao-de-queijo"
+  | "alho"
+  | "abacaxi"
+  | "mandioca"
+  | "coxinha"
+  | "caipirinha"
+  | "espetinho";
+
 type Size = "sm" | "md" | "lg";
 
 interface Props {
@@ -32,7 +55,22 @@ interface Props {
 
 const { kind, size = "md", ariaLabel, class: extra = "" } = Astro.props;
 
-const motifs: Record<Kind, string> = { pimenta, folha, milho, cebola, tomate, garrafa };
+const motifs: Record<Kind, string> = {
+  pimenta,
+  folha,
+  milho,
+  cebola,
+  tomate,
+  garrafa,
+  limao,
+  "pao-de-queijo": paoDeQueijo,
+  alho,
+  abacaxi,
+  mandioca,
+  coxinha,
+  caipirinha,
+  espetinho,
+};
 const svg = motifs[kind];
 const decorative = !ariaLabel;
 ---

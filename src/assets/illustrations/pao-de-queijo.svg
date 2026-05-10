@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="presentation" aria-hidden="true">
+  <!--
+    Pão de queijo em paper-cut sharp.
+    Bolinha dourada com manchas mais douradas (assada), highlight chapado.
+  -->
+  <g>
+    <!-- Corpo redondo — dourado dendê -->
+    <polygon
+      points="32,14 39,15 46,18 51,23 54,29 55,36 53,43 49,49 43,53 36,55 28,55 21,53 15,49 11,43 9,36 10,29 13,23 18,18 25,15"
+      fill="#f4b400"
+    />
+
+    <!-- Sombra direita — dendê mais escuro -->
+    <polygon
+      points="39,15 46,18 51,23 54,29 55,36 53,43 49,49 43,53 36,55 39,49 43,42 46,34 46,26 43,20"
+      fill="#a8770b"
+    />
+
+    <!-- Manchas assadas (3 pequenas, dendê escuro) -->
+    <polygon points="22,26 27,24 28,28 24,31 21,30" fill="#a8770b" />
+    <polygon points="38,32 43,30 44,35 39,37" fill="#a8770b" />
+    <polygon points="26,42 31,40 31,45 27,46" fill="#a8770b" />
+
+    <!-- Highlight no topo-esquerdo — dourado clarinho -->
+    <polygon
+      points="18,22 24,19 26,24 22,28 17,27"
+      fill="#ffe9a3"
+    />
+  </g>
+</svg>

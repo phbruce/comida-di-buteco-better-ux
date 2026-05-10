@@ -24,7 +24,12 @@ const detalheUrl = `${base}butecos/${buteco.cidade_slug}/${buteco.slug}/`;
 const alt = fotoAltSintetico(buteco);
 
 // Motivo determinístico para placeholder de foto (mesmo buteco → mesma figura).
-const placeholderKinds = ["pimenta", "folha", "milho", "cebola", "tomate", "garrafa"] as const;
+// Pool dos 14 motivos pra dar variedade real entre cards adjacentes.
+const placeholderKinds = [
+  "pimenta", "folha", "milho", "cebola", "tomate", "garrafa",
+  "limao", "pao-de-queijo", "alho", "abacaxi", "mandioca",
+  "coxinha", "caipirinha", "espetinho",
+] as const;
 const placeholderIdx = Array.from(buteco.slug).reduce((a, c) => a + c.charCodeAt(0), 0) % placeholderKinds.length;
 const placeholderKind = placeholderKinds[placeholderIdx];
 ---

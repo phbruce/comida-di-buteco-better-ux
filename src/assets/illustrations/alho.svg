@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="presentation" aria-hidden="true">
+  <!--
+    Alho (cabeça inteira) em paper-cut sharp.
+    Bulbo arredondado, casca papery cream, dentes sugeridos por curvas
+    chapadas (V invertido na base), pequeno talo verde no topo.
+  -->
+  <g>
+    <!-- Bulbo principal — cream -->
+    <polygon
+      points="32,16 39,17 45,21 50,26 53,32 54,39 52,46 47,52 41,55 32,57 23,55 17,52 12,46 10,39 11,32 14,26 19,21 25,17"
+      fill="#fbf7f0"
+    />
+
+    <!-- Sombra direita — cream escuro -->
+    <polygon
+      points="39,17 45,21 50,26 53,32 54,39 52,46 47,52 41,55 32,57 36,50 41,42 43,33 41,25 38,19"
+      fill="#d4c8b0"
+    />
+
+    <!-- Dente esquerdo (V invertido sugerindo segmento) — sombra cream -->
+    <polygon
+      points="11,33 14,28 19,30 22,38 21,48 17,53 12,48"
+      fill="#d4c8b0"
+    />
+
+    <!-- Dente central — divisão sutil -->
+    <polygon points="31,18 33,18 33,55 31,55" fill="#d4c8b0" />
+
+    <!-- Dente direito (curva à direita) -->
+    <polygon
+      points="42,30 47,28 53,33 53,42 50,50 45,53 41,48"
+      fill="#d4c8b0"
+    />
+
+    <!-- Highlight no canto superior-esquerdo — branco -->
+    <polygon
+      points="20,24 26,22 27,28 24,32 19,30"
+      fill="#ffffff"
+    />
+
+    <!-- Talo (broto) no topo, pequeno -->
+    <polygon
+      points="29,16 30,11 32,8 34,11 35,16"
+      fill="#a89977"
+    />
+
+    <!-- Folha verde pequena saindo do talo -->
+    <polygon
+      points="34,10 38,6 41,9 38,12"
+      fill="#1f6f4a"
+    />
+
+    <!-- Raízes finas embaixo -->
+    <polygon points="29,56 30,60 31,57" fill="#a89977" />
+    <polygon points="32,57 33,61 34,58" fill="#a89977" />
+    <polygon points="34,56 35,60 36,57" fill="#a89977" />
+  </g>
+</svg>
