@@ -478,11 +478,17 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
         submit.disabled = true;
         submit.textContent = "Enviando…";
 
+        // Timeout duro de 15s — sem AbortController, fetch numa rede ruim
+        // pode pendurar pra sempre e o botão "Enviando…" trava.
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(() => controller.abort(), 15000);
+
         try {
           const res = await fetch(endpoint + "/api/comments", {
             method: "POST",
             body: data,
             headers: { Accept: "application/json" },
+            signal: controller.signal,
           });
           if (res.status === 429) {
             feedback.innerHTML = `<p class="cmt__error">Você comentou recentemente. Espere um pouco antes de comentar de novo.</p>`;
@@ -504,10 +510,14 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
           updateCounter();
           // Reseta Turnstile pra próximo envio
           if ((window as any).turnstile?.reset) (window as any).turnstile.reset();
-        } catch (err) {
+        } catch (err: unknown) {
           console.warn("[comments] submit failed", err);
-          feedback.innerHTML = `<p class="cmt__error">Não foi possível enviar agora. Tente de novo.</p>`;
+          const isAbort = err instanceof DOMException && err.name === "AbortError";
+          feedback.innerHTML = isAbort
+            ? `<p class="cmt__error">Tempo esgotado. Sua conexão pode estar instável — tente de novo.</p>`
+            : `<p class="cmt__error">Não foi possível enviar agora. Tente de novo.</p>`;
         } finally {
+          window.clearTimeout(timeoutId);
           submit.disabled = false;
           submit.textContent = "Comentar";
         }
