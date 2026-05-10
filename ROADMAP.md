@@ -30,15 +30,15 @@ Vários itens originalmente listados nas Fases 2-3 foram implementados direto em
 
 **Objetivo:** documentar de forma objetiva os problemas e oportunidades do site atual.
 
-- [ ] Heurísticas de Nielsen aplicadas a cada fluxo principal
-- [ ] Auditoria de acessibilidade (axe / Lighthouse) do site atual
-- [ ] Auditoria de performance (Core Web Vitals) do site atual
-- [ ] Mapa de fluxos: home → cidade → buteco → voto
-- [ ] Inventário de conteúdo
+- [x] Heurísticas de Nielsen aplicadas a cada fluxo principal
+- [x] Auditoria de acessibilidade (estática, via inspeção do HTML — runtime fica como dívida da Fase 5)
+- [x] Auditoria de performance (hipóteses informadas — runtime fica como dívida da Fase 5)
+- [x] Mapa de fluxos: home → cidade → buteco → voto
+- [x] Inventário de conteúdo
 
-**Saída:** `docs/pesquisa/diagnostico-site-atual.md` preenchido com evidências.
+**Saída:** [`docs/pesquisa/diagnostico-site-atual.md`](./docs/pesquisa/diagnostico-site-atual.md) preenchido com 10 heurísticas, 11 itens de a11y estática, 6 hipóteses de performance, mapa de fluxos completo e tabela de oportunidades capturadas pelo redesign. **Concluída.**
 
-**Status:** pendente. Skipped na primeira passada — partimos direto pra implementação. Boa candidata pra ser feita pós-MVP, comparando "antes vs depois".
+**Status:** auditoria runtime (Lighthouse, axe, testes com usuários) movida pra Fase 5.
 
 ---
 
@@ -80,6 +80,12 @@ Implementação no ar; documentação em `docs/design-system/` ainda dívida.
 - [x] Feedback (Web3Forms + Turnstile, ADR-0012/0013) — `src/components/site/Feedback.astro`
 - [ ] Notification / Inset text (não implementado ainda — usado inline em `/concurso/` mas sem componente reusável)
 
+**Documentação textual dos componentes** (em `docs/design-system/componentes/`):
+- [x] `button.md`, `input.md`, `tag.md`, `breadcrumb.md`, `pagination.md`
+- [x] `skip-link.md`, `phase-banner.md`
+- [x] `illustration.md`, `illustration-band.md`
+- [ ] Componentes site-specific (Header, Footer, ButecoCard, ButecoListItem, Map, Feedback) — listados no `componentes/README.md`, sem página dedicada por enquanto.
+
 ---
 
 ## Fase 4 — Telas-chave
@@ -100,10 +106,11 @@ Implementação no ar; documentação em `docs/design-system/` ainda dívida.
 
 - [ ] Testes de usabilidade moderados (5 usuários por cidade-alvo)
 - [ ] Testes de acessibilidade automatizados (CI com axe-core ou pa11y)
+- [x] Lighthouse CI configurado (`.github/workflows/lighthouse.yml`) rodando contra 4 URLs deployadas: home, `/concurso/`, `/sobre/`, `/butecos/belo-horizonte/`. Trigger: schedule diário 9 UTC + manual + após cada deploy bem-sucedido. Relatório no artifact `lighthouse-results`.
 - [ ] Métricas de performance no campo (Core Web Vitals via beacon ou GA4 web vitals)
 - [ ] Teste de leitor de tela (NVDA + VoiceOver) nos fluxos críticos
 
-**Status:** não iniciada.
+**Status:** Lighthouse CI ativado. Demais itens pendentes — exigem ferramenta runtime extra (axe-core CI, RUM beacon, pesquisa moderada com pessoas reais).
 
 ---
 

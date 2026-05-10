@@ -1,0 +1,57 @@
+name: Lighthouse CI
+
+# Roda Lighthouse contra a versão deployada no GitHub Pages e arquiva
+# o relatório como artifact pra acompanhar Core Web Vitals ao longo do tempo.
+#
+# Não bloqueia merges. É um sinal, não um gate — aceitamos que medidas
+# podem oscilar com a rede do runner. RNF-0002 + Fase 5 do ROADMAP.
+
+on:
+  # Manual trigger — botão "Run workflow" no Actions tab
+  workflow_dispatch:
+  # Diariamente às 9 UTC (~6h BRT) pra ver tendências
+  schedule:
+    - cron: "0 9 * * *"
+  # Sob demanda quando o deploy.yml termina
+  workflow_run:
+    workflows: ["Deploy to GitHub Pages"]
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run Lighthouse
+        # treosh/lighthouse-ci-action é mantido pela comunidade, MIT.
+        # Configurado pra rodar contra 4 URLs deployadas em mobile preset.
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            https://phbruce.github.io/comida-di-buteco-better-ux/
+            https://phbruce.github.io/comida-di-buteco-better-ux/concurso/
+            https://phbruce.github.io/comida-di-buteco-better-ux/sobre/
+            https://phbruce.github.io/comida-di-buteco-better-ux/butecos/belo-horizonte/
+          # Coleta 1 run por URL (rápido). Pra resultado mais estável,
+          # subir pra 3 runs em rodadas semanais.
+          runs: 1
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+          # Sem assertion-script — não bloqueamos merge por número.
+
+      - name: Resumo no log
+        run: |
+          echo "Lighthouse rodou em 4 URLs deployadas."
+          echo "Relatório completo no artifact 'lighthouse-results' deste run."
+          echo "Pra abrir no Lighthouse Viewer: https://googlechrome.github.io/lighthouse/viewer/"
